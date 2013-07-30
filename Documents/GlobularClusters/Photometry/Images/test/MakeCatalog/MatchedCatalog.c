@@ -2,20 +2,8 @@
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>
-#include <quadtree.h>
-#include <quadtree.c>
-
-/* ------- CONSTANTS ------- */
-
-#define MAX  10
-#define MAXDIST 10 // Arbitrary for now
-
-/* ------- TYPES ------- */
-
-typedef struct box_t {
-    double xmin, ymin, xmax, ymax;
-} box_t;
-
+#include "quadtree.h"
+#include "list.h"
 
 /* ------- PROTOTYPES ------- */
 
