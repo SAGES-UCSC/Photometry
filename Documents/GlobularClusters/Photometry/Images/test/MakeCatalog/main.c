@@ -15,7 +15,7 @@ list_t *fill_list(char *name);
 
 /* ------- GLOBALS ------- */
 
- int debug = 0;
+int debug = 0;
 
 
 /*  ------- FUNCTIONS ------- */
@@ -60,10 +60,10 @@ void write_list(list_t *list) {
     FILE *out;
     out = fopen("MatchedCatalog.txt", "w+");
 
-    fprintf(out, "%5s %20s %20s %20s %20s %20s %20s %25s", "Source", "Magnitude 1", "Error", 
+    fprintf(out, "%6s %14s %14s %14s %18s %18s %14s %14s\n", "Source", "Magnitude 1", "Error", 
             "Size", "X_pos", "Y_pos","Magnitude 2", "Magnitude 3");
     while ((source = pop(list))) {
-        fprintf(out, "%5d %20f %20f %20f %20f %20f %20f %25f", source->num, source->mag, 
+        fprintf(out, "%6d %14.4f %14.4f %14.4f %18.4f %18.4f %14.4f %14.4f\n", source->num, source->mag, 
                         source->mag_err, source->size, source->x, source->y,
                         source->match2->mag, source->match3->mag);
 
