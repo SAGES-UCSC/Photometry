@@ -17,7 +17,7 @@ Routines needed to build quadtree
 /* ------- PROTOTYPES ------- */
 
 static node_t *new_node(double xmin, double ymin, double xmax, double ymax);
-static void nearer_source(node_t *node, double tx, double ty, box_t *interest, source_t **nearest, double *dist);
+static void nearer_source(node_t *tree, node_t *node, double tx, double ty, box_t *interest, source_t **nearest, double *dist);
 static void subdivide(node_t *node);
 
 
@@ -110,17 +110,25 @@ source_t *nearest_source(node_t *tree, double x, double y) {
     double dist;
     box_t interest;
 
-    dist = DBL_MAX;
-    interest = tree->box;
+    dist = dblmin(tree->box.xmax - tree->box.xmin, tree->box.ymax - tree->box.ymin) / 100.0;
+    interest.xmin = x - dist;
+    interest.ymin = y - dist;
+    interest.xmax = x + dist;
+    interest.ymax = y + dist;
+    clip_box(&interest, &tree->box);
+    dist = dist * dist;
 
     if (debug) {
         printf("nearest_source: \n");
-        printf("  x, y = %0.2f, %0.2f\n", x, y);
-        printf("  interest = xmin %0.4f, ymin %0.4f, xmax %0.4f, ymax %0.4f\n", 
+        printf("  target (%0.2f, %0.2f)\n", x, y);
+        printf("  interest (%0.4f, %0.4f) (%0.4f, %0.4f)\n", 
                 interest.xmin, interest.ymin, interest.xmax, interest.ymax);
     }
 
-    nearer_source(tree, x, y, &interest, &nearest, &dist);
+    nearer_source(tree, tree, x, y, &interest, &nearest, &dist);
+
+    if (debug)
+        printf("\n");
 
     return nearest;
 }
@@ -131,13 +139,12 @@ target       -- source we're looking for
 interest     -- the area of interest
 nearest      -- the current nearest match
 dist         -- distance to current nearest match */
-static void nearer_source(node_t *node, double tx, double ty, box_t *interest, source_t **nearest, double *dist) {
+static void nearer_source(node_t *tree, node_t *node, double tx, double ty, box_t *interest, source_t **nearest, double *dist) {
     source_t *s;
     double s_dist;
 
     if (debug) {
-        printf("nearer_source: \n");
-        printf("  xmin %0.4f, ymin %0.4f, xmax %0.4f, ymax %0.4f\n", 
+        printf("nearer_source: (%0.4f, %0.4f) (%0.4f, %0.4f)\n", 
                node->box.xmin, node->box.ymin, node->box.xmax, node->box.ymax);
     }
 
@@ -146,7 +153,7 @@ static void nearer_source(node_t *node, double tx, double ty, box_t *interest, s
         // If the node has no children run through the compares
         if (node->q1 == NULL) {
             if (debug)
-                printf(" intersection with leaf\n");
+                printf("  intersection with leaf\n");
             for (s = (source_t *)node->contents.first; s != NULL; s = (source_t *)s->links.next) {
                 s_dist = norm2(s->x, s->y, tx, ty);
                 if (debug)
@@ -160,22 +167,25 @@ static void nearer_source(node_t *node, double tx, double ty, box_t *interest, s
                     interest->ymin = ty - s_dist;
                     interest->xmax = tx + s_dist;
                     interest->ymax = ty + s_dist;
+                    clip_box(interest, &tree->box);
 
-                    if (debug)
-                        printf("  -- new nearest");
+                    if (debug) {
+                        printf("  -- new nearest: dist %0.4f box (%0.4f, %0.4f) (%0.4f, %0.4f)",
+                            s_dist, interest->xmin, interest->ymin, interest->xmax, interest->ymax);
+                    }
                 }
                 if (debug)
                     printf("\n");
             }   
         } else {
             if (debug)
-                printf(" intersection, checking children\n");
+                printf("  intersection, checking children\n");
             // If the node has children, recurse through the
             // tree by calling nearer_source on each of the children
-            nearer_source(node->q1, tx, ty, interest, nearest, dist);
-            nearer_source(node->q2, tx, ty, interest, nearest, dist);
-            nearer_source(node->q3, tx, ty, interest, nearest, dist);
-            nearer_source(node->q4, tx, ty, interest, nearest, dist);
+            nearer_source(tree, node->q1, tx, ty, interest, nearest, dist);
+            nearer_source(tree, node->q2, tx, ty, interest, nearest, dist);
+            nearer_source(tree, node->q3, tx, ty, interest, nearest, dist);
+            nearer_source(tree, node->q4, tx, ty, interest, nearest, dist);
         }
     } else {
         if (debug)
@@ -212,6 +222,21 @@ double norm2(double x1, double y1, double x2, double y2) {
     double xd = x2 - x1;
     double yd = y2 - y1;
     return xd * xd + yd * yd;
+}
+
+double dblmax(double a, double b) {
+    return a > b ? a : b;
+}
+
+double dblmin(double a, double b) {
+    return a < b ? a : b;
+}
+
+void clip_box(box_t *b, box_t *bounds) {
+    b->xmin = dblmax(b->xmin, bounds->xmin);
+    b->ymin = dblmax(b->ymin, bounds->ymin);
+    b->xmax = dblmin(b->xmax, bounds->xmax);
+    b->ymax = dblmin(b->ymax, bounds->ymax);
 }
 
 

@@ -61,6 +61,9 @@ source_t *nearest_source(node_t *quadtree, double x, double y);
 int intersecting(box_t *b1, box_t *b2);
 double norm(double x1, double y1, double x2, double y2);
 double norm2(double x1, double y1, double x2, double y2);
+double dblmin(double a, double b);
+double dblmax(double a, double b);
+void clip_box(box_t *b, box_t *bounds);
 
 /* for debugging */
 void print_node(node_t *node, int indent_count);

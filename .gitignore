@@ -2,3 +2,13 @@
 Documents/GlobularClusters/Photometry/Images/test/MakeCatalog/a.out
 
 .DS_Store
+
+*.swp
+
+Documents/GlobularClusters/Photometry/Images/test/MakeCatalog/MatchedCatalog.txt
+
+Documents/GlobularClusters/Photometry/Images/test/MakeCatalog/test1.txt
+
+Documents/GlobularClusters/Photometry/Images/test/MakeCatalog/test2.txt
+
+Documents/GlobularClusters/Photometry/Images/test/MakeCatalog/test3.txt
