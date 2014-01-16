@@ -1,3 +1,23 @@
+'''
+AUTHOR
+    Alexa Villaume, UCSC
+
+PURPOSE
+    To find the point-source objects in a catalog and make a
+    cut to only include them
+
+INPUT PARAMETERS
+    The catalog for the cuts to be made ont
+
+FILES CREATED
+    Shape cut catalog
+
+NOTES
+    This is very incomplete. As of now you need to know where to make the
+    cut. Plan to make this more complete and interactive.
+
+'''
+
 
 # Make histogram of a_world values and cut below peak
 
