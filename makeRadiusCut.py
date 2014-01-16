@@ -1,3 +1,28 @@
+'''
+AUTHOR
+    Alexa Villaume, UCSC
+
+PURPOSE
+    Make a radius cut given a center and a maximum distance
+
+INPUT PARAMETERS
+    The name of the system
+    Path to catalog
+    Column the ra values are in
+    Column the dec values are in
+    Center coordinates in degree
+    Distance to make the cut
+
+FILES CREATED
+    New catalog of the form <system name> + "_radiuscut"
+
+NOTES
+    This is going to be rewritten so it can be easily included in
+    larger programs
+
+'''
+
+
 import math
 
 def makeCut(ra, dec, gal_ra, gal_dec, distance):
