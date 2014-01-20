@@ -1,3 +1,12 @@
+'''
+AUTHOR:
+    Alexa Villaume, UCSC
+
+PURPOSE:
+    This is a collection of classes in order to make working with
+    different photometry catalogs easier.
+'''
+
 class CFHTSource:
     # Take source line, split(), float them,
     def __init__(self, line):
