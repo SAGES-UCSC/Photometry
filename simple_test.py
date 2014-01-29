@@ -37,18 +37,31 @@ catalog.next() # This is to skip the header
 # CFHT source
 sources = map(lambda line: S.CFHTSource(line), catalog)
 
-# Make the color cut
+
+## Make the color cut
 candidates = filter(lambda s: pu.makeColorCut(s.mag1, s.mag4, s.mag2, s.mag4, x0, x1, m, b, var), sources)
 
 # Finds the value of a_world that seems to "contain" the point-like sources
 shape = map(lambda s: s.a_world, candidates)
-peak = pu.detHistPeak(shape, 1000)
+
+'''
+Zach and I use the x-value that seems to contain the gaussian
+distribution as the cut off. Not sure how well detSizeCut is
+going to work for different data sets so at the moment it's good to
+take a look for youself.
+'''
+pu.LookAtShapes(shape, 1000)
+
+peak = pu.detSizeCut(shape, 1000)
 print "Estimated peak: ", peak
 
 # Make shape cut based on value found in previous step
 candidates = filter(lambda s: s.a_world <= peak, candidates)
 
-output = open("GC_Candidates.txt", "w")
-for source in candidates:
-    output.write(source.line)
+# Just to demonstrate how to use this function...
+corrected = pu.correctMag(candidates, 5)
+
+#output = open("GC_Candidates.txt", "w")
+#for source in candidates:
+#    output.write(source.line)
 

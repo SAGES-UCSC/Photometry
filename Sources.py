@@ -25,3 +25,19 @@ class CFHTSource:
         self.mag4_err = float(cols[10])
         self.a_world = float(cols[11])
         self.b_world = float(cols[12])
+
+'''
+class ACSSource:
+    def _init_(self, line):
+        self.line = line
+        cols = line.split()
+        self.name = cols[0]
+        self.ra = cols[]
+        self.dec = cols[]
+        self.size1 = cols[]
+        self.size2 = cols[]
+        self.size3 = cols[]
+        self.mag1 = cols[]
+        self.mag2 = cols[]
+        self.mag3 = cols[]
+'''
