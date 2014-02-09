@@ -43,11 +43,8 @@ def detSizeCut(shape_col, bin_num):
 
     return round(bins[peak+10], 4)
 
-
 '''
-This will will show a histogram of the input. Zach and I use the x-value that seems
-to contain the gaussian distribution as the cut off. Not sure how well detSizeCut is
-going to work for
+This will will show a histogram of the input.
 '''
 def LookAtShapes(shape_col, bin_num):
     hist, bins = np.histogram(shape_col, bin_num)
@@ -55,5 +52,35 @@ def LookAtShapes(shape_col, bin_num):
     center = (bins[:-1] + bins[1:]) / 2
     plt.bar(center, hist, align='center', width=width)
     plt.show()
+
+'''
+Calculate the median of an array
+'''
+def calcMedian(data):
+    data.sort()
+
+    if len(data) % 2 == 1:
+        return data[(len(data) + 1)/2 -1]
+    else:
+        lower = data[len(data)/2 -1]
+        upper = data[len(data)/2]
+        return (float(lower + upper))/2
+
+'''
+Calculate the median absolute deviation of an array
+'''
+def calcMAD(data):
+    med = calcMedian(data)
+    tmp = []
+    for val in data:
+        tmp.append(math.fabs(val - med))
+    tmp.sort()
+    return(calcMedian(tmp))
+
+def noHead(line):
+    if line[0] != "#":
+        return True
+    else:
+        return False
 
 #def testColorCut():

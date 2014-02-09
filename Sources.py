@@ -26,6 +26,33 @@ class CFHTSource:
         self.a_world = float(cols[11])
         self.b_world = float(cols[12])
 
+class SCAMSource:
+    def __init__(self, line):
+        self.line = line
+        cols = line.split()
+        self.name = cols[0]
+        self.ximg = float(cols[1])
+        self.yimg = float(cols[2])
+        self.ra = float(cols[3])
+        self.dec = float(cols[4])
+        self.mag_auto = float(cols[5])
+        self.mag_auto_err = float(cols[6])
+        self.mag_best = float(cols[7])
+        self.mag_best_err = float(cols[8])
+        self.mag_aper = float(cols[9])
+        self.mag_aper_err = float(cols[10])
+        self.a_world = float(cols[11])
+        self.a_world_err = float(cols[12])
+        self.b_world = float(cols[13])
+        self.b_world_err = float(cols[14])
+        self.theta  = float(cols[15])
+        self.theta_err  = float(cols[16])
+        self.isoarea  = float(cols[17])
+        self.mu  = float(cols[18])
+        self.flux_radius = float(cols[19])
+        self.flags = float(cols[20])
+
+
 '''
 class ACSSource:
     def _init_(self, line):
