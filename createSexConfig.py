@@ -4,8 +4,24 @@ Create a source extractor configuration file based on input parameters.
 Need to include aperture stuff
 """
 
-def createSexConfig(name, filter_file, param_file,  assoc_file, ap):
+def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
     config = name + '.config'
+
+    if doassoc == True:
+        aname = "ASSOC_NAME"
+        adata = "ASSOC_DATA"
+        aparam = "ASSOC_PARAMS"
+        aradius = "ASSOC_RADIUS"
+        atype = "ASSOC_TYPE"
+        aselec = "ASSOCSELEC_TYPE"
+    else:
+        aname = "#ASSOC_NAME"
+        adata = "#ASSOC_DATA"
+        aparam = "#ASSOC_PARAMS"
+        aradius = "#ASSOC_RADIUS"
+        atype = "#ASSOC_TYPE"
+        aselec = "#ASSOCSELEC_TYPE"
+
     ap = str(ap)
     seeing = str(1.2)
     zp = str(0)            # Going to correct zeropoints after the final catalog is made
@@ -100,13 +116,13 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap):
 
                     #------------------------------- ASSOCiation ---------------------------------
 
-                    ASSOC_NAME       """+assoc_file+"""       # name of the ASCII file to ASSOCiate
-                    ASSOC_DATA       1,2            # columns of the data to replicate (0=all)
-                    ASSOC_PARAMS     1,2            # columns of xpos,ypos[,mag]
-                    ASSOC_RADIUS     2.0            # cross-matching radius (pixels)
-                    ASSOC_TYPE       NEAREST        # ASSOCiation method: FIRST, NEAREST, MEAN,
+                    """+aname+"""       """+assoc_file+"""       # name of the ASCII file to ASSOCiate
+                    """+adata+"""    1,2            # columns of the data to replicate (0=all)
+                    """+aparam+"""     1,2            # columns of xpos,ypos[,mag]
+                    """+aradius+"""     2.0            # cross-matching radius (pixels)
+                    """+atype+"""       NEAREST        # ASSOCiation method: FIRST, NEAREST, MEAN,
                     # MAG_MEAN, SUM, MAG_SUM, MIN or MAX
-                    ASSOCSELEC_TYPE  MATCHED        # ASSOC selection type: ALL, MATCHED or -MATCHED
+                    """+aselec+"""  MATCHED        # ASSOC selection type: ALL, MATCHED or -MATCHED
 
                     #----------------------------- Miscellaneous ---------------------------------
 

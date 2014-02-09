@@ -8,49 +8,43 @@ import random as r
 import matplotlib.pyplot as plt
 import sys
 import createSexConfig as sc
+import createSexParam as sp
 import Sources as S
 import phot_utils as pu
 from subprocess import call
 
+def getNoise(aperture, name, filter_file, image,  verbose):
+    x = []
+    y = []
+    for i in range(0,10000):
+        x.append(r.uniform(1,10000))
+        y.append(r.uniform(1,5000))
 
-def main():
-    '''
-    Generating a textfile of random positions
-    '''
-    #x = []
-    #y = []
-    #for i in range(0,1000000):
-    #    x.append(r.uniform(1,10000))
-    #    y.append(r.uniform(1,5000))
-
-    #output = open("MeasureFluxAt.txt", "w")
-    #for i in range(len(x)):
-    #    output.write('%.3f' % x[i] + '%10.3f' % y[i]  + '\n')
+    output = open("MeasureFluxAt.txt", "w")
+    for i in range(len(x)):
+        output.write('%.3f' % x[i] + '%10.3f' % y[i]  + '\n')
 
     '''
-    Can be used as a check on the uniformity of the coverage
-    if you're worried about that sort of thing
+    Use to check the uniformity of the coverage
     '''
-    #plt.plot(x,y,linestyle='none', marker=',')
-    #plt.show()
+    if verbose == True:
+        plt.plot(x,y,linestyle='none', marker=',')
+        plt.show()
 
-    aperture = np.linspace(0.5, 10, num=10)
+    sp.createSexParam(name, True)
+    assoc_file = "MeasureFluxAt.txt"
+    param_file = name + ".param"
+
     nmad = []
     for ap in aperture:
         '''
         Make the call to Source Extractor with randomly generated positions.
         And then do it again but this time just to get detections
         '''
-        image      = "NGC4374_i.fits"
-        assoc_file = "MeasureFluxAt.txt"
-        param_file  = "gc_select.param"
-        filter_file     = "default.conv"
-        name = "blargh"
+        sc.createSexConfig(name, filter_file, param_file, assoc_file, ap, True)
+        call(['sex', '-c', name + '.config', image])
 
-        config = sc.createSexConfig(name, filter_file, param_file, assoc_file, ap)
-        call(['sex', '-c', 'blargh.config', image])
-
-        ## Need to figure out a way in createSexConfig to switch off ASSOC
+        # Need to create a different parameter file
         ## I'm going to leave that and the matching until after I have more
         ## of the full program implemented
         #sc.createSexConfig()
@@ -65,17 +59,18 @@ def main():
         match two catalogs along with three and agnostic to catalogs
         '''
 
-        '''
-        Calculate NMAD value for this aperture size. Save to array
-        '''
-        cat = open("blargh.cat")
+        cat = open(name + ".cat")
         tmp = filter(lambda line: pu.noHead(line), cat)
         sources = map(lambda line: S.SCAMSource(line), tmp)
         flux = map(lambda s: s.mag_aper, sources)
         nmad.append(pu.calcMAD(flux))
 
-    plt.plot(aperture, nmad, linestyle='none', marker='o')
-    plt.show()
+    # Fit this plot with eq 3 from Whitaker et al
+    if verbose == True:
+        plt.plot(aperture, nmad, linestyle='none', marker='o')
+        plt.show()
+
+    return nmad
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(getNoise())
