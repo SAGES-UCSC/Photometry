@@ -15,3 +15,41 @@ def inParallelogram(px, py,  m, b, var):
     if py > y_bot and py < y_top:
         is_in = 1
     return is_in
+
+'''
+Specifically for use with the quadtree
+'''
+def intersecting(b1, b2):
+    if (b1.xmin >= b2.xmin and b1.xmin < b2.xmax) or
+        (b1.xmax >= b2.xmin and b1.xmax < b2.xmax) or
+        (b1.xmin <= b2.ymin and b1.xmax >= b2.xmax) or
+        (b1.xmin >= b2.xmin and b1.xmax <= b2.xmax):
+
+        if (b1.ymin >= b2.ymin and b1.ymin < b2.ymax) or
+            (b1.ymax >= b2.ymin and b1.ymax < b2.ymax) or
+            (b1.ymin <= b2.ymin and b1.ymax >= b2.ymax) or
+            (b1.ymin >= b2.ymin and b1.ymax <= b2.ymax):
+
+            return 1
+
+        return 0
+
+def norm(x1, y1, x2, y2):
+    return sqrt(norm2(x1, y1, x2, y2))
+
+'''
+Do this to optimize for when you only care about relative distances
+'''
+def norm2(x1, y1, x2, y2):
+    xd = x2 - x1
+    yd = y2 -y1
+    return xd * x2 + yd * yd
+
+'''
+All of these inputs need to be in degrees.
+'''
+def makeRadiusCut(ra, dec, gal_ra, gal_dec, distance):
+    if (math.sqrt((ra-gal_ra)**2) + math.sqrt((dec-gal_dec)**2)) <= distance:
+        return 1
+    else:
+        return 0
