@@ -10,6 +10,7 @@ class Quadtree():
         self.ymax  = ymax
 
     def __newnode__(xmin, ymin, xmax, ymax):
+        self.name = blah.blah
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
@@ -17,9 +18,10 @@ class Quadtree():
         self.xmix = (xmin + xmax)/2
         self.ymix = (ymin + ymax)/2
         self.q1 = self.q2 = self.q3 = self.q4 = NONE
-        self.contents = source # How do I do this?
 
-    # Call Sources? Just want to make it a SCAMSource
+    # I don't want to schlep all the contents around
+    # Just want to return an identifier so I can get
+    # the matched items afterward
     def __newsource__():
 
     def __insertsource__(node, source):
