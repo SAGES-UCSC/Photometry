@@ -13,14 +13,16 @@ class Quadtree:
         self.ymax = ymax
         self.xmix = (xmin + xmax)/2
         self.ymix = (ymin + ymax)/2
-        self.q1 = self.q2 = self.q3 = self.q4 = NONE
-        self.contents = WHAT    # CONTENTS
+        self.q1 = self.q2 = self.q3 = self.q4 = None
+        self.contents = []
 
     def insertsource(node, source):
+        quadrant = newnode()
+
         if node.contents.length == MAX:
             subdivide(node)
 
-        if node.q1 != NONE:
+        if node.q1 != None:
             if source.ximg >= node.xmid:
                 if source.yimg >= node.ymid:
                     quadrant = node.q1
@@ -36,7 +38,6 @@ class Quadtree:
         else:
         # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
-
 
     def subdivide(node):
         node.q1 = new_node(node.xmid, node.ymid, node.box.xmax, node.box.ymax)
@@ -63,7 +64,7 @@ class Quadtree:
 
     def nearersource(tree, node, x, y, interest, nearest, dist):
         if gu.interestecting(node.box, interest):
-            if node.q1 == NONE:
+            if node.q1 == None:
                 for the sources in the contents list:
                     s_dist = norm(s.ximg, s.yimg, x, y)
                     if (s_dist < dist):
@@ -81,7 +82,6 @@ class Quadtree:
                 nearer_source(tree, node.q2, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q3, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q4, x, y, interest, nearest, dist)
-
 
 class Box:
     def __init__(self):
