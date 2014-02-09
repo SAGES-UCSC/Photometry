@@ -9,7 +9,7 @@ class Quadtree():
         self.xmax  = xmax
         self.ymax  = ymax
 
-    def __newnode__(xmin, ymin, xmax, ymax):
+    def newnode(xmin, ymin, xmax, ymax):
         self.name = blah.blah
         self.xmin = xmin
         self.ymin = ymin
@@ -18,13 +18,9 @@ class Quadtree():
         self.xmix = (xmin + xmax)/2
         self.ymix = (ymin + ymax)/2
         self.q1 = self.q2 = self.q3 = self.q4 = NONE
+        self.contents = WHAT
 
-    # I don't want to schlep all the contents around
-    # Just want to return an identifier so I can get
-    # the matched items afterward
-    def __newsource__():
-
-    def __insertsource__(node, source):
+    def insertsource(node, source):
         if node.contents.length == MAX:
             subdivide(node)
 
@@ -42,15 +38,15 @@ class Quadtree():
         else:
             # If no subquads exist add source to the list in contents element
 
-    def __subdivide__(node):
+    def subdivide(node):
         node.q1 = new_node()
         node.q2 = new_node()
         node.q3 = new_node()
         node.q4 = new_node()
 
-        # pop the list and insert the sources as they coe off
+        # pop the list and insert the sources as they come off
 
-    def __nearestsource__(tree, x, y):
+    def nearestsource(tree, x, y):
         # Initalize a box of interest
         dist = SOMETHING
         interest.xmin = x - dist
@@ -61,9 +57,23 @@ class Quadtree():
         # How to keep track of nearest now?
         nearer_source(tree, tree, x, y, interest, nearest,  dist)
 
-    def __nearersource__(tree, node, x, y, interest, nearest, dist):
+    def nearersource(tree, node, x, y, interest, nearest, dist):
 
-
-class Source():
+# What do I need to give this?
+class Box():
+    def __init__():
+        self.xmin = xmin
+        self.ymin = ymin
+        self.xmax = xmax
+        self.ymax = ymax
 
 class Node():
+    def __init__():
+        self.box = Box() # How to do this actually?
+        self.xmid = xmid
+        self.ymid = ymid
+        self.q1 = Node()
+        self.q2 = Node()
+        self.q3 = Node()
+        self.q4 = Node()
+        self.contents = S.SCAMSources()

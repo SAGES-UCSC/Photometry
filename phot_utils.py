@@ -77,6 +77,9 @@ def calcMAD(data):
     tmp.sort()
     return(calcMedian(tmp))
 
+'''
+Check for header on input files
+'''
 def noHead(line):
     if line[0] != "#":
         return True
