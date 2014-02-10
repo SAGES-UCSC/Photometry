@@ -20,15 +20,9 @@ def main():
     image = "NGC4374_i.fits"
     filter_file = "default.conv"
 
-    x = []
-    y = []
-    for i in range(0,10000):
-        x.append(r.uniform(1,10000))
-        y.append(r.uniform(1,8000))
-
     output = open("MeasureFluxAt.txt", "w")
-    for i in range(len(x)):
-        output.write('%.3f' % x[i] + '%10.3f' % y[i]  + '\n')
+    for i in range(0,10000):
+        output.write('%.3f' % r.uniform(1,10000) + '%10.3f' % r.uniform(1,8000) + '\n')
 
     aperture = np.linspace(0.5, 10, num=1)
     #noise = gn.getNoise(aperture, name, filter_file, image,  False)
@@ -62,7 +56,7 @@ def main():
         # Make sure that the background measuresments don't overlap with the source detections
         # Also don't include mag_aper == 99.0
         quadtree = q.Quadtree(0, 0, 10000, 8000)
-        map(lambda line: q.insertsource(quadtree, S.SCAMSource(line)), stmp )
+        map(lambda line: quadtree.insertsource(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
     snr = []
