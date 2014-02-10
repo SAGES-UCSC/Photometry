@@ -33,10 +33,10 @@ class Quadtree:
             node.contents.append(source)
 
     def subdivide(node):
-        node.q1 = new_node(node.xmid, node.ymid, node.xmax, node.ymax)
-        node.q2 = new_node(node.xmin, node.ymid, node.xmid, node.ymax)
-        node.q3 = new_node(node.xmin, node.ymin, node.xmid, node.ymid)
-        node.q4 = new_node(node.xmid, node.ymin, node.xmax, node.ymid)
+        node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
+        node.q2 = Node(node.xmin, node.ymid, node.xmid, node.ymax)
+        node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
+        node.q4 = Node(node.xmid, node.ymin, node.xmax, node.ymid)
 
         # pop the list and insert the sources as they come off
         while node.contents:
