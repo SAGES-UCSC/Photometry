@@ -12,7 +12,7 @@ class Quadtree:
             subdivide(node)
 
         if node.q1 != None:
-            inserttoquad(quadrant, source)
+            inserttoquad(node, source)
         else:
             # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
@@ -28,6 +28,8 @@ class Quadtree:
                 quadrant = node.q2
             else:
                 quadrant = node.q3
+        insertsource(quadrant, source)
+
 
     def subdivide(node):
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
