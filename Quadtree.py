@@ -7,7 +7,6 @@ import geom_utils as gu
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
         Node(xmin, ymin, xmax, ymax)
-        tree.newnode(xmin, ymin, xmax, ymax)
 
     def insertsource(node, source):
         quadrant = newnode()
@@ -34,10 +33,10 @@ class Quadtree:
             node.contents.append(source)
 
     def subdivide(node):
-        node.q1 = new_node(node.xmid, node.ymid, node.box.xmax, node.box.ymax)
-        node.q2 = new_node(node.box.xmin, node.ymid, node.xmid, node.box.ymax)
-        node.q3 = new_node(node.box.xmin, node.box.ymin, node.xmid, node.ymid)
-        node.q4 = new_node(node.xmid, node.box.ymin, node.box.xmax, node.ymid)
+        node.q1 = new_node(node.xmid, node.ymid, node.xmax, node.ymax)
+        node.q2 = new_node(node.xmin, node.ymid, node.xmid, node.ymax)
+        node.q3 = new_node(node.xmin, node.ymin, node.xmid, node.ymid)
+        node.q4 = new_node(node.xmid, node.ymin, node.xmax, node.ymid)
 
         # pop the list and insert the sources as they come off
         while node.contents:
@@ -45,19 +44,19 @@ class Quadtree:
 
     def nearestsource(tree, x, y):
         # Initalize a box of interest
-        dist = gu.dblmin(tree.box.xmax - tree.box.xmin, tree.box.ymax - tree.box.ymin)
+        dist = gu.dblmin(tree.xmax - tree.xmin, tree.ymax - tree.ymin)
         interest.xmin = x - dist
         interest.ymin = x - dist
         interest.xmax = x + dist
         interest.ymax = x + dist
-        gu.clip_box(interest, tree.box)
+        gu.clip_box(interest, xmin, ymin, xmax, ymax)
         dist = dist * dist
 
         # How to keep track of nearest now?
         nearer_source(tree, tree, x, y, interest, nearest,  dist)
 
     def nearersource(tree, node, x, y, interest, nearest, dist):
-        if gu.interestecting(node.box, interest):
+        if gu.interestecting(node, interest):
             if node.q1 == None:
                 for s in node.contents():
                     s_dist = norm(s.ximg, s.yimg, x, y)
@@ -70,13 +69,12 @@ class Quadtree:
                         interest.ymin = y - s_dist
                         interest.xmax = x + s_dist
                         interest.ymax = y + s_dist
-                        gu.clip_box(interest, tree.box)
+                        gu.clip_box(interest, tree)
             else:
                 nearer_source(tree, node.q1, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q2, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q3, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q4, x, y, interest, nearest, dist)
-
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
