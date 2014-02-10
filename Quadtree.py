@@ -3,12 +3,14 @@ Implement a quadtree
 '''
 import geom_utils as gu
 
+MAX = 12
+
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
 
     def insertsource(node, source):
-        if node.contents.length == MAX:
+        if len(node.contents) == MAX:
             subdivide(node)
 
         if node.q1:
@@ -17,7 +19,7 @@ class Quadtree:
             # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
 
-    def inserttoquad(node, source)
+    def inserttoquad(node, source):
         if source.ximg >= node.xmid:
             if source.yimg >= node.ymid:
                 quadrant = node.q1
