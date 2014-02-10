@@ -6,7 +6,7 @@ import geom_utils as gu
 
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
-        Node(xmin, ymin, xmax, ymax)
+        self.top = Node(xmin, ymin, xmax, ymax)
 
     def insertsource(node, source):
         quadrant = newnode()
