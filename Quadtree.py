@@ -77,16 +77,13 @@ class Quadtree:
                 nearer_source(tree, node.q3, x, y, interest, nearest, dist)
                 nearer_source(tree, node.q4, x, y, interest, nearest, dist)
 
-class Box:
+
+class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
-
-class Node:
-    def __init__(self, xmin, ymin, xmax, ymax):
-        self.box = Box(xmin, ymin, xmax, ymax )
         self.xmid = (xmin + xmax)/2
         self.ymid = (ymin + ymax)/2
         self.contents = []
