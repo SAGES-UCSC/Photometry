@@ -1,20 +1,13 @@
 '''
 Implement a quadtree
 '''
+import geom_utils as gu
+
 
 class Quadtree:
-    def __init__(xmin, ymin, xmax, ymax):
-        newnode(xmin, ymin, xmax, ymax)
-
-    def newnode(xmin, ymin, xmax, ymax):
-        self.xmin = xmin
-        self.ymin = ymin
-        self.xmax = xmax
-        self.ymax = ymax
-        self.xmix = (xmin + xmax)/2
-        self.ymix = (ymin + ymax)/2
-        self.q1 = self.q2 = self.q3 = self.q4 = None
-        self.contents = []
+    def __init__(self, xmin, ymin, xmax, ymax):
+        self.tree = Node.newnode()
+        tree.newnode(xmin, ymin, xmax, ymax)
 
     def insertsource(node, source):
         quadrant = newnode()
@@ -33,8 +26,9 @@ class Quadtree:
                     quadrant = node.q2
                 else:
                     quadrant = node.q3
-            else:
-                insertsource(quadrant, source)
+
+            insertsource(quadrant, source)
+
         else:
         # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
@@ -46,8 +40,8 @@ class Quadtree:
         node.q4 = new_node(node.xmid, node.box.ymin, node.box.xmax, node.ymid)
 
         # pop the list and insert the sources as they come off
-        while source = pop(node.contents):
-            insertsource(node, source)
+        while node.contents:
+            insertsource(node, node.contents.pop())
 
     def nearestsource(tree, x, y):
         # Initalize a box of interest
@@ -65,7 +59,7 @@ class Quadtree:
     def nearersource(tree, node, x, y, interest, nearest, dist):
         if gu.interestecting(node.box, interest):
             if node.q1 == None:
-                for the sources in the contents list:
+                for s in node.contents():
                     s_dist = norm(s.ximg, s.yimg, x, y)
                     if (s_dist < dist):
                         nearest = s
@@ -92,13 +86,23 @@ class Box:
 
 class Node:
     def __init__(self):
-        self.box = Box() # How to do this actually?
+        self.box = Box()
         self.xmid = xmid
         self.ymid = ymid
         self.q1 = Node()
         self.q2 = Node()
         self.q3 = Node()
         self.q4 = Node()
-        self.contents = # I don't know how to do this
+        self.contents = []
+
+    def newnode(xmin, ymin, xmax, ymax):
+        self.box.xmin = xmin
+        self.box.ymin = ymin
+        self.box.xmax = xmax
+        self.box.ymax = ymax
+        self.xmid = (xmin + xmax)/2
+        self.ymid = (ymin + ymax)/2
+        self.q1 = self.q2 = self.q3 = self.q4 = None
+        self.contents = []
 
 

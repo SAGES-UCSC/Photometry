@@ -12,11 +12,12 @@ import phot_utils as pu
 import Sources as S
 import matplotlib.pyplot as plt
 from subprocess import call
+import Quadtree as q
 
 def main():
-    sname       = "sign"
-    nname       = "noise"
-    image       = "NGC4374_i.fits"
+    sname = "sign"
+    nname = "noise"
+    image = "NGC4374_i.fits"
     filter_file = "default.conv"
 
     x = []
@@ -29,7 +30,7 @@ def main():
     for i in range(len(x)):
         output.write('%.3f' % x[i] + '%10.3f' % y[i]  + '\n')
 
-    aperture = np.linspace(0.5, 10, num=2)
+    aperture = np.linspace(0.5, 10, num=1)
     #noise = gn.getNoise(aperture, name, filter_file, image,  False)
 
     sp.createSexParam(sname, False)
@@ -61,7 +62,7 @@ def main():
         # Make sure that the background measuresments don't overlap with the source detections
         # Also don't include mag_aper == 99.0
         quadtree = q.Quadtree(0, 0, 10000, 8000)
-        map(lamnda line: q.insertsource(quadtree, S.SCAMSource(line)), stmp )
+        map(lambda line: q.insertsource(quadtree, S.SCAMSource(line)), stmp )
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
     snr = []
