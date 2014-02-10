@@ -6,7 +6,7 @@ import geom_utils as gu
 
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
-        self.tree = Node.newnode()
+        Node(xmin, ymin, xmax, ymax)
         tree.newnode(xmin, ymin, xmax, ymax)
 
     def insertsource(node, source):
@@ -78,31 +78,16 @@ class Quadtree:
                 nearer_source(tree, node.q4, x, y, interest, nearest, dist)
 
 class Box:
-    def __init__(self):
+    def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
 
 class Node:
-    def __init__(self):
-        self.box = Box()
-        self.xmid = xmid
-        self.ymid = ymid
-        self.q1 = Node()
-        self.q2 = Node()
-        self.q3 = Node()
-        self.q4 = Node()
-        self.contents = []
-
-    def newnode(xmin, ymin, xmax, ymax):
-        self.box.xmin = xmin
-        self.box.ymin = ymin
-        self.box.xmax = xmax
-        self.box.ymax = ymax
+    def __init__(self, xmin, ymin, xmax, ymax):
+        self.box = Box(xmin, ymin, xmax, ymax )
         self.xmid = (xmin + xmax)/2
         self.ymid = (ymin + ymax)/2
-        self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
-
 
