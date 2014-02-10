@@ -3,7 +3,6 @@ Implement a quadtree
 '''
 import geom_utils as gu
 
-
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
@@ -27,8 +26,20 @@ class Quadtree:
             insertsource(quadrant, source)
 
         else:
-        # If no subquads exist add source to the list in CONTENTS element
+            # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
+
+    def inserttoquad(node, source)
+        if source.ximg >= node.xmid:
+            if source.yimg >= node.ymid:
+                quadrant = node.q1
+            else:
+                quadrant = node.q4
+        else:
+            if source.yimg >= node.ymid:
+                quadrant = node.q2
+            else:
+                quadrant = node.q3
 
     def subdivide(node):
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
@@ -38,7 +49,7 @@ class Quadtree:
 
         # pop the list and insert the sources as they come off
         while node.contents:
-            insertsource(node, node.contents.pop())
+            inserttoquad(node, node.contents.pop())
 
     def nearestsource(tree, x, y):
         # Initalize a box of interest
