@@ -30,14 +30,14 @@ Specifically for use with the quadtree
 Takes two Box objects as arguments
 '''
 def intersecting(b1, b2):
-    if (b1.xmin >= b2.xmin and b1.xmin < b2.xmax) or
-        (b1.xmax >= b2.xmin and b1.xmax < b2.xmax) or
-        (b1.xmin <= b2.ymin and b1.xmax >= b2.xmax) or
+    if (b1.xmin >= b2.xmin and b1.xmin < b2.xmax) or \
+        (b1.xmax >= b2.xmin and b1.xmax < b2.xmax) or \
+        (b1.xmin <= b2.ymin and b1.xmax >= b2.xmax) or \
         (b1.xmin >= b2.xmin and b1.xmax <= b2.xmax):
 
-        if (b1.ymin >= b2.ymin and b1.ymin < b2.ymax) or
-            (b1.ymax >= b2.ymin and b1.ymax < b2.ymax) or
-            (b1.ymin <= b2.ymin and b1.ymax >= b2.ymax) or
+        if (b1.ymin >= b2.ymin and b1.ymin < b2.ymax) or \
+            (b1.ymax >= b2.ymin and b1.ymax < b2.ymax) or \
+            (b1.ymin <= b2.ymin and b1.ymax >= b2.ymax) or \
             (b1.ymin >= b2.ymin and b1.ymax <= b2.ymax):
 
             return 1
@@ -67,11 +67,9 @@ def dblmin(a, b):
     else:
         return b
 '''
-Specifically for use with the quadtree
-Takes two Box objects as arguments
 '''
-def clip_box(b, bounds):
-    b.xmin = dblmax(b.xmin, bounds.xmin)
-    b.ymin = dblmax(b.ymin, bounds.ymin)
-    b.xmax = dblmin(b.xmax, bounds.xmax)
-    b.ymax = dblmin(b.ymax, bounds.ymax)
+def clip_box(bxmin, bxmax, bymin, bymax, boundsxmin, boundsxmax, boundsymin, boundsymax):
+    bxmin = dblmax(bxmin, boundsxmin)
+    bymin = dblmax(bymin, boundsymin)
+    bxmax = dblmin(bxmax, boundsxmax)
+    bymax = dblmin(bymax, boundsymax)
