@@ -24,7 +24,7 @@ def disassociate(list1, tree2):
     unmatched = []
     while list1:
         target = list1.pop()
-        match2 = tree2.nearestsource(tree2, target.ximg, target.yimg)
+        match2 = tree2.match(target.ximg, target.yimg)
         if match2 != None and norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
             unmatched.append(target)
 

@@ -55,6 +55,9 @@ class Quadtree:
         while node.contents:
             self.inserttoquad(node, node.contents.pop())
 
+    def match(self, x, y):
+        self.nearestsource(self, x, y)
+
     def nearestsource(self, tree, x, y):
         # Initalize a box of interest
         dist = gu.dblmin(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin)
