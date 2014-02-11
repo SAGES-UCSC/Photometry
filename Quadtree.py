@@ -57,7 +57,7 @@ class Quadtree:
         # How to keep track of nearest now?
         nearer_source(tree, tree, x, y, interest, nearest,  dist)
 
-    def nearersource(sef, tree, node, x, y, interest, nearest, dist):
+    def nearersource(self, tree, node, x, y, interest, nearest, dist):
         if gu.interestecting(node, interest):
             if node.q1 == None:
                 for s in node.contents():
