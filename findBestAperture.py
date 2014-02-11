@@ -15,6 +15,19 @@ from subprocess import call
 import Quadtree as q
 from pprint import pprint
 
+MAXDIST = 0.5
+
+'''
+In this case we want the objects that DON'T match
+'''
+def disassociate(list1, tree2):
+    unmatched = []
+    while list1:
+        target = list1.pop()
+        match2 = q.nearestsource(tree2, target.ximg, target.img)
+        if match2 != None and norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
+            unmatched.append(target)
+
 def main():
     sname = "sign"
     nname = "noise"
@@ -56,9 +69,11 @@ def main():
 
         # Make sure that the background measuresments don't overlap with the source detections
         # Also don't include mag_aper == 99.0
-        quadtree = q.Quadtree(0, 0, 10000, 8000)
-        map(lambda line: quadtree.insert(S.SCAMSource(line)), stmp)
+        ssources = q.Quadtree(0, 0, 10000, 8000)
+        map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
+
+        matchlist = disassociate(nsources, ssources)
 
     snr = []
     for i in range(len(signal)):
