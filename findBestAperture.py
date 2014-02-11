@@ -37,11 +37,11 @@ def main():
     signal = []
     noise = []
     for ap in aperture:
-        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
-        call(['sex', '-c', sname + '.config', image])
+        #sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
+        #call(['sex', '-c', sname + '.config', image])
 
-        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
-        call(['sex', '-c', nname + '.config', image])
+        #sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
+        #call(['sex', '-c', nname + '.config', image])
 
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
@@ -57,7 +57,7 @@ def main():
         # Make sure that the background measuresments don't overlap with the source detections
         # Also don't include mag_aper == 99.0
         quadtree = q.Quadtree(0, 0, 10000, 8000)
-        map(lambda line: quadtree.insertsource(S.SCAMSource(line)), stmp)
+        map(lambda line: quadtree.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
     snr = []
