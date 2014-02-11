@@ -61,11 +61,9 @@ class Quadtree:
     def nearestsource(self, tree, x, y):
         # Initalize a box of interest
         dist = gu.dblmin(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin)
-        interest.xmin = x - dist
-        interest.ymin = x - dist
-        interest.xmax = x + dist
-        interest.ymax = x + dist
-        gu.clip_box(interest, xmin, ymin, xmax, ymax)
+        interest = Node(x-dist, y-dist, x+dist, y+dist)
+        gu.clip_box(interest.xmin, interest.xmax, interest.ymin, interest.ymax,
+                    tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
         dist = dist * dist
 
         # How to keep track of nearest now?
