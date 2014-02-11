@@ -2,6 +2,7 @@
 Implement a quadtree
 '''
 import geom_utils as gu
+import math
 
 MAX = 12
 
@@ -69,29 +70,30 @@ class Quadtree:
         dist = dist * dist
 
         # How to keep track of nearest now?
-        self.nearersource(tree, tree, x, y, interest, nearest,  dist)
+        self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
-        if gu.intersecting(node.top.xmin, node.top.xmax, node.top.ymin, node.top.ymax,
+        if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
                             interest.xmin, interest.xmax, interest.ymin, interest.ymax):
-            if node.top.q1 == None:
-                for s in node.contents():
-                    s_dist = norm(s.ximg, s.yimg, x, y)
+            if node.q1 == None:
+                for s in node.contents:
+                    s_dist = gu.norm(s.ximg, s.yimg, x, y)
                     if (s_dist < dist):
                         nearest = s
                         dist = s_dist
 
-                        s_dist = sqrt(s_dist)
+                        s_dist = math.sqrt(s_dist)
                         interest.xmin = x - s_dist
                         interest.ymin = y - s_dist
                         interest.xmax = x + s_dist
                         interest.ymax = y + s_dist
-                        gu.clip_box(interest, tree)
+                        gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
+                                    tree.xmin, tree.xmax, tree.ymin, tree.ymax)
             else:
-                self.nearersource(tree, node.top.q1, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.top.q2, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.top.q3, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.top.q4, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.q3, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.q4, x, y, interest, nearest, dist)
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
