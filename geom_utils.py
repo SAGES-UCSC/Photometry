@@ -1,3 +1,5 @@
+import math
+
 def calcY(x, m, b):
     y = m*x + b
     return y
@@ -43,7 +45,7 @@ def intersecting(b1xmin, b1xmax, b1ymin, b1ymax, b2xmin, b2xmax, b2ymin, b2ymax)
         return 0
 
 def norm(x1, y1, x2, y2):
-    return sqrt(norm2(x1, y1, x2, y2))
+    return math.sqrt(norm2(x1, y1, x2, y2))
 
 '''
 Do this to optimize for when you only care about relative distances
@@ -51,7 +53,7 @@ Do this to optimize for when you only care about relative distances
 def norm2(x1, y1, x2, y2):
     xd = x2 - x1
     yd = y2 -y1
-    return xd * x2 + yd * yd
+    return xd * xd + yd * yd
 
 def dblmax(a, b):
     if a > b:
