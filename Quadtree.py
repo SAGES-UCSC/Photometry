@@ -9,7 +9,9 @@ class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
 
-    def insertsource(node, source):
+    def insert(self, source):
+
+    def insertsource(self, node, source):
         if len(node.contents) == MAX:
             subdivide(node)
 
@@ -19,7 +21,7 @@ class Quadtree:
             # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
 
-    def inserttoquad(node, source):
+    def inserttoquad(self, node, source):
         if source.ximg >= node.xmid:
             if source.yimg >= node.ymid:
                 quadrant = node.q1
@@ -32,7 +34,7 @@ class Quadtree:
                 quadrant = node.q3
         insertsource(quadrant, source)
 
-    def subdivide(node):
+    def subdivide(self, node):
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
         node.q2 = Node(node.xmin, node.ymid, node.xmid, node.ymax)
         node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
@@ -42,7 +44,7 @@ class Quadtree:
         while node.contents:
             inserttoquad(node, node.contents.pop())
 
-    def nearestsource(tree, x, y):
+    def nearestsource(self, tree, x, y):
         # Initalize a box of interest
         dist = gu.dblmin(tree.xmax - tree.xmin, tree.ymax - tree.ymin)
         interest.xmin = x - dist
@@ -55,7 +57,7 @@ class Quadtree:
         # How to keep track of nearest now?
         nearer_source(tree, tree, x, y, interest, nearest,  dist)
 
-    def nearersource(tree, node, x, y, interest, nearest, dist):
+    def nearersource(sef, tree, node, x, y, interest, nearest, dist):
         if gu.interestecting(node, interest):
             if node.q1 == None:
                 for s in node.contents():
@@ -85,4 +87,3 @@ class Node:
         self.xmid = (xmin + xmax)/2
         self.ymid = (ymin + ymax)/2
         self.contents = []
-
