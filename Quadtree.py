@@ -87,8 +87,8 @@ class Quadtree:
                         interest.ymin = y - s_dist
                         interest.xmax = x + s_dist
                         interest.ymax = y + s_dist
-                        gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
-                                    tree.xmin, tree.xmax, tree.ymin, tree.ymax)
+                        #gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
+                        #            tree.xmin, tree.xmax, tree.ymin, tree.ymax)
             else:
                 self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
