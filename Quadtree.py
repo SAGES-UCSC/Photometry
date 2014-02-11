@@ -10,7 +10,7 @@ class Quadtree:
         self.top = Node(xmin, ymin, xmax, ymax)
 
     def insert(self, source):
-        inserttonode(self.top, source)
+        self.inserttonode(self.top, source)
 
     def inserttonode(self, node, source):
         if len(node.contents) == MAX:
@@ -33,7 +33,7 @@ class Quadtree:
                 quadrant = node.q2
             else:
                 quadrant = node.q3
-        insertsource(quadrant, source)
+        inserttonode(quadrant, source)
 
     def subdivide(self, node):
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
