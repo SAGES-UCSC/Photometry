@@ -13,6 +13,7 @@ import Sources as S
 import matplotlib.pyplot as plt
 from subprocess import call
 import Quadtree as q
+from pprint import pprint
 
 def main():
     sname = "sign"
