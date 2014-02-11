@@ -59,6 +59,8 @@ class Quadtree:
         self.nearestsource(self, x, y)
 
     def nearestsource(self, tree, x, y):
+        nearest = None
+
         # Initalize a box of interest
         dist = gu.dblmin(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin)
         interest = Node(x-dist, y-dist, x+dist, y+dist)
@@ -70,8 +72,9 @@ class Quadtree:
         self.nearersource(tree, tree, x, y, interest, nearest,  dist)
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
-        if gu.interestecting(node, interest):
-            if node.q1 == None:
+        if gu.intersecting(node.top.xmin, node.top.xmax, node.top.ymin, node.top.ymax,
+                            interest.xmin, interest.xmax, interest.ymin, interest.ymax):
+            if node.top.q1 == None:
                 for s in node.contents():
                     s_dist = norm(s.ximg, s.yimg, x, y)
                     if (s_dist < dist):
@@ -85,10 +88,10 @@ class Quadtree:
                         interest.ymax = y + s_dist
                         gu.clip_box(interest, tree)
             else:
-                self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q3, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q4, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.top.q1, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.top.q2, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.top.q3, x, y, interest, nearest, dist)
+                self.nearersource(tree, node.top.q4, x, y, interest, nearest, dist)
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):

@@ -26,19 +26,17 @@ def makeRadiusCut(ra, dec, gal_ra, gal_dec, distance):
         return 0
 
 '''
-Specifically for use with the quadtree
-Takes two Box objects as arguments
 '''
-def intersecting(b1, b2):
-    if (b1.xmin >= b2.xmin and b1.xmin < b2.xmax) or \
-        (b1.xmax >= b2.xmin and b1.xmax < b2.xmax) or \
-        (b1.xmin <= b2.ymin and b1.xmax >= b2.xmax) or \
-        (b1.xmin >= b2.xmin and b1.xmax <= b2.xmax):
+def intersecting(b1xmin, b1xmax, b1ymin, b1ymax, b2xmin, b2xmax, b2ymin, b2ymax):
+    if (b1xmin >= b2xmin and b1xmin < b2xmax) or \
+        (b1xmax >= b2xmin and b1xmax < b2xmax) or \
+        (b1xmin <= b2ymin and b1xmax >= b2xmax) or \
+        (b1xmin >= b2xmin and b1xmax <= b2xmax):
 
-        if (b1.ymin >= b2.ymin and b1.ymin < b2.ymax) or \
-            (b1.ymax >= b2.ymin and b1.ymax < b2.ymax) or \
-            (b1.ymin <= b2.ymin and b1.ymax >= b2.ymax) or \
-            (b1.ymin >= b2.ymin and b1.ymax <= b2.ymax):
+        if (b1ymin >= b2ymin and b1ymin < b2ymax) or \
+            (b1ymax >= b2ymin and b1ymax < b2ymax) or \
+            (b1ymin <= b2ymin and b1ymax >= b2ymax) or \
+            (b1ymin >= b2ymin and b1ymax <= b2ymax):
 
             return 1
 
