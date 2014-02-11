@@ -57,7 +57,7 @@ class Quadtree:
 
     def nearestsource(self, tree, x, y):
         # Initalize a box of interest
-        dist = gu.dblmin(tree.xmax - tree.xmin, tree.ymax - tree.ymin)
+        dist = gu.dblmin(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin)
         interest.xmin = x - dist
         interest.ymin = x - dist
         interest.xmax = x + dist
