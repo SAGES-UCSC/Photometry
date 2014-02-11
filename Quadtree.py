@@ -17,7 +17,17 @@ class Quadtree:
             self.subdivide(node)
 
         if node.q1:
-            self.inserttoquad(node, source)
+        #    self.inserttoquad(node, source)
+            if source.ximg >= node.xmid:
+                if source.yimg >= node.ymid:
+                    quadrant = node.q1
+                else:
+                    quadrant = node.q4
+            else:
+                if source.yimg >= node.ymid:
+                    quadrant = node.q2
+                else:
+                    quadrant = node.q3
         else:
             # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
@@ -56,7 +66,7 @@ class Quadtree:
         dist = dist * dist
 
         # How to keep track of nearest now?
-        nearer_source(tree, tree, x, y, interest, nearest,  dist)
+        nearersource(tree, tree, x, y, interest, nearest,  dist)
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
         if gu.interestecting(node, interest):
