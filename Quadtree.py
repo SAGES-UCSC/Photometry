@@ -14,10 +14,10 @@ class Quadtree:
 
     def inserttonode(self, node, source):
         if len(node.contents) == MAX:
-            subdivide(node)
+            self.subdivide(node)
 
         if node.q1:
-            inserttoquad(node, source)
+            self.inserttoquad(node, source)
         else:
             # If no subquads exist add source to the list in CONTENTS element
             node.contents.append(source)
@@ -33,7 +33,7 @@ class Quadtree:
                 quadrant = node.q2
             else:
                 quadrant = node.q3
-        inserttonode(quadrant, source)
+        self.inserttonode(quadrant, source)
 
     def subdivide(self, node):
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
@@ -43,7 +43,7 @@ class Quadtree:
 
         # pop the list and insert the sources as they come off
         while node.contents:
-            inserttoquad(node, node.contents.pop())
+            self.inserttoquad(node, node.contents.pop())
 
     def nearestsource(self, tree, x, y):
         # Initalize a box of interest
@@ -87,4 +87,5 @@ class Node:
         self.ymax = ymax
         self.xmid = (xmin + xmax)/2
         self.ymid = (ymin + ymax)/2
+        self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
