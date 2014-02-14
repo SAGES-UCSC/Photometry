@@ -15,7 +15,7 @@ from subprocess import call
 import Quadtree as q
 from pprint import pprint
 
-MAXDIST = 10
+MAXDIST = 0
 
 '''
 In this case we want the objects that DON'T match
@@ -25,7 +25,7 @@ def disassociate(list1, tree2):
     while list1:
         target = list1.pop()
         match2 = tree2.match(target.ximg, target.yimg)
-        if match2 != None and norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) < MAXDIST:
+        if match2 != None and norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
             print target
             unmatched.append(target)
 
@@ -49,11 +49,11 @@ def main():
     noise = []
     aperture = np.linspace(0.5, 10, num=1)
     for ap in aperture:
-        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
-        call(['sex', '-c', sname + '.config', image])
+#        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
+#        call(['sex', '-c', sname + '.config', image])
 
-        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
-        call(['sex', '-c', nname + '.config', image])
+#        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
+#        call(['sex', '-c', nname + '.config', image])
 
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
