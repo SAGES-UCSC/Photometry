@@ -56,8 +56,8 @@ class Quadtree:
         # Initalize a box of interest
         dist = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
         interest = {'xmin':x-dist, 'ymin':y-dist, 'xmax':x+dist, 'ymax':y+dist,}
-        interest = gu.clip_box(interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax'],
-                    tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
+        interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
+                    tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
         dist = dist * dist
 
         if verbose:
@@ -66,6 +66,9 @@ class Quadtree:
             print "     interest", interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax']
 
         nearest = self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
+        if verbose:
+            print "Nearestsource recieving", nearest
+
         return nearest
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
@@ -87,8 +90,8 @@ class Quadtree:
                         interest['ymin'] = y - s_dist
                         interest['xmax'] = x + s_dist
                         interest['ymax'] = y + s_dist
-                        interest = gu.clip_box(interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax'],
-                                    tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
+                        interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
+                                    tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
                         if verbose:
                             print "     -- new nearest: dist", s_dist, "box", interest['xmin'], interest['ymin'], interest['xmax'],
                         interest['ymax']
@@ -104,7 +107,7 @@ class Quadtree:
             if verbose:
                 "       no intersection"
         if verbose:
-            print "Returning --",  nearest
+            print "Nearersource returning --",  nearest
         return nearest
 
 class Node:
