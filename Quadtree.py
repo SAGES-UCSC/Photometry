@@ -70,30 +70,38 @@ class Quadtree:
         dist = dist * dist
 
         # How to keep track of nearest now?
-        self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
+        nearest = self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
+        #print nearest
+        return nearest
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
         if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
                             interest.xmin, interest.xmax, interest.ymin, interest.ymax):
+            #print "Intersection"
             if node.q1 == None:
                 for s in node.contents:
                     s_dist = gu.norm(s.ximg, s.yimg, x, y)
                     if (s_dist < dist):
                         nearest = s
                         dist = s_dist
-
                         s_dist = math.sqrt(s_dist)
                         interest.xmin = x - s_dist
                         interest.ymin = y - s_dist
                         interest.xmax = x + s_dist
                         interest.ymax = y + s_dist
-                        #gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
-                        #            tree.xmin, tree.xmax, tree.ymin, tree.ymax)
+                        interest.xmin
+                        gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
+                                    tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
             else:
                 self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q3, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q4, x, y, interest, nearest, dist)
+        #else:
+            #if verbose:
+            #print "No interesection"
+    #    print nearest
+        return nearest
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
