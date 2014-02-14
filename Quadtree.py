@@ -54,20 +54,18 @@ class Quadtree:
 
         # Initalize a box of interest
         dist = gu.dblmin(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin)
-        interest = Node(x-dist, y-dist, x+dist, y+dist)
-        gu.clip_box(interest.xmin, interest.xmax, interest.ymin, interest.ymax,
+        interest = {'xmin':x-dist, 'ymin':y-dist, 'xmax':x+dist, 'ymax':y+dist,}
+        interest = gu.clip_box(interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax'],
                     tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
         dist = dist * dist
 
-        # How to keep track of nearest now?
         nearest = self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
-        #print nearest
+        print nearest
         return nearest
 
     def nearersource(self, tree, node, x, y, interest, nearest, dist):
         if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
-                            interest.xmin, interest.xmax, interest.ymin, interest.ymax):
-            #print "Intersection"
+                            interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
                     s_dist = gu.norm(s.ximg, s.yimg, x, y)
@@ -75,22 +73,18 @@ class Quadtree:
                         nearest = s
                         dist = s_dist
                         s_dist = math.sqrt(s_dist)
-                        interest.xmin = x - s_dist
-                        interest.ymin = y - s_dist
-                        interest.xmax = x + s_dist
-                        interest.ymax = y + s_dist
-                        interest.xmin
-                        gu.clip_box(interest.xmin, interest.xmax, interest.ymin. interest.ymax,
+                        interest['xmin'] = x - s_dist
+                        interest['ymin'] = y - s_dist
+                        interest['xmax'] = x + s_dist
+                        interest['ymax'] = y + s_dist
+                        interest = gu.clip_box(interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax'],
                                     tree.top.xmin, tree.top.xmax, tree.top.ymin, tree.top.ymax)
             else:
                 self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q3, x, y, interest, nearest, dist)
                 self.nearersource(tree, node.q4, x, y, interest, nearest, dist)
-        #else:
-            #if verbose:
-            #print "No interesection"
-    #    print nearest
+
         return nearest
 
 class Node:
