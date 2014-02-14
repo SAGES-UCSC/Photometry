@@ -95,11 +95,11 @@ class Quadtree:
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
-        self.xmin = xmin
-        self.ymin = ymin
-        self.xmax = xmax
-        self.ymax = ymax
-        self.xmid = (xmin + xmax)/2
-        self.ymid = (ymin + ymax)/2
+        self.xmin = float(xmin)
+        self.ymin = float(ymin)
+        self.xmax = float(xmax)
+        self.ymax = float(ymax)
+        self.xmid = (self.xmin + self.xmax)/2
+        self.ymid = (self.ymin + self.ymax)/2
         self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
