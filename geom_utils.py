@@ -57,6 +57,6 @@ def norm2(x1, y1, x2, y2):
 
 '''
 '''
-def clip_box(bxmin, bxmax, bymin, bymax, boundsxmin, boundsxmax, boundsymin, boundsymax):
+def clip_box(bxmin, bymin, bxmax, bymax, boundsxmin, boundsymin, boundsxmax, boundsymax):
     return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
             'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
