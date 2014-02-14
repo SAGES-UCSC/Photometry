@@ -55,21 +55,8 @@ def norm2(x1, y1, x2, y2):
     yd = y2 -y1
     return xd * xd + yd * yd
 
-def dblmax(a, b):
-    if a > b:
-        return a
-    else:
-        return b
-
-def dblmin(a, b):
-    if a < b:
-        return a
-    else:
-        return b
 '''
 '''
 def clip_box(bxmin, bxmax, bymin, bymax, boundsxmin, boundsxmax, boundsymin, boundsymax):
-    bxmin = dblmax(bxmin, boundsxmin)
-    bymin = dblmax(bymin, boundsymin)
-    bxmax = dblmin(bxmax, boundsxmax)
-    bymax = dblmin(bymax, boundsymax)
+    return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
+            'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
