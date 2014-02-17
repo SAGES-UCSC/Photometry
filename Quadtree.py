@@ -50,7 +50,6 @@ class Quadtree:
     def match(self, x, y):
         return self.nearestsource(self, x, y)
 
-
     def nearestsource(self, tree, x, y):
         nearest = {'source':None, 'dist':0}
 
@@ -61,10 +60,8 @@ class Quadtree:
                     tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
         nearest['dist'] = nearest['dist'] * nearest['dist']
 
-
         self.nearersource(tree, tree.top, x, y, nearest, interest)
 
-        #print "From Nearestsource ", nearest['source']
         return nearest['source']
 
     def nearersource(self, tree, node, x, y, nearest, interest):

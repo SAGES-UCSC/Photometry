@@ -14,8 +14,9 @@ import matplotlib.pyplot as plt
 from subprocess import call
 import Quadtree as q
 from pprint import pprint
+import geom_utils as gu
 
-MAXDIST = 0
+MAXDIST = 2
 
 '''
 In this case we want the objects that DON'T match
@@ -25,9 +26,11 @@ def disassociate(list1, tree2):
     while list1:
         target = list1.pop()
         match2 = tree2.match(target.ximg, target.yimg)
-        if match2 != None and norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
-            print target
+        if match2 != None and gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
+            target.match2 = match2
             unmatched.append(target)
+
+    return unmatched
 
 def main():
     sname = "sign"
@@ -47,13 +50,13 @@ def main():
 
     signal = []
     noise = []
-    aperture = np.linspace(0.5, 10, num=1)
+    aperture = np.linspace(0.5, 15, num=20)
     for ap in aperture:
-#        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
-#        call(['sex', '-c', sname + '.config', image])
+        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
+        call(['sex', '-c', sname + '.config', image])
 
-#        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
-#        call(['sex', '-c', nname + '.config', image])
+        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
+        call(['sex', '-c', nname + '.config', image])
 
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
@@ -64,29 +67,37 @@ def main():
         # Background measuresments can't overlap with source detections
         # Also don't include mag_aper == 99.0
         ssources = q.Quadtree(0, 0, 11000, 9000)
-        for i in range(0,13):
-            ssources.insert(S.SCAMSource(stmp[i]))
-#        map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
+        map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
         bkgddetections = disassociate(nsources, ssources)
+        srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        #sflux = map(lambda s: s.mag_aper, ssources)
-        #signal.append(pu.calcMAD(sflux))
+        print "For ", ap, "there are ", len(bkgddetections)
 
-        #nflux = map(lambda s: s.mag_aper, bkgddetections)
-        #noise.append(pu.calcMAD(nflux))
+        sflux = map(lambda s: s.mag_aper, srcdetections)
+        signal.append(pu.calcMAD(sflux))
 
+        nflux = map(lambda s: s.mag_aper, bkgddetections)
+        noise.append(pu.calcMAD(nflux))
 
-#    snr = []
-#    for i in range(len(signal)):
-#        snr.append(signal[i]/noise[i])
+        output = open("ap_" + str(ap) + "noise.txt")
+        for source in bkgddetections:
+            output.write(source.line)
+        output = open("ap_" + str(ap) + "signal.txt")
+        for source in srcdetections:
+            output.write(source.line)
 
-#    plt.plot(aperture, sflux, linestyle='none', marker='o')
-#    plt.plot(aperture, nflux, linestyle='none', marker='o')
-#    plt.show()
+    snr = []
+    for i in range(len(signal)):
+        snr.append(signal[i]/noise[i])
+
+    plt.plot(aperture, snr, linestyle='none', marker='o')
+    plt.show()
+    plt.plot(aperture, signal, linestyle='none', marker='o')
+    plt.show()
+    plt.plot(aperture, noise, linestyle='none', marker='o')
+    plt.show()
 
 if __name__ == '__main__':
     sys.exit(main())
-
-
