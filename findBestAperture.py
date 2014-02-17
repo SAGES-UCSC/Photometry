@@ -63,8 +63,10 @@ def main():
 
         # Background measuresments can't overlap with source detections
         # Also don't include mag_aper == 99.0
-        ssources = q.Quadtree(0.0, 0.0, 11000.0, 9000.0)
-        map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
+        ssources = q.Quadtree(0, 0, 11000, 9000)
+        for i in range(0,13):
+            ssources.insert(S.SCAMSource(stmp[i]))
+#        map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
         bkgddetections = disassociate(nsources, ssources)
