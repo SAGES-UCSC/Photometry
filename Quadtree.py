@@ -5,7 +5,7 @@ import geom_utils as gu
 import math
 
 MAX = 12
-verbose = True
+verbose = False
 
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -53,7 +53,7 @@ class Quadtree:
     def nearestsource(self, tree, x, y):
         nearest = {'source':None, 'dist':0}
 
-        # Initalize a box of interest
+        # Initialize a box of interest
         nearest['dist'] = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
         interest = {'xmin':x-dist, 'ymin':y-dist, 'xmax':x+dist, 'ymax':y+dist,}
         interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
@@ -67,9 +67,9 @@ class Quadtree:
 
         self.nearersource(tree, tree.top, x, y, nearest, interest)
         if verbose:
-            print "Nearestsource recieving", nearest
+            print "Nearestsource receiving", nearest
 
-        return nearest
+        return nearest['source']
 
     def nearersource(self, tree, node, x, y, nearest, interest):
         if verbose:
@@ -99,7 +99,7 @@ class Quadtree:
                 print "\n"
             else:
                 if verbose:
-               #     print "     intersection, checking children"
+                    print "     intersection, checking children"
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
                 self.nearersource(tree, node.q2, x, y, nearest, interest)
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
