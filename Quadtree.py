@@ -51,7 +51,7 @@ class Quadtree:
         self.nearestsource(self, x, y)
 
     def nearestsource(self, tree, x, y):
-        nearest = None
+        nearest = {'source':None, 'dist':0}
 
         # Initalize a box of interest
         dist = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
@@ -65,13 +65,13 @@ class Quadtree:
             print "     target", x, y
             print "     interest", interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax']
 
-        nearest = self.nearersource(tree, tree.top, x, y, interest, nearest,  dist)
+        self.nearersource(tree, tree.top, x, y, nearest, interest)
         if verbose:
             print "Nearestsource recieving", nearest
 
         return nearest
 
-    def nearersource(self, tree, node, x, y, interest, nearest, dist):
+    def nearersource(self, tree, node, x, y, nearest, interest):
         if verbose:
             print "nearer source", node.xmin, node.ymin, node.xmax, node.ymax
 
@@ -82,9 +82,9 @@ class Quadtree:
             if node.q1 == None:
                 for s in node.contents:
                     s_dist = gu.norm(s.ximg, s.yimg, x, y)
-                    if (s_dist < dist):
-                        nearest = s
-                        dist = s_dist
+                    if (s_dist < nearest['dist']):
+                        nearest['source'] = s
+                        nearest['dist'] = s_dist
                         s_dist = math.sqrt(s_dist)
                         interest['xmin'] = x - s_dist
                         interest['ymin'] = y - s_dist
@@ -95,14 +95,15 @@ class Quadtree:
                         if verbose:
                             print "     -- new nearest: dist", s_dist, "box", interest['xmin'], interest['ymin'], interest['xmax'],
                         interest['ymax']
+            if verbose:
                 print "\n"
             else:
                 if verbose:
-                    print "     intersection, checking children"
-                self.nearersource(tree, node.q1, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q2, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q3, x, y, interest, nearest, dist)
-                self.nearersource(tree, node.q4, x, y, interest, nearest, dist)
+               #     print "     intersection, checking children"
+                self.nearersource(tree, node.q1, x, y, nearest, interest)
+                self.nearersource(tree, node.q2, x, y, nearest, interest)
+                self.nearersource(tree, node.q3, x, y, nearest, interest)
+                self.nearersource(tree, node.q4, x, y, nearest, interest)
         else:
             if verbose:
                 "       no intersection"
