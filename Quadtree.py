@@ -54,11 +54,11 @@ class Quadtree:
         nearest = {'source':None, 'dist':0}
 
         # Initalize a box of interest
-        dist = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
+        nearest['dist'] = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
         interest = {'xmin':x-dist, 'ymin':y-dist, 'xmax':x+dist, 'ymax':y+dist,}
         interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
                     tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
-        dist = dist * dist
+        nearest['dist'] = nearest['dist'] * nearest['dist']
 
         if verbose:
             print "nearest_source"
@@ -82,7 +82,7 @@ class Quadtree:
             if node.q1 == None:
                 for s in node.contents:
                     s_dist = gu.norm(s.ximg, s.yimg, x, y)
-                    if (s_dist < nearest['dist']):
+                    if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
                         s_dist = math.sqrt(s_dist)
@@ -109,7 +109,6 @@ class Quadtree:
                 "       no intersection"
         if verbose:
             print "Nearersource returning --",  nearest
-        return nearest
 
 class Node:
     def __init__(self, xmin, ymin, xmax, ymax):
