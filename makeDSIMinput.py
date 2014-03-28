@@ -41,10 +41,10 @@ def main():
 
     # Put it all together and write to ouput file
     output = open(sys.argv[2], 'w')
-    for i in src:
+    for i in range(len(src)):
         output.write('%10s' % src[i].name + '%15s' % ra[i] + '%15s' % dec[i] +
                         '%6.d' % equinox + '%10.2f' % src[i].mag1 + '%2s' % passband +
-                        '%5.0d' % priority[obj] + '%5.0d' % sample + '%5s' % s_flag +
+                        '%5.0d' % priority[i] + '%5.0d' % sample + '%5s' % s_flag +
                         '%10.d' % pa + '\n')
     output.close()
 
