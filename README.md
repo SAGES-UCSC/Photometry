@@ -13,4 +13,9 @@ goals:
 ##EXPLANATION:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
 any given routine, such as **makeDSIMinput.py**, when a catalog is read each line is read in as an object. This makes handling each data set and
-interchanging between data sets much easier and concise.
+interchanging between data sets much easier and concise. If you have a catalog that doesn't fit the format of any of the source classes already in
+**Sources.py** it's easy to make one just following the format of the source classes already created.
+
+
+### Explanation of routines and functions:
+* makeDSIMin.py - 
