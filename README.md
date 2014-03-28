@@ -22,7 +22,13 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
     **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
 
-    **Things you have to edit:** 
+    **What you have to edit:** 
     * Lines 23-27 - need to be changed to suit the needs of the mask design
     * Line 31 - Need to change the kind of the class the catalog belongs to
-    * Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is 
+    * Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is
+
+* makeRegionFile.py - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
+  from the command line.
+
+  **What you have to edit:**
+  * Line 12 - Change the class the catalog belongs to
