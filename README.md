@@ -18,6 +18,11 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 
 ### Routines and functions:
+
+#### Foundational:
+
+* **Sources.py**
+
 * **phot_utils.py** - A collection of useful photometry functions to be included in larger programs.
     * **correctMag** - Input: a catalog of source objects and a correction factor.
     * **makeMagCut** - Input: A magnitude, low, and high. Returns boolean.
@@ -37,6 +42,10 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **norm2** - Calculate the square of the norm between two points
     * **clip_box** - Trim a box dimensions 
 
+* **Quadtree.py** - 
+
+#### Mask Making:
+
 * **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
     **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
@@ -51,3 +60,11 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
   **What you have to edit:**
   * Line 12 - Change the class the catalog belongs to
+
+* **simple_test.py**
+
+#### Photometry:
+
+* **createSexConfig.py** -
+* **createSexParam.py** - 
+* **findBestAperture.py** - 
