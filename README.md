@@ -18,6 +18,16 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 
 ### Routines and functions:
+* **phot_utils.py** - A collection of useful photometry functions to be included in larger programs.
+    * **correctMag** - Input: a catalog of source objects and a correction factor.
+    * **makeMagCut** - Input: A magnitude, low, and high. Returns boolean.
+    * **makeColorCut** - 
+    * **detSizeCut** -
+    * **LookeAtShapes** -
+    * **calcMedian** - Input: list of values Output: median of the list 
+    * **calcMAD** - Input: List of values Output: median absolute deviation
+    * **nohHead** -  Input: A catalog Output: All the lines that aren't comments
+
 * **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
     **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
