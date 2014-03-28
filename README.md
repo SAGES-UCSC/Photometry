@@ -18,7 +18,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 
 ### Routines and functions:
-* makeDSIMin.py - A program to turn a catalog file into a DSIM input file.
+* **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
     **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
 
@@ -27,7 +27,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * Line 31 - Need to change the kind of the class the catalog belongs to
     * Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is
 
-* makeRegionFile.py - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
+* **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
 
   **What you have to edit:**
