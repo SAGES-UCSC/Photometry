@@ -17,5 +17,6 @@ interchanging between data sets much easier and concise. If you have a catalog t
 **Sources.py** it's easy to make one just following the format of the source classes already created.
 
 
-### Explanation of routines and functions:
-* makeDSIMin.py - 
+### Routines and functions:
+* makeDSIMin.py - A program to turn a catalog file into a DSIM input file.
+   **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'> 
