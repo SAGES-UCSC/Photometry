@@ -20,9 +20,9 @@ interchanging between data sets much easier and concise. If you have a catalog t
 ### Routines and functions:
 * makeDSIMin.py - A program to turn a catalog file into a DSIM input file.
 
-**Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
+    **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
 
-**Things you have to edit:** 
-* Lines 23-27 - need to be changed to suit the needs of the mask design
-* Line 31 - Need to change the kind of the class the catalog belongs to
-* Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is 
+    **Things you have to edit:** 
+    * Lines 23-27 - need to be changed to suit the needs of the mask design
+    * Line 31 - Need to change the kind of the class the catalog belongs to
+    * Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is 
