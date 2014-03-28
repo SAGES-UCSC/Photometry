@@ -28,6 +28,15 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **calcMAD** - Input: List of values Output: median absolute deviation
     * **nohHead** -  Input: A catalog Output: All the lines that aren't comments
 
+* **geom_utils.pyt** - A collection of useful geometry functions to have on hand for larger programs
+    * **calcY** - Input: x, m, b Output: y
+    * **inBox** - Test whether a point is in a box. Input: Bounds of box (x0, x1, y0, y1), point coordinates(px, py) Output: Boolean
+    * **makeRadiusCut** - Make cut on data for a given radius. Does not take into account projection effects. Input: Point coordinates (ra, dec) center coordinates (gal_ra, gal_dec), distance. All inputs in degress. Output: Boolean
+    * **intersecting** - Test whether two boxes are interesecting. Input: Bounds of Box1, bounds of Box2 Output: Bolean 
+    * **norm** - Calculate the norm between two points.
+    * **norm2** - Calculate the square of the norm between two points
+    * **clip_box** - Trim a box dimensions 
+
 * **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
     **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
