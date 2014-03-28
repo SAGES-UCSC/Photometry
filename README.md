@@ -21,6 +21,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
 * makeDSIMin.py - A program to turn a catalog file into a DSIM input file.
 
 **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
+
 **Things you have to edit:** 
 * Lines 23-27 - need to be changed to suit the needs of the mask design
 * Line 31 - Need to change the kind of the class the catalog belongs to
