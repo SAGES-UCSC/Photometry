@@ -20,4 +20,4 @@ interchanging between data sets much easier and concise. If you have a catalog t
 ### Routines and functions:
 * makeDSIMin.py - A program to turn a catalog file into a DSIM input file.
 
-    **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'> 
+        **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'> 
