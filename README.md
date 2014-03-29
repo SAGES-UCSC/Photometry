@@ -16,7 +16,7 @@ general method that holds up the current best methods. Our goals are:
 
 To come later. 
 
-##GORY DETIALS:
+##GORY DETAILS:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
 any given routine, such as **makeDSIMinput.py**, when a catalog is read each line is read in as an object. This makes handling each data set and
 interchanging between data sets much easier and concise. If you have a catalog that doesn't fit the format of any of the source classes already in
