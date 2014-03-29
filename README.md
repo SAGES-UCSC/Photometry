@@ -2,8 +2,10 @@
 Alexa Villaume, for the SAGES group based at UC Santa Cruz
 
 ##PURPOSE:
-This is intended to be a set of tools that will make doing photometry both easier and more uniform across the SAGES group. These are the following
-goals:
+Let's begin with what this is **not** intended to be. This is not intended to be a pipeline for photometry. Given the often heterogeneous nature of
+the data we use and the manifold results or end products we can get it is not feasible to make a pipeline that would be generally useful. Instead
+this is meant to be a set of tools to make doing photometry quicker, with less scripts being written by us individually, and to set a uniform
+general method that holds up the current best methods. Our goals are:
 * Make DEIMOS mask design easier and more uniform
 * Get the best photometry that we can from our Subaru images. I will be following the methods of Whitaker et al. (2011)
 * Mitigate the complications and annoyances that come with working with multiple different catalogs from different sources including archival
