@@ -27,7 +27,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 #### Foundational:
 
-* **Sources.py**
+* **Sources.py** - This holds each catalog class. Feel free to make your own.
 
 * **phot_utils.py** - A collection of useful photometry functions to be included in larger programs.
     * **correctMag** - Input: a catalog of source objects and a correction factor.
@@ -39,7 +39,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **LookeAtShapes** - I'm uncertain about the above's robustness so this is a function to look at the histogram of the a_world values. 
     * **calcMedian** - Input: list of values Output: median of the list 
     * **calcMAD** - Input: List of values Output: median absolute deviation
-    * **nohHead** -  Input: A catalog Output: All the lines that aren't comments
+    * **nohHead** -  Burn the header of an input file. Input: A catalog Output: All the lines that aren't comments
 
 * **geom_utils.pyt** - A collection of useful geometry functions to have on hand for larger programs
     * **calcY** - Input: x, m, b Output: y
@@ -51,9 +51,13 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **clip_box** - Trim a box dimensions 
 
 * **Quadtree.py** - A way to index sources in two dimensions in order to cross-correlate catalogs. There is a C-version of this (in MakeCatalog). It
-  runs much faster but you lose the object oriented-ness that makes the Python version so easy to use.. 
+  runs much faster but you lose the object oriented-ness that makes the Python version so easy to use. 
 
 #### Mask Making:
+
+* **simple_test.py** - This program demonstrates how to put together various routines and functions to do some basic GC candidate selection.
+  This program starts with an already cross-correlated final catalog of all a given system. You can tweak the input to the various functions to cut
+  down the original catalog to a catalog of GC candidates using the functions from **geom_utils.py** and **phot_utils.py**. 
 
 * **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
@@ -68,7 +72,6 @@ interchanging between data sets much easier and concise. If you have a catalog t
   **What you have to edit:**
   * Line 12 - Change the class the catalog belongs to
 
-* **simple_test.py** - This program demonstrates how to put together various routines and functions to do some basic GC candidate selection. 
 
 **NOTE:** There are some other DSIM/mask making routines in the DSIM repo. They were written before I had implemented the object oriented parts of
   these tools and I'm working on updating them.
