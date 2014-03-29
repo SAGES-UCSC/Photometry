@@ -64,7 +64,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 * **simple_test.py** - This program demonstrates how to put together various routines and functions to do some basic GC candidate selection. 
 
-* **NOTE:** There are some other DSIM/mask making routines in the DSIM repo. They were written before I had implemented the object oriented parts of
+**NOTE:** There are some other DSIM/mask making routines in the DSIM repo. They were written before I had implemented the object oriented parts of
   these tools and I'm working on updating them.
 
 
