@@ -30,7 +30,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
       be. Input: Four magnitude colors (mag1, mag2, mag3, mag4), line parameters(x0, x1, m, b), and the value for how generous the cut shoud be (var)
     * **detSizeCut** - Intended to cut out all but the point sources from a data set. Input: The a_world column from the catalog and the number of
       bins.
-    * **LookeAtShapes** -
+    * **LookeAtShapes** - I'm uncertain about the above's robustness so this is a function to look at the histogram of the a_world values. 
     * **calcMedian** - Input: list of values Output: median of the list 
     * **calcMAD** - Input: List of values Output: median absolute deviation
     * **nohHead** -  Input: A catalog Output: All the lines that aren't comments
