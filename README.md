@@ -42,7 +42,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **norm2** - Calculate the square of the norm between two points
     * **clip_box** - Trim a box dimensions 
 
-* **Quadtree.py** - 
+* **Quadtree.py** - A way to index sources in two dimensions in order to cross-correlate catalogs. There is a C-version of this that is much faster. 
 
 #### Mask Making:
 
@@ -55,16 +55,22 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * Line 31 - Need to change the kind of the class the catalog belongs to
     * Line 40, 47 - Change src.mag1 to whatever the proper magnitude column is
 
-* **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
-  from the command line.
 
   **What you have to edit:**
   * Line 12 - Change the class the catalog belongs to
 
-* **simple_test.py**
+* **simple_test.py** - This program demonstrates how to put together various routines and functions to do some basic GC candidate selection. 
+
+* **NOTE:** There are some other DSIM/mask making routines in the DSIM repo. They were written before I had implemented the object oriented parts of
+  these tools and I'm working on updating them.
+
 
 #### Photometry:
 
-* **createSexConfig.py** -
-* **createSexParam.py** - 
-* **findBestAperture.py** - 
+* **createSexConfig.py** - Generate a Source Extractor configuration file. This is intended to be included as a function in a larger program. Now the
+  inputs are fairly rudimentry.
+* **createSexParam.py** - Generate a Source Extractor configuration file. This is intended to be included as a function in a larger proram.
+* **findBestAperture.py** - The first part of reconstructing the methods of Whitaker et al. (2011). This is a routine to optimize the aperture we use
+  for extracting photometery. Not fully functional yet.
+* **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
+  from the command line.
