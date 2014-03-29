@@ -42,7 +42,8 @@ interchanging between data sets much easier and concise. If you have a catalog t
     * **norm2** - Calculate the square of the norm between two points
     * **clip_box** - Trim a box dimensions 
 
-* **Quadtree.py** - A way to index sources in two dimensions in order to cross-correlate catalogs. There is a C-version of this that is much faster. 
+* **Quadtree.py** - A way to index sources in two dimensions in order to cross-correlate catalogs. There is a C-version of this (in MakeCatalog). It
+  runs much faster but you lose the object oriented-ness that makes the Python version so easy to use.. 
 
 #### Mask Making:
 
