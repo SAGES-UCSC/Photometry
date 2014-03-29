@@ -12,9 +12,9 @@ general method that holds up the current best methods. Our goals are:
 * Mitigate the complications and annoyances that come with working with multiple different catalogs from different sources including archival
   catalogs 
 
-#### Getting these tools
+#### Getting and using these tools
 
-To come later.
+To come later. 
 
 ##EXPLANATION:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
@@ -78,6 +78,8 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 
 #### Photometry:
+
+These will be the set of routines that will allow to extract the photometry from images.
 
 * **createSexConfig.py** - Generate a Source Extractor configuration file. This is intended to be included as a function in a larger program. Now the
   inputs are fairly rudimentry.
