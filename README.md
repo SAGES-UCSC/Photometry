@@ -1,6 +1,7 @@
 ##
 Alexa Villaume, for the SAGES group based at UC Santa Cruz
 
+
 ##PURPOSE:
 Let's begin with what this is **not** intended to be. This is not intended to be a pipeline for photometry. Given the often heterogeneous nature of
 the data we use and the manifold results or end products we can get it is not feasible to make a pipeline that would be generally useful. Instead
@@ -11,6 +12,9 @@ general method that holds up the current best methods. Our goals are:
 * Mitigate the complications and annoyances that come with working with multiple different catalogs from different sources including archival
   catalogs 
 
+#### Getting these tools
+
+To come later.
 
 ##EXPLANATION:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
