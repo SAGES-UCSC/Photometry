@@ -26,8 +26,10 @@ interchanging between data sets much easier and concise. If you have a catalog t
 * **phot_utils.py** - A collection of useful photometry functions to be included in larger programs.
     * **correctMag** - Input: a catalog of source objects and a correction factor.
     * **makeMagCut** - Input: A magnitude, low, and high. Returns boolean.
-    * **makeColorCut** - 
-    * **detSizeCut** -
+    * **makeColorCut** - This function takes a predetermined line in color-color space and makes a cut based on that and how generous we wish to
+      be. Input: Four magnitude colors (mag1, mag2, mag3, mag4), line parameters(x0, x1, m, b), and the value for how generous the cut shoud be (var)
+    * **detSizeCut** - Intended to cut out all but the point sources from a data set. Input: The a_world column from the catalog and the number of
+      bins.
     * **LookeAtShapes** -
     * **calcMedian** - Input: list of values Output: median of the list 
     * **calcMAD** - Input: List of values Output: median absolute deviation
