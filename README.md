@@ -91,12 +91,12 @@ These will be the set of routines that will allow to extract the photometry from
 
 #### To-Do:
 
-[] Finish findBestAperture.py
-[] Write findZeropoint.py 
-[] Fix correctMag
-[] Fix magCut
-[] Refine UX
-[] Get Lee to resend PSF code
-[] Coordinate matching?
-[] Completeness 
-[] GC Candidate Likelihood
+- [ ] Finish findBestAperture.py
+- [ ] Write findZeropoint.py 
+- [ ] Fix correctMag
+- [ ] Fix magCut
+- [ ] Refine UX
+- [ ] Get Lee to resend PSF code
+- [ ] Coordinate matching?
+- [ ] Completeness 
+- [ ] GC Candidate Likelihood
