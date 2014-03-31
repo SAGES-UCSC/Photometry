@@ -88,3 +88,15 @@ These will be the set of routines that will allow to extract the photometry from
   for extracting photometery. Not fully functional yet.
 * **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
+
+#### To-Do:
+
+[] Finish findBestAperture.py
+[] Write findZeropoint.py 
+[] Fix correctMag
+[] Fix magCut
+[] Refine UX
+[] Get Lee to resend PSF code
+[] Coordinate matching?
+[] Completeness 
+[] GC Candidate Likelihood
