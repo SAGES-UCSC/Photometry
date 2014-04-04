@@ -102,8 +102,3 @@ These will be the set of routines that will allow to extract the photometry from
 - [ ] Completeness 
 - [ ] GC Candidate Likelihood
 =======
-FSPS
-====
-
-Things I write to use FSPS
->>>>>>> d49e94bda1b1a97d9199b2271ef962ec1b2c9c28
