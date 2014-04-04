@@ -101,4 +101,3 @@ These will be the set of routines that will allow to extract the photometry from
 - [ ] Coordinate matching?
 - [ ] Completeness 
 - [ ] GC Candidate Likelihood
-=======
