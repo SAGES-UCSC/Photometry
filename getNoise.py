@@ -3,6 +3,10 @@
 #http://astroa.physics.metu.edu.tr/MANUALS/sextractor/Guide2source_extractor.pdf
 #http://astroa.physics.metu.edu.tr/MANUALS/sextractor/sextractor.pdf
 
+'''
+Make the call to Source Extractor with randomly generated positions.
+'''
+
 import numpy as np
 import random as r
 import matplotlib.pyplot as plt
@@ -37,10 +41,6 @@ def getNoise(aperture, name, filter_file, image,  verbose):
 
     nmad = []
     for ap in aperture:
-        '''
-        Make the call to Source Extractor with randomly generated positions.
-        And then do it again but this time just to get detections
-        '''
         sc.createSexConfig(name, filter_file, param_file, assoc_file, ap, True)
         call(['sex', '-c', name + '.config', image])
 

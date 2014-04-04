@@ -27,6 +27,7 @@ def main():
     pa = 119
     catalog = open(sys.argv[1], 'r')
 
+    # Get rid of any header and real lines into source objects
     tmp = filter(lambda line: pu.noHead(line), catalog)
     src = map(lambda line: S.CFHTSource(line), tmp)
     catalog.close()
@@ -36,7 +37,7 @@ def main():
     dec = map(lambda obj: pu.convertDEC(obj.dec), src)
 
     # Determine priority for each source
-    mag_min = min(map(lambda s: s.mag1, src))
+    mag_min = min(map(lambda s: s.mag, src))
     priority = map(lambda s: detPriority(mag_min, s.mag1), src)
 
     # Put it all together and write to ouput file

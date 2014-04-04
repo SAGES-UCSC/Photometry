@@ -5,7 +5,7 @@ PURPOSE
 import sys
 import numpy as np
 import random as r
-import getNoise as gn
+import time
 import createSexConfig as sc
 import createSexParam as sp
 import phot_utils as pu
@@ -16,7 +16,7 @@ import Quadtree as q
 from pprint import pprint
 import geom_utils as gu
 
-MAXDIST = 2
+MAXDIST = 1.0
 
 '''
 In this case we want the objects that DON'T match
@@ -26,7 +26,7 @@ def disassociate(list1, tree2):
     while list1:
         target = list1.pop()
         match2 = tree2.match(target.ximg, target.yimg)
-        if match2 != None and gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) > MAXDIST:
+        if match2 != None and gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) >= MAXDIST:
             target.match2 = match2
             unmatched.append(target)
 
@@ -40,7 +40,7 @@ def main():
 
     output = open("MeasureFluxAt.txt", "w")
     for i in range(0,100000):
-        output.write('%.3f' % r.uniform(1,10000) + '%10.3f' % r.uniform(1,8000) + '\n')
+        output.write('%.3f' % r.uniform(1,11000) + '%10.3f' % r.uniform(1,9000) + '\n')
 
     sp.createSexParam(sname, False)
     sp.createSexParam(nname, True)
@@ -50,7 +50,7 @@ def main():
 
     signal = []
     noise = []
-    aperture = np.linspace(0.5, 15, num=20)
+    aperture = np.linspace(0.5, 15, num=1)
     for ap in aperture:
         sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
         call(['sex', '-c', sname + '.config', image])
@@ -58,6 +58,7 @@ def main():
         sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
         call(['sex', '-c', nname + '.config', image])
 
+        print "REMOVING THE HEADER FROM THE SOURCE EXTRACTOR CATALOG FILES"
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
 
@@ -66,14 +67,20 @@ def main():
 
         # Background measuresments can't overlap with source detections
         # Also don't include mag_aper == 99.0
+        print "FILLING QUADTREE"
         ssources = q.Quadtree(0, 0, 11000, 9000)
         map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
+        print "QUADTREE FILLED"
 
+        start_time = time.time()
         bkgddetections = disassociate(nsources, ssources)
+        end_time = time.time()
+        print("ELAPSED TIME WAS %g SECONDS" % (end_time - start_time))
+        ssources.debug()
         srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        print "For ", ap, "there are ", len(bkgddetections)
+        print "FOR APERTURE", ap, "THERE ", len(bkgddetections), "MEASUREMENTS"
 
         sflux = map(lambda s: s.mag_aper, srcdetections)
         signal.append(pu.calcMAD(sflux))
@@ -81,10 +88,10 @@ def main():
         nflux = map(lambda s: s.mag_aper, bkgddetections)
         noise.append(pu.calcMAD(nflux))
 
-        output = open("ap_" + str(ap) + "noise.txt")
+        output = open("ap_" + str(ap) + "noise.txt", "w")
         for source in bkgddetections:
             output.write(source.line)
-        output = open("ap_" + str(ap) + "signal.txt")
+        output = open("ap_" + str(ap) + "signal.txt", "w")
         for source in srcdetections:
             output.write(source.line)
 

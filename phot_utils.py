@@ -3,6 +3,27 @@ import numpy as np
 import math
 import geom_utils as gu
 
+# Convert from decimal to sexagesimal
+''' From http://idlastro.gsfc.nasa.gov/ftp/pro/astro/radec.pro '''
+''' Need to put better testing in '''
+def convertRA(ra):
+    ra1 = math.trunc(ra/15.)
+    ra2 = math.trunc((ra-ra1*15.)*4)
+    ra3 = ((ra-ra1*15.-ra2/4.)*240.)
+
+    return str(ra1) + ':' + str(ra2) + ':' + str(round(ra3,6))
+
+def convertDEC(dec):
+    dec1 = math.trunc(dec)
+    dec2 = math.trunc(abs(dec-dec1)*60)
+    dec3 = ((abs(dec-dec1)*60.)-dec2)*60.
+
+    return str(dec1) + ':' + str(dec2) + ':' + str(round(dec3,6))
+
+# Distance should be in parsec
+def getDistMod(dist):
+    return  5*math.log10(dist) - 5
+
 '''
 Add whatever correction, like a distance modulus, to a list of magnitudes
 This function takes an array to correct
@@ -10,7 +31,7 @@ This isn't the right way to go about this...need to have the corrected mag
 be in the catalog
 '''
 def correctMag(c, correction):
-    return map(lambda c: c.mag1 + correction , c)
+    return map(lambda c: c + correction , c)
 
 '''
 Cut out noise, good for DSIM input files...
@@ -85,5 +106,6 @@ def noHead(line):
         return True
     else:
         return False
+
 
 #def testColorCut():

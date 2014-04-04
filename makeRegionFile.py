@@ -5,7 +5,7 @@ A program to turn a catalog file into a ds9 region file
 import phot_utils as pu
 import Sources as S
 
-def makeRegionFile(filename, outname):
+def makeRegionFile(filename, outname, pixsize):
     catalog = open(filename, "r")
     tmp = filter(lambda line: pu.noHead(line), catalog)
 
@@ -14,4 +14,4 @@ def makeRegionFile(filename, outname):
     out = open(outname, "w")
     for source in sources:
         out.write("physical;circle(" + str(source.ximg) + "," +
-                    str(source.yimg) + ",2) #color=red" + "\n")
+                    str(source.yimg) + "," + str(pixsize) + ") #color=red" + "\n")

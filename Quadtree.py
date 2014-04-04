@@ -4,17 +4,29 @@ Implement a quadtree
 import geom_utils as gu
 import math
 
-MAX = 12
-verbose = True
+MAX = 25
 
 class Quadtree:
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
+        self.num_subdivides = 0
+        self.num_inserttonodes = 0
+        self.num_matched = 0
+        self.num_inserttoquads = 0
+        self.num_nearersources = 0
+
+    def debug(self):
+        print "Number of subdivides: ", self.num_subdivides
+        print "Inserttonode was called %d times", self.num_inserttonodes
+        print "Matched was called %d times", self.num_matched
+        print "Inserttoquad was called %d times", self.num_inserttoquads
+        print "Nearer sources was called %d times", self.num_nearersources
 
     def insert(self, source):
         self.inserttonode(self.top, source)
 
     def inserttonode(self, node, source):
+        self.num_inserttonodes+=1
         if len(node.contents) == MAX:
             self.subdivide(node)
 
@@ -25,6 +37,7 @@ class Quadtree:
             node.contents.append(source)
 
     def inserttoquad(self, node, source):
+        self.num_inserttoquads+=1
         if source.ximg >= node.xmid:
             if source.yimg >= node.ymid:
                 quadrant = node.q1
@@ -38,6 +51,7 @@ class Quadtree:
         self.inserttonode(quadrant, source)
 
     def subdivide(self, node):
+        self.num_subdivides+=1
         node.q1 = Node(node.xmid, node.ymid, node.xmax, node.ymax)
         node.q2 = Node(node.xmin, node.ymid, node.xmid, node.ymax)
         node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
@@ -48,6 +62,7 @@ class Quadtree:
             self.inserttoquad(node, node.contents.pop())
 
     def match(self, x, y):
+        self.num_matched+=1
         return self.nearestsource(self, x, y)
 
     def nearestsource(self, tree, x, y):
@@ -65,19 +80,20 @@ class Quadtree:
         return nearest['source']
 
     def nearersource(self, tree, node, x, y, nearest, interest):
+        self.num_nearersources+=1
         if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
                             interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    s_dist = gu.norm(s.ximg, s.yimg, x, y)
+                    s_dist = gu.norm2(s.ximg, s.yimg, x, y)
                     if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
-                        s_dist = math.sqrt(s_dist)
-                        interest['xmin'] = x - s_dist
-                        interest['ymin'] = y - s_dist
-                        interest['xmax'] = x + s_dist
-                        interest['ymax'] = y + s_dist
+                        dist = math.sqrt(s_dist)
+                        interest['xmin'] = x - dist
+                        interest['ymin'] = y - dist
+                        interest['xmax'] = x + dist
+                        interest['ymax'] = y + dist
                         interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
                                     tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
             else:
