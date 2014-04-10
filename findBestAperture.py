@@ -5,40 +5,37 @@ PURPOSE
 import sys
 import numpy as np
 import random as r
-import time
+import math
+from subprocess import call
 import createSexConfig as sc
 import createSexParam as sp
 import phot_utils as pu
 import Sources as S
 import matplotlib.pyplot as plt
-from subprocess import call
 import Quadtree as q
-from pprint import pprint
 import geom_utils as gu
-
-MAXDIST = 1.0
 
 '''
 In this case we want the objects that DON'T match
 '''
-def disassociate(list1, tree2):
+def disassociate(list1, tree2, aperture):
+    dist = aperture/2
     unmatched = []
     while list1:
         target = list1.pop()
         match2 = tree2.match(target.ximg, target.yimg)
-        if match2 != None and gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) >= MAXDIST:
-            target.match2 = match2
+        if match2 == None or gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) >= dist:
             unmatched.append(target)
-
     return unmatched
 
 def main():
     sname = "sign"
     nname = "noise"
-    image = "NGC4374_i.fits"
+    image = sys.argv[1]
     filter_file = "default.conv"
+    assoc_file = "MeasureFluxAt.txt"
 
-    output = open("MeasureFluxAt.txt", "w")
+    output = open(assoc_file, "w")
     for i in range(0,100000):
         output.write('%.3f' % r.uniform(1,11000) + '%10.3f' % r.uniform(1,9000) + '\n')
 
@@ -46,19 +43,16 @@ def main():
     sp.createSexParam(nname, True)
     sparam_file = sname + ".param"
     nparam_file = nname + ".param"
-    assoc_file = "MeasureFluxAt.txt"
 
     signal = []
     noise = []
-    aperture = np.linspace(0.5, 15, num=1)
+    aperture = np.linspace(0.5, 15, num=5)
     for ap in aperture:
         sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
         call(['sex', '-c', sname + '.config', image])
-
         sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
         call(['sex', '-c', nname + '.config', image])
 
-        print "REMOVING THE HEADER FROM THE SOURCE EXTRACTOR CATALOG FILES"
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
 
@@ -66,45 +60,19 @@ def main():
         ntmp = filter(lambda line: pu.noHead(line), ncat)
 
         # Background measuresments can't overlap with source detections
-        # Also don't include mag_aper == 99.0
-        print "FILLING QUADTREE"
         ssources = q.Quadtree(0, 0, 11000, 9000)
         map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
-        print "QUADTREE FILLED"
 
-        start_time = time.time()
-        bkgddetections = disassociate(nsources, ssources)
-        end_time = time.time()
-        print("ELAPSED TIME WAS %g SECONDS" % (end_time - start_time))
-        ssources.debug()
+        bkgddetections = disassociate(nsources, ssources, ap)
         srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        print "FOR APERTURE", ap, "THERE ", len(bkgddetections), "MEASUREMENTS"
-
-        sflux = map(lambda s: s.mag_aper, srcdetections)
-        signal.append(pu.calcMAD(sflux))
-
-        nflux = map(lambda s: s.mag_aper, bkgddetections)
-        noise.append(pu.calcMAD(nflux))
-
-        output = open("ap_" + str(ap) + "noise.txt", "w")
+        output = open("ap_" + str(round(ap, 2)) + "noise.txt", "w")
         for source in bkgddetections:
             output.write(source.line)
-        output = open("ap_" + str(ap) + "signal.txt", "w")
+        output = open("ap_" + str(round(ap, 2)) + "signal.txt", "w")
         for source in srcdetections:
             output.write(source.line)
-
-    snr = []
-    for i in range(len(signal)):
-        snr.append(signal[i]/noise[i])
-
-    plt.plot(aperture, snr, linestyle='none', marker='o')
-    plt.show()
-    plt.plot(aperture, signal, linestyle='none', marker='o')
-    plt.show()
-    plt.plot(aperture, noise, linestyle='none', marker='o')
-    plt.show()
 
 if __name__ == '__main__':
     sys.exit(main())
