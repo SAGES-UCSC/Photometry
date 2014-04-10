@@ -14,6 +14,7 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
         aradius = "ASSOC_RADIUS"
         atype = "ASSOC_TYPE"
         aselec = "ASSOCSELEC_TYPE"
+        detect_at = "0.1"
     else:
         aname = "#ASSOC_NAME"
         adata = "#ASSOC_DATA"
@@ -21,6 +22,7 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
         aradius = "#ASSOC_RADIUS"
         atype = "#ASSOC_TYPE"
         aselec = "#ASSOCSELEC_TYPE"
+        detect_at = "5"
 
     ap = str(ap)
     seeing = str(1.2)
@@ -41,10 +43,10 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
 
                     DETECT_TYPE      CCD            # CCD (linear) or PHOTO (with gamma correction)
                     DETECT_MINAREA   5              # minimum number of pixels above threshold
-                    DETECT_THRESH    1.2            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+                    DETECT_THRESH    """+detect_at+""""      # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
                     ANALYSIS_THRESH  1.2            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
 
-                    FILTER           Y              # apply filter for detection (Y or N)?
+                    FILTER           N              # apply filter for detection (Y or N)?
                     FILTER_NAME      """+filter_file+"""   # name of the file containing the filter
 
                     DEBLEND_NTHRESH  32             # Number of deblending sub-thresholds
