@@ -86,6 +86,8 @@ These will be the set of routines that will allow to extract the photometry from
 * **createSexParam.py** - Generate a Source Extractor configuration file. This is intended to be included as a function in a larger proram.
 * **findBestAperture.py** - The first part of reconstructing the methods of Whitaker et al. (2011). This is a routine to optimize the aperture we use
   for extracting photometery.
+
+      **Calling Sequence:** python findBestAperture.py <'Input Image'>
 * **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
 
