@@ -61,7 +61,7 @@ interchanging between data sets much easier and concise. If you have a catalog t
 
 * **makeDSIMin.py** - A program to turn a catalog file into a DSIM input file.
 
-    **Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>
+    ```Calling Sequence:** python makeDSIM.py <'Input Catalog'> <'Output Name'>```
 
     **What you have to edit:** 
     * Lines 23-27 - need to be changed to suit the needs of the mask design
@@ -87,7 +87,7 @@ These will be the set of routines that will allow to extract the photometry from
 * **findBestAperture.py** - The first part of reconstructing the methods of Whitaker et al. (2011). This is a routine to optimize the aperture we use
   for extracting photometery.
 
-      **Calling Sequence:** python findBestAperture.py <'Input Image'>
+      ```Calling Sequence: python findBestAperture.py <'Input Image'>```
 * **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
 
