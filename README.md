@@ -92,6 +92,12 @@ These will be the set of routines that will allow to extract the photometry from
 * **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
 
+#### Raising an issue AKA Something sucks/Something is confusing/Something needs to be added
+
+If, while trying to use any part of this code, you find that something doesn't work right, as expected, or could be improved you can go the the
+"Issues" tab and write a post about it. It can be anything, even if you find an aspect of the documentation confusing. The Issues tab is also the
+place to request features. 
+
 #### To-Do:
 
 - [X] Finish findBestAperture.py
