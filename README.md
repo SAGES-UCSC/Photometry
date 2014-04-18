@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ##
 Alexa Villaume, for the SAGES group based at UC Santa Cruz
 
@@ -86,13 +85,13 @@ These will be the set of routines that will allow to extract the photometry from
   inputs are fairly rudimentry.
 * **createSexParam.py** - Generate a Source Extractor configuration file. This is intended to be included as a function in a larger proram.
 * **findBestAperture.py** - The first part of reconstructing the methods of Whitaker et al. (2011). This is a routine to optimize the aperture we use
-  for extracting photometery. Not fully functional yet.
+  for extracting photometery.
 * **makeRegionFile.py** - Turn a catalog into a DS9 regions file. This is written as a function to be included in a larger program, it's not to be run
   from the command line.
 
 #### To-Do:
 
-- [ ] Finish findBestAperture.py
+- [X] Finish findBestAperture.py
 - [ ] Write findZeropoint.py 
 - [ ] Fix correctMag
 - [ ] Fix magCut
