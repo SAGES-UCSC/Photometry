@@ -9,6 +9,7 @@ from astroquery.vizier import Vizier
 from astroquery.sdss import SDSS
 from astropy import coordinates as coords
 from subprocess import call
+import numpy as np
 import Quadtree as Q
 import Sources as S
 import createSexConfig as sc
@@ -46,17 +47,23 @@ def getSCAM(simage, galaxy, filter_file, ap):
     # Return magntiude column
     return map(lambda source: source.mag_auto != 99.0, sources)
 
-
 def calcZP(sdss, scam):
-    print 'blaah'
-    # Match scam and SDSS catalogs
+    # Match scam and sdss catalogs
+    scamsources = Q.Quadtree()
+    map(lambda line: scamsources.insert(line), scam)
+
+    matches = associate()
+
+    # Clip outliers of (m_sdss - m_scam)
+    std =  np.std(m_sdss - m_scam)
+    for entries in catalog if m_sdds - m_scam > std*3 then delete entry
 
     #plot to see
-    #plt.plot(m_sdss - m_scam, m_scam, linestyle='none', marker=',')
+    plt.plot(m_sdss - m_scam, m_scam, linestyle='none', marker=',')
+    plt.show()
 
-    # Clip outliers
-
-    # Taken median of offset
+    # Take median of offset
+    return phot_utils.calcMedian()
 
 def main():
 
