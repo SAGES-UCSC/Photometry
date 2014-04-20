@@ -23,7 +23,8 @@ The first step is to get git -
 Once git is set up then you can start pulling the code from the repo. Note that **Sources.py**, **Quadtree.py**, **phot_utils.py**, and
 *geom_utils.py** are all foundational parts of the code.
 
-Second, these routines depend on [astropy](http://www.astropy.org/) and [astroquery](https://github.com/astropy/astroquery)
+Second, these routines depend on [astropy](http://www.astropy.org/) and [astroquery](https://github.com/astropy/astroquery) and you have to get
+them.
 
 ##GORY DETAILS:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
