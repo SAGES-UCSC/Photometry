@@ -8,24 +8,36 @@ import sys
 from astroquery.vizier import Vizier
 from astroquery.sdss import SDSS
 from astropy import coordinates as coords
+import Quadtree as Q
+import Sources as S
 
-def main():
-
+def getSDSS(galaxy):
     # Query SDSS for a given galaxy and radius
     v = Vizier(columns=["**"], catalog="SDSS")
-    result = v.query_region("NGC3377", radius="1.0d") # Arbitray distance for now, settle on real number later
+    result = v.query_region(galaxy, radius="1.0d") # Arbitray distance for now, settle on real number later
     #for entry in result[0].colnames:
     #    print entry
 
     # Only select stellar sources
-    # This seems to make the table messy to handle. Try something else
-    stars = filter(lambda line: line['cl'] == 6, result[1])
+    # This isn't working now...
+    for i, entry in enumerate(result[1]):
+        if entry['cl'] != '6':
+            result[1].remove_row(i)
+
+    for entry in result[1]:
+        print entry['cl']
 
     # SDSS magnitudes are not exactly in AB so need to correct
 
 
+
+def getSCAM(simage)
+
+    # Use Source Extractor to get photometry
+
     # Do mag cut on scam data to remove saturateed sources
 
+def calcZP():
 
     # Match scam and SDSS catalogs
 
@@ -35,6 +47,8 @@ def main():
     # Clip outliers
 
     # Taken median of offset
+
+def main():
 
 
 if __name__ == '__main__':
