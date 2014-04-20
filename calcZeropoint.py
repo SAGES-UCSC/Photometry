@@ -38,10 +38,16 @@ def getSCAM(simage, galaxy, filter_file, ap):
     call(['sex', '-c', galaxy + '.config', simage])
     with open(galaxy + '.cat', 'r') as cat:
         tmp = filter(lambda line: phot_utils.noHead(line), cat)
+        sources = map(lambda line: S.SCAMSource(line), tmp)
 
     # Do mag cut on scam data to remove saturateed sources
+    # Best way to go about this?
 
-def calcZP():
+    # Return magntiude column
+    return map(lambda source: source.mag_auto != 99.0, sources)
+
+
+def calcZP(sdss, scam):
     print 'blaah'
     # Match scam and SDSS catalogs
 
@@ -55,8 +61,8 @@ def calcZP():
 def main():
 
     galaxy, simage = sys.argv[1], sys.argv[2]
-    getSDSS(galaxy)
-    getSCAM(simage, galaxy, "default.conv", 4)
+    calcZP(getSDSS(galaxy), getSCAM(simage, galaxy, "default.conv", 4))
+
 
 if __name__ == '__main__':
     sys.exit(main())
