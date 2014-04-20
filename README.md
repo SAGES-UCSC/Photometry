@@ -14,7 +14,14 @@ general method that holds up the current best methods. Our goals are:
 
 #### Getting and using these tools
 
-To come later. 
+The first step is to get git - 
+
+[Installing git](http://docs.astropy.org/en/stable/development/workflow/git_install.html)
+[Configuring git](http://docs.astropy.org/en/stable/development/workflow/git_configure.html)
+[Git resources](http://docs.astropy.org/en/stable/development/workflow/git_resources.html)
+
+Once git is set up then you can start pulling the code from the repo. Note that **Sources.py**, **Quadtree.py**, **phot_utils.py**, and
+*geom_utils.py** are all foundational parts of the code.
 
 ##GORY DETAILS:
 The basis for most of the routines are treating the sources in each catalog as objects. Look at **Sources.py** to get idea of this. Basically, in
