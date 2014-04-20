@@ -15,6 +15,17 @@ import Sources as S
 import createSexConfig as sc
 import createSexParam as sp
 import phot_utils
+import geom_utils as gu
+
+def associate(list1, tree2, aperture):
+    dist = aperture/2
+    while list1:
+        target = list1.pop()
+        match2 = tree2.match(target.ximg, target.yimg)
+        if match2 != None and gu.norm2(match2['ra'], match2['dec'], target.ra, target.dec) <= dist:
+            target.match2 = match2
+
+    return list1
 
 def getSDSS(galaxy):
     # Query SDSS for a given galaxy and radius
@@ -44,26 +55,27 @@ def getSCAM(simage, galaxy, filter_file, ap):
     # Do mag cut on scam data to remove saturateed sources
     # Best way to go about this?
 
-    # Return magntiude column
-    return map(lambda source: source.mag_auto != 99.0, sources)
+    # Return list of scam sources
+    return sources
 
 def calcZP(sdss, scam):
     # Match scam and sdss catalogs
-    scamsources = Q.Quadtree()
-    map(lambda line: scamsources.insert(line), scam)
+    sdsssources = Q.Quadtree(min(sdss['RAJ2000']) - 0.1, min(sdss['DEJ2000']) - 0.1,
+            max(sdss['RAJ2000']) + 0.1, max(sdss['DEJ2000']) + 0.1)
+    map(lambda line: sdsssources.insert(line), sdss)
 
-    matches = associate()
+    matches = associate(scam, sdsssources, 4)
 
-    # Clip outliers of (m_sdss - m_scam)
-    std =  np.std(m_sdss - m_scam)
-    for entries in catalog if m_sdds - m_scam > std*3 then delete entry
+    ## Clip outliers of (m_sdss - m_scam)
+    #std =  np.std(matches.match2['g_mag'] - m_scam.mag_aper)
+    #for entries in catalog if m_sdds - m_scam > std*3 then delete entry
 
-    #plot to see
-    plt.plot(m_sdss - m_scam, m_scam, linestyle='none', marker=',')
-    plt.show()
+    ##plot to see
+    #plt.plot(m_sdss - m_scam, m_scam, linestyle='none', marker=',')
+    #plt.show()
 
-    # Take median of offset
-    return phot_utils.calcMedian()
+    ## Take median of offset
+    #return phot_utils.calcMedian()
 
 def main():
 
