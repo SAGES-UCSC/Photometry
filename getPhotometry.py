@@ -73,7 +73,7 @@ def main():
         # Re-name the check images created
         checks = (glob.glob('*.fits'))
         for check in checks:
-            os.rename(check,
+            os.rename(check, fname + '_' + check)
 
 if __name__ == '__main__':
     sys.exit(main())
