@@ -10,6 +10,8 @@ import Sources as sources
 import createSexConfig
 import createSexParam
 import findBestAperture
+import phot_utils
+import geom_utils
 
 def load_file(f, **kwargs):
     if kwargs['verbose']:
@@ -24,12 +26,16 @@ def load_file(f, **kwargs):
 
 def calc_seeing(catalog):
     with open(catalog, 'r') as f:
-        cat = map(lambda line: sources.SCAMSource(line), f)
-    # Make size and brightness cut so only using the best
+        tmp = filter(lambda line: phot_utils.noHead(line), f)
+        cat = map(lambda line: sources.SCAMSource(line), tmp)
+    # Make shape and brightness cut so only using the best
     # point sources
+    shape = map(lambda s: s.a_world, cat)
+    peak = phot_utils.detSizeCut(shape, 1000)
+    ptsources = filter(lambda s: s.a_world <= peak, cat)
+    ptsources = filter(lambda s: s.mag_aper <= 20, ptsources)
 
-    fwhm = filter(lambda line: line.fwhm, cat)
-
+    fwhm = map(lambda line: line.fwhm, ptsources)
     return sum(fwhm)/len(fwhm)
 
 def main():
@@ -48,16 +54,16 @@ def main():
     for i, img in enumerate(imgs):
         image = load_file(img, verbose=False)
         satur = image[0].header['SATURATE']
-        seeing = 1
-        ap = findBestAperture.findBestAperture(img, satur, seeing)
+#        seeing = 1
+#        ap = findBestAperture.findBestAperture(img, satur, seeing)
         fname = system + '_' + img[-6]
-        # Extract sources with initial rough estimate of seeing
-        config = createSexConfig.createSexConfig(fname, filter_file,
-                 param_file, satur, seeing, "nill", ap, False)
-        call(['sex', '-c', config, galsub[i], img])
+#        # Extract sources with initial rough estimate of seeing
+#        config = createSexConfig.createSexConfig(fname, filter_file,
+#                 param_file, satur, seeing, "nill", ap, False)
+#        call(['sex', '-c', config, galsub[i], img])
         seeing = calc_seeing(fname + '.cat')
 
-        # Recalculate with refined seeing
+        # Re-extract with refined seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing, "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
