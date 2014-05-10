@@ -1,12 +1,16 @@
 """
 PURPOSE
-    To find the optimum aperture
+    To find the optimum aperture for an image
 """
 import sys
 import numpy as np
+import os
 import random as r
 import math
 from subprocess import call
+import matplotlib.pyplot as plt
+import time
+
 import createSexConfig as sc
 import createSexParam as sp
 import phot_utils as pu
@@ -23,20 +27,25 @@ def disassociate(list1, tree2, aperture):
     unmatched = []
     while list1:
         target = list1.pop()
-        match2 = tree2.match(target.ximg, target.yimg)
-        if match2 == None or gu.norm2(match2.ximg, match2.yimg, target.ximg, target.yimg) >= dist:
-            unmatched.append(target)
+        if target.mag_aper != 99.00:
+            match2 = tree2.match(target.ximg, target.yimg)
+            # Switch over to care about difft coord systems
+            if match2 == None or match2.mag_aper != 99.0 or \
+                gu.pixnorm(match2.ximg, match2.yimg, target.ximg, target.yimg) >= dist:
+                unmatched.append(target)
     return unmatched
 
-def main():
+def findBestAperture(image, satur, seeing):
+    if os.path.isdir('BestApertureFiles') == False:
+        os.mkdir('BestApertureFiles')
+
     sname = "sign"
     nname = "noise"
-    image = sys.argv[1]
     filter_file = "default.conv"
-    assoc_file = "MeasureFluxAt.txt"
+    assoc_file = "measurefluxat.txt"
 
     output = open(assoc_file, "w")
-    for i in range(0,100000):
+    for i in xrange(0,100000):
         output.write('%.3f' % r.uniform(1,11000) + '%10.3f' % r.uniform(1,9000) + '\n')
 
     sp.createSexParam(sname, False)
@@ -46,33 +55,52 @@ def main():
 
     signal = []
     noise = []
-    aperture = np.linspace(0.5, 15, num=5)
+    aperture = np.linspace(0.5, 10, num=7)
     for ap in aperture:
-        sc.createSexConfig(sname, filter_file, sparam_file, "nill", ap, False)
+        sc.createSexConfig(sname, filter_file, sparam_file, satur, seeing, "nill", ap, False)
         call(['sex', '-c', sname + '.config', image])
-        sc.createSexConfig(nname, filter_file, nparam_file, assoc_file, ap, True)
+        sc.createSexConfig(nname, filter_file, nparam_file, satur, seeing, assoc_file, ap, True)
         call(['sex', '-c', nname + '.config', image])
 
         scat = open(sname + ".cat")
         stmp = filter(lambda line: pu.noHead(line), scat)
-
         ncat = open(nname + ".cat")
         ntmp = filter(lambda line: pu.noHead(line), ncat)
 
         # Background measuresments can't overlap with source detections
-        ssources = q.Quadtree(0, 0, 11000, 9000)
+        ssources = q.Quadtree(0, 0, 12000, 10000)
         map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
+        start = time.time()
         bkgddetections = disassociate(nsources, ssources, ap)
+        end = time.time()
+        print("ELAPSED TIME: " + str(end-start))
         srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        output = open("ap_" + str(round(ap, 2)) + "noise.txt", "w")
-        for source in bkgddetections:
-            output.write(source.line)
-        output = open("ap_" + str(round(ap, 2)) + "signal.txt", "w")
-        for source in srcdetections:
-            output.write(source.line)
+        flux = map(lambda f: f.flux_aper, bkgddetections)
+        noise.append(pu.calcMAD(flux))
+
+        flux = map(lambda f: f.flux_aper, srcdetections)
+        signal.append(pu.calcMAD(flux))
+
+        with open(image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", "w") as output:
+            for source in bkgddetections:
+                output.write(source.line)
+        call(['mv', image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", 'BestApertureFiles'])
+
+        with open(image[-6] + "_ap_" + str(round(ap, 2)) + "signal.txt", "w") as output:
+            for source in srcdetections:
+                output.write(source.line)
+        call(['mv', image[-6] + "_ap_" + str(round(ap, 2)) + "signal.txt", 'BestApertureFiles'])
+
+    snr = []
+    for i in range(len(noise)):
+        snr.append(signal[i]/noise[i])
+    plt.plot(aperture, snr, linestyle='none', marker='o')
+    plt.savefig(image + '_snr.png')
+    maxsnr = snr.index(max(snr))
+    return aperture[maxsnr]
 
 if __name__ == '__main__':
     sys.exit(main())
