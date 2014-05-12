@@ -11,16 +11,16 @@ def createSexParam(name, doassoc):
     fout.write("""
 NUMBER                 Running object number
 #EXT_NUMBER             FITS extension number
-#FLUX_ISO               Isophotal flux                                             [count]
-#FLUXERR_ISO            RMS error for isophotal flux                               [count]
+FLUX_ISO               Isophotal flux                                             [count]
+FLUXERR_ISO            RMS error for isophotal flux                               [count]
 #MAG_ISO                Isophotal magnitude                                        [mag]
 #MAGERR_ISO             RMS error for isophotal magnitude                          [mag]
 #FLUX_ISOCOR            Corrected isophotal flux                                   [count]
 #FLUXERR_ISOCOR         RMS error for corrected isophotal flux                     [count]
 #MAG_ISOCOR             Corrected isophotal magnitude                              [mag]
 #MAGERR_ISOCOR          RMS error for corrected isophotal magnitude                [mag]
-#FLUX_APER              Flux vector within fixed circular aperture(s)              [count]
-#FLUXERR_APER           RMS error vector for aperture flux(es)                     [count]
+FLUX_APER              #Flux vector within fixed circular aperture(s)              [count]
+FLUXERR_APER           #RMS error vector for aperture flux(es)                     [count]
 #FLUX_AUTO              Flux within a Kron-like elliptical aperture                [count]
 #FLUXERR_AUTO           RMS error for AUTO flux                                    [count]
 #FLUX_PETRO             Flux within a Petrosian-like elliptical aperture           [count]
@@ -98,10 +98,10 @@ A_WORLD                Profile RMS along major axis (world units)               
 ERRA_WORLD             World RMS position error along major axis                  [deg]
 B_WORLD                Profile RMS along minor axis (world units)                 [deg]
 ERRB_WORLD             World RMS position error along minor axis                  [deg]
-#ERRTHETA_WORLD         Error ellipse pos. angle (CCW/world-x)                     [deg]
-#THETA_WORLD            Position angle (CCW/world-x)                               [deg]
+ERRTHETA_WORLD         Error ellipse pos. angle (CCW/world-x)                     [deg]
+THETA_WORLD            Position angle (CCW/world-x)                               [deg]
 #THETA_SKY              Position angle (east of north) (native)                    [deg]
-THETA_J2000            Position angle (east of north) (J2000)                     [deg]
+#THETA_J2000            Position angle (east of north) (J2000)                     [deg]
 #THETA_B1950            Position angle (east of north) (B1950)                     [deg]
 #ERRX2_IMAGE            Variance of position along x                               [pixel**2]
 #ERRY2_IMAGE            Variance of position along y                               [pixel**2]
@@ -193,16 +193,16 @@ FLAGS                  Extraction flags
 #FLAGS_WIN              Flags for WINdowed parameters
 #IMAFLAGS_ISO           FLAG-image flags OR'ed over the iso. profile
 #NIMAFLAGS_ISO          Number of flagged pixels entering IMAFLAGS_ISO
-#FWHM_IMAGE             FWHM assuming a gaussian core                              [pixel]
+FWHM_IMAGE             FWHM assuming a gaussian core                              [pixel]
 #FWHM_WORLD             FWHM assuming a gaussian core                              [deg]
-#ELONGATION             A_IMAGE/B_IMAGE
+ELONGATION             A_IMAGE/B_IMAGE
 #ELLIPTICITY            1 - B_IMAGE/A_IMAGE
 #POLAR_IMAGE            (A_IMAGE^2 - B_IMAGE^2)/(A_IMAGE^2 + B_IMAGE^2)
 #POLAR_WORLD            (A_WORLD^2 - B_WORLD^2)/(A_WORLD^2 + B_WORLD^2)
 #POLARWIN_IMAGE         (AWIN^2 - BWIN^2)/(AWIN^2 + BWIN^2)
 #POLARWIN_WORLD         (AWIN^2 - BWIN^2)/(AWIN^2 + BWIN^2)
 #CLASS_STAR             S/G classifier output
-#VIGNET                 Pixel data around detection                                [count]
+VIGNET                 #Pixel data around detection                                [count]
 #VIGNET_SHIFT           Pixel data around detection, corrected for shift           [count]
 """+va+"""           #ASSOCiated parameter vector
 """+na+"""           #Number of ASSOCiated IDs

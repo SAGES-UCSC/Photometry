@@ -1,10 +1,9 @@
 """
 Create a source extractor configuration file based on input parameters.
-
-Need to include aperture stuff
+http://www.naoj.org/Observing/Instruments/SCam/parameters.html
 """
 
-def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
+def createSexConfig(name, filter_file, param_file, satur, seeing, assoc_file, ap, doassoc):
     config = name + '.config'
 
     if doassoc == True:
@@ -25,9 +24,10 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
         detect_at = "5"
 
     ap = str(ap)
-    seeing = str(1.2)
-    zp = str(0)            # Going to correct zeropoints after the final catalog is made
-    gain = str(2.5)        # From the Subaru S-Cam website
+    seeing = str(seeing)
+    zp = str(30)           # Going to correct zeropoints after the final catalog is made
+    gain = str(3.1)        # From the Subaru S-Cam website
+    satur = str(satur)   # Divided value from S-Cam webstie by gain
     fout = open(config,'w')
     fout.write("""
                     #
@@ -75,7 +75,7 @@ def createSexConfig(name, filter_file, param_file,  assoc_file, ap, doassoc):
                     # for MAG_AUTO and MAG_PETRO
                     PHOT_FLUXFRAC    0.5            # flux fraction[s] used for FLUX_RADIUS
 
-                    SATUR_LEVEL      5000000000000000000.0        # level (in ADUs) at which arises saturation
+                    SATUR_LEVEL      """+satur+"""       # level (in ADUs) at which arises saturation
 
                     MAG_ZEROPOINT     """+zp+"""            # magnitude zero-point
                     MAG_GAMMA        4.0            # gamma of emulsion (for photographic scans)
