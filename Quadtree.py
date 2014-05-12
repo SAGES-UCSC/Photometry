@@ -4,11 +4,12 @@ Implement a quadtree
 import geom_utils as gu
 import math
 
-MAX = 25
+MAX = 50
 
 class Quadtree:
-    def __init__(self, xmin, ymin, xmax, ymax):
+    def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
         self.top = Node(xmin, ymin, xmax, ymax)
+        self.coord = kwargs['coord']
         self.num_subdivides = 0
         self.num_inserttonodes = 0
         self.num_matched = 0
@@ -38,16 +39,35 @@ class Quadtree:
 
     def inserttoquad(self, node, source):
         self.num_inserttoquads+=1
-        if source.ximg >= node.xmid:
-            if source.yimg >= node.ymid:
-                quadrant = node.q1
+        # Get working the res to make more flexible
+        if self.coord == 'pix' or self.coord == None:
+            if source.ximg >= node.xmid:
+                if source.yimg >= node.ymid:
+                    quadrant = node.q1
+                else:
+                    quadrant = node.q4
             else:
-                quadrant = node.q4
+                if source.yimg >= node.ymid:
+                    quadrant = node.q2
+                else:
+                    quadrant = node.q3
+        # make sure xmid and ymid are consistent
+        # fix so not hardcoding/can use different
+        # object types
+        elif self.coord == 'equatorial':
+            if source['RAJ2000'] >= node.xmid:
+                if source['DEJ2000'] >= node.ymid:
+                    quadrant = node.q1
+                else:
+                    quadrant = node.q4
+            else:
+                if source['DEJ2000'] >= node.ymid:
+                    quadrant = node.q1
+                else:
+                    quadrant = node.q4
         else:
-            if source.yimg >= node.ymid:
-                quadrant = node.q2
-            else:
-                quadrant = node.q3
+            print "you did not enter a coordinate system recognized. Try again."
+            # bail out of the proram better
         self.inserttonode(quadrant, source)
 
     def subdivide(self, node):
@@ -69,8 +89,16 @@ class Quadtree:
         nearest = {'source':None, 'dist':0}
 
         # Initialize a box of interest
-        nearest['dist'] = min(tree.top.xmax - tree.top.xmin, tree.top.ymax - tree.top.ymin) / 1000.0
-        interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'], 'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
+        if self.coord == 'pix' or self.coord == None:
+            nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
+                                  tree.top.ymax - tree.top.ymin) / 1000.0
+        elif self.coord == 'equatorial':
+            nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
+                                  tree.top.ymax - tree.top.ymin) / 1.0 # What should this be?
+        else:
+            print "you did not specify a coordinate system recognized"
+        interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'],
+                    'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
         interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
                     tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
         nearest['dist'] = nearest['dist'] * nearest['dist']
@@ -85,7 +113,13 @@ class Quadtree:
                             interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    s_dist = gu.norm2(s.ximg, s.yimg, x, y)
+                    if self.coord == 'pix' or self.coord == None:
+                        s_dist = gu.pixnorm2(s.ximg, s.yimg, x, y)
+                    elif self.coord == 'equatorial':
+                        s_dist = gu.equnorm2(s['RAJ2000'], s['DEJ2000'], x, y)
+                    else:
+                        print "you did not specify a coordinate system recognized"
+                        # Bail out better
                     if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
@@ -94,8 +128,10 @@ class Quadtree:
                         interest['ymin'] = y - dist
                         interest['xmax'] = x + dist
                         interest['ymax'] = y + dist
-                        interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
-                                    tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
+                        interest = gu.clip_box(interest['xmin'], interest['ymin'],
+                                               interest['xmax'], interest['ymax'],
+                                               tree.top.xmin, tree.top.ymin,
+                                               tree.top.xmax, tree.top.ymax)
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
                 self.nearersource(tree, node.q2, x, y, nearest, interest)

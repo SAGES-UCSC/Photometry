@@ -27,12 +27,9 @@ def disassociate(list1, tree2, aperture):
     unmatched = []
     while list1:
         target = list1.pop()
-        if target.mag_aper != 99.00:
-            match2 = tree2.match(target.ximg, target.yimg)
-            # Switch over to care about difft coord systems
-            if match2 == None or match2.mag_aper != 99.0 or \
-                gu.pixnorm(match2.ximg, match2.yimg, target.ximg, target.yimg) >= dist:
-                unmatched.append(target)
+        match2 = tree2.match(target.ximg, target.yimg)
+        if match2 == None or gu.pixnorm(match2.ximg, match2.yimg, target.ximg, target.yimg) >= dist:
+            unmatched.append(target)
     return unmatched
 
 def findBestAperture(image, satur, seeing):
@@ -55,7 +52,7 @@ def findBestAperture(image, satur, seeing):
 
     signal = []
     noise = []
-    aperture = np.linspace(0.5, 10, num=7)
+    aperture = np.linspace(0.5, 12, num=10)
     for ap in aperture:
         sc.createSexConfig(sname, filter_file, sparam_file, satur, seeing, "nill", ap, False)
         call(['sex', '-c', sname + '.config', image])
@@ -63,12 +60,12 @@ def findBestAperture(image, satur, seeing):
         call(['sex', '-c', nname + '.config', image])
 
         scat = open(sname + ".cat")
-        stmp = filter(lambda line: pu.noHead(line), scat)
+        stmp = filter(lambda line: pu.no_head(line), scat)
         ncat = open(nname + ".cat")
-        ntmp = filter(lambda line: pu.noHead(line), ncat)
+        ntmp = filter(lambda line: pu.no_head(line), ncat)
 
         # Background measuresments can't overlap with source detections
-        ssources = q.Quadtree(0, 0, 12000, 10000)
+        ssources = q.Quadtree(0, 0, 12000, 10000, coord='pix')
         map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
@@ -78,11 +75,11 @@ def findBestAperture(image, satur, seeing):
         print("ELAPSED TIME: " + str(end-start))
         srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        flux = map(lambda f: f.flux_aper, bkgddetections)
-        noise.append(pu.calcMAD(flux))
+        flux = map(lambda f: f.mag_aper, bkgddetections)
+        noise.append(pu.calc_MAD(flux))
 
-        flux = map(lambda f: f.flux_aper, srcdetections)
-        signal.append(pu.calcMAD(flux))
+        flux = map(lambda f: f.mag_aper, srcdetections)
+        signal.append(pu.calc_MAD(flux))
 
         with open(image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", "w") as output:
             for source in bkgddetections:
@@ -98,6 +95,7 @@ def findBestAperture(image, satur, seeing):
     for i in range(len(noise)):
         snr.append(signal[i]/noise[i])
     plt.plot(aperture, snr, linestyle='none', marker='o')
+    plt.show()
     plt.savefig(image + '_snr.png')
     maxsnr = snr.index(max(snr))
     return aperture[maxsnr]
