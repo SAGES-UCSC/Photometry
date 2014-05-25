@@ -7,6 +7,23 @@ import geom_utils as gu
 MAX = 50
 
 class Quadtree(object):
+    class Node(object):
+        def __init__(self, xmin, ymin, xmax, ymax):
+            self.xmin = float(xmin)
+            self.ymin = float(ymin)
+            self.xmax = float(xmax)
+            self.ymax = float(ymax)
+            self.xmid = (self.xmin + self.xmax)/2
+            self.ymid = (self.ymin + self.ymax)/2
+            self.q1 = self.q2 = self.q3 = self.q4 = None
+            self.contents = []
+
+    class Point(object)
+        def __init__(self, source):
+            self.source = source
+            self.x = source.ximg
+            self.y = source.yimg
+
     def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
         if 'coord' in kwargs:
             self.coord = kwargs['coord']
@@ -129,11 +146,6 @@ class Quadtree(object):
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
                 self.nearersource(tree, node.q4, x, y, nearest, interest)
 
-class Point()
-    def __init__(self, source):
-        self.source = source
-        self.x = source.ximg
-        self.y = source.yimg
 
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, source):
@@ -150,13 +162,3 @@ class VizierEquatorialQuadtree(Quadtree):
         super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
     def insert():
 
-class Node(object):
-    def __init__(self, xmin, ymin, xmax, ymax):
-        self.xmin = float(xmin)
-        self.ymin = float(ymin)
-        self.xmax = float(xmax)
-        self.ymax = float(ymax)
-        self.xmid = (self.xmin + self.xmax)/2
-        self.ymid = (self.ymin + self.ymax)/2
-        self.q1 = self.q2 = self.q3 = self.q4 = None
-        self.contents = []
