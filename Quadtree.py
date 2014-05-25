@@ -1,12 +1,14 @@
-'''
-Quadtree superclass. Only functions that are agnostic to type of coordinates used.
-'''
 import math
 import geom_utils as gu
 
 MAX = 50
 
 class Quadtree(object):
+    """
+    Quadtree base class. Only functions that are agnostic to
+    the type of coordinate system or source object used. Must
+    use a subclass.
+    """
     class Node(object):
         def __init__(self, xmin, ymin, xmax, ymax):
             self.xmin = float(xmin)
@@ -19,20 +21,18 @@ class Quadtree(object):
             self.contents = []
 
     class Point(object):
+        """
+        The point of Point (heh.) is to have a uniform object that
+        can be passed around the Quadtree. This makes for
+        easy switching between equatorial and pixel coordinate
+        systems or different objects.
+        """
         def __init__(self, source, x, y):
             self.source = source
             self.x = float(x)
             self.y = float(y)
 
-    def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
-        if 'coord' in kwargs:
-            self.coord = kwargs['coord']
-        else:
-            self.coord = None
-        if 'objtype' in kwargs:
-            self.objtype = kwargs['objtype']
-        else:
-            self.objtype = None
+    def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
         self.num_subdivides = 0
         self.num_insert = 0
@@ -42,12 +42,12 @@ class Quadtree(object):
         self.num_nearersources = 0
 
     def debug(self):
-        print "Number of subdivides: ", self.num_subdivides
-        print "Inserttonode was called %d times", self.num_inserttonodes
-        print "Matched was called %d times", self.num_matched
-        print "Inserttoquad was called %d times", self.num_inserttoquads
-        print "Nearer sources was called %d times", self.num_nearersources
-        print "Insert was called %d times", self.num_insert
+        print "Number of subdivides: %d" % self.num_subdivides
+        print "Inserttonode was called %d times" % self.num_inserttonodes
+        print "Matched was called %d times" % self.num_matched
+        print "Inserttoquad was called %d times" % self.num_inserttoquads
+        print "Nearer sources was called %d times" % self.num_nearersources
+        print "Insert was called %d times" % self.num_insert
 
     def inserttonode(self, node, source):
         self.num_inserttonodes+=1
@@ -79,7 +79,7 @@ class Quadtree(object):
         node.q2 = Node(node.xmin, node.ymid, node.xmid, node.ymax)
         node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
         node.q4 = Node(node.xmid, node.ymin, node.xmax, node.ymid)
-        # pop the list and insert the sources as they come off
+        # Pop the list and insert the sources as they come off
         while node.contents:
             self.inserttoquad(node, node.contents.pop())
 
@@ -89,9 +89,8 @@ class Quadtree(object):
 
     def nearestsource(self, tree, x, y):
         nearest = {'source':None, 'dist':0}
-        # Need to include this next line somehow in the subclasses
-        nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
-                              tree.top.ymax - tree.top.ymin)/1000.0
+        nearest['dist'] = initial_dist(tree.top.xmax, tree.top.xmin,
+                                       tree.top.ymax, tree.top.ymin)
         interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'],
                     'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
         interest = gu.clip_box(interest['xmin'], interest['ymin'],
@@ -112,7 +111,7 @@ class Quadtree(object):
                 for s in node.contents:
                     s_dist = norm2(s.x, s.y, x, y)
                     if s_dist < nearest['dist']:
-                        nearest['source'] = s
+                        nearest['source'] = s.source
                         nearest['dist'] = s_dist
                         dist = math.sqrt(s_dist)
                         interest['xmin'] = x - dist
@@ -140,6 +139,11 @@ class ScamPixelQuadtree(Quadtree):
     def norm2(x1, y1, x2, y2);
         return gu.pixnorm2(x1, y1, x2, y2)
 
+        nearest['dist'] = initial_dist(tree.top.xmax, tree.top.xmin,
+                                       tree.top.ymax, tree.top.ymin)
+    def initial_dist(x2, x1, y1, y1):
+        return  min(x2 - x1, y2 - y1)/1000.0
+
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(ScamEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
@@ -151,6 +155,9 @@ class ScamEquatorialQuadtree(Quadtree):
     def norm2(x1, y1, x2, y2);
         return gu.equnorm2(x1, y1, x2, y2)
 
+    def initial_dist(x2, x1, y1, y1):
+        return  min(x2 - x1, y2 - y1)/0.1
+
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(VizierEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
@@ -161,4 +168,7 @@ class VizierEquatorialQuadtree(Quadtree):
 
     def norm2(x1, y1, x2, y2);
         return gu.equnorm2(x1, y1, x2, y2)
+
+    def initial_dist(x2, x1, y1, y1):
+        return  min(x2 - x1, y2 - y1)/0.1
 
