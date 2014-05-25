@@ -162,7 +162,7 @@ class ScamEquatorialQuadtree(Quadtree):
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, node):
-        super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax)
+        super(vizierEquatorial, self).__init__(xmin, ymin, xmax, ymax)
     def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
