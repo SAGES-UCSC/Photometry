@@ -155,14 +155,14 @@ class ScamPixelQuadtree(Quadtree):
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
-        super(scamEquatorial, self).__init__(xmin, ymin, xmax, ymax)
+        super(ScamEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
     def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source.ra, source.dec))
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
-        super(vizierEquatorial, self).__init__(xmin, ymin, xmax, ymax)
+        super(VizierEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
     def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
