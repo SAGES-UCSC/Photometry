@@ -46,30 +46,17 @@ def clip_box(bxmin, bymin, bxmax, bymax, boundsxmin, boundsymin, boundsxmax, bou
     return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
             'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
 
-class norm(object):
-    """
-    Class and subfunctions to calculate the norm for
-    both pixel-coordinate objects and ra/dec objects
-    """
-    def __init__(self, f):
-        self.f = f
-
-    def __call__(self, x1, y1, x2, y2):
-        return self.f(x1, y1, x2, y2)
-@norm
 def equnorm(x1, y1, x2, y2):
     return math.sqrt(equnorm2(x1, y1, x2, y2))
 
-@norm
 def equnorm2(x1, y1, x2, y2):
     a = ((x1-x2)*math.cos(y1))*((x1-x2)*math.cos(y1))
     b = (y1-y2)*(y1-y2)
     return a + b
-@norm
+
 def pixnorm(x1, y1, x2, y2):
     return math.sqrt(pixnorm2(x1, y1, x2, y2))
 
-@norm
 def pixnorm2(x1, y1, x2, y2):
     xd = x2 - x1
     yd = y2 -y1
