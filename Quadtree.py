@@ -149,7 +149,7 @@ class Quadtree(object):
 
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
-        super(scamPixel, self).__init__(xmin, ymin, xmax, ymax, cord='pixel')
+        super(ScamPixelQuadtree, self).__init__(xmin, ymin, xmax, ymax, cord='pixel')
     def insert():
 
 class ScamEquatorialQuadtree(Quadtree):
