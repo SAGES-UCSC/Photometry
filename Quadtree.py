@@ -138,7 +138,7 @@ class ScamPixelQuadtree(Quadtree):
         self.inserttnode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(x1, y1, x2, y2);
-        gu.pixnorm2(x1, y1, x2, y2)
+        return gu.pixnorm2(x1, y1, x2, y2)
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -149,7 +149,7 @@ def insert(self, source):
         self.inserttnode(self.top, Point(source, source.ra, source.dec))
 
     def norm2(x1, y1, x2, y2);
-        gu.equnorm2(x1, y1, x2, y2)
+        return gu.equnorm2(x1, y1, x2, y2)
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -160,5 +160,5 @@ class VizierEquatorialQuadtree(Quadtree):
         self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
 
     def norm2(x1, y1, x2, y2);
-        gu.equnorm2(x1, y1, x2, y2)
+        return gu.equnorm2(x1, y1, x2, y2)
 
