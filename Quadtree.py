@@ -49,20 +49,6 @@ class Quadtree(object):
         print "Nearer sources was called %d times", self.num_nearersources
         print "Insert was called %d times", self.num_insert
 
-    def insert(self, source):
-        self.num_insert+=1
-        # Any way to move this into __init__(). It's unnecessary to
-        # To do this for every
-        if self.objtype == 'subaru' or self.objtype == None:
-            if self.coord == 'pixel' or self.coord == None:
-                source = scamPixel(source)
-            elif self.coord == 'equatorial':
-                source = scamEquatorial(source)
-        elif self.objtype == 'vizier':
-            source = vizerEquatorial(source)
-
-        self.inserttonode(self.top, source)
-
     def inserttonode(self, node, source):
         self.num_inserttonodes+=1
         if len(node.contents) == MAX:
