@@ -110,10 +110,7 @@ class Quadtree(object):
                           interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    if self.coord == 'pixel' or self.coord == None:
-                        s_dist = gu.pixnorm2(s.x, s.y, x, y)
-                    elif self.coord == 'equatorial':
-                        s_dist = gu.equnorm2(s.x, s.y, x, y)
+                    s_dist = pixnorm2(s.x, s.y, x, y)
                     if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
@@ -135,21 +132,33 @@ class Quadtree(object):
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(ScamPixelQuadtree, self).__init__(xmin, ymin, xmax, ymax)
+
     def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source.ximg, source.yimg))
 
+    def norm2(x1, y1, x2, y2);
+        gu.pixnorm2(x1, y1, x2, y2)
+
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(ScamEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
-    def insert(self, source):
+
+def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source.ra, source.dec))
+
+    def norm2(x1, y1, x2, y2);
+        gu.equnorm2(x1, y1, x2, y2)
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(VizierEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
+
     def insert(self, source):
         self.num_insert+=1
         self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
+
+    def norm2(x1, y1, x2, y2);
+        gu.equnorm2(x1, y1, x2, y2)
 
