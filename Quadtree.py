@@ -18,7 +18,7 @@ class Quadtree(object):
             self.q1 = self.q2 = self.q3 = self.q4 = None
             self.contents = []
 
-    class Point(object)
+    class Point(object):
         def __init__(self, source):
             self.source = source
             self.x = source.ximg
@@ -148,8 +148,8 @@ class Quadtree(object):
 
 
 class ScamPixelQuadtree(Quadtree):
-    def __init__(self, source):
-        #super(scamPixel, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='pixel')
+    def __init__(self, xmin, ymin, xmax, ymax):
+        super(scamPixel, self).__init__(xmin, ymin, xmax, ymax, cord='pixel')
     def insert():
 
 class ScamEquatorialQuadtree(Quadtree):
