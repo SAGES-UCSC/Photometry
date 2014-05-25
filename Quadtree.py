@@ -1,16 +1,24 @@
 '''
-Implement a quadtree
+Quadtree superclass. Only functions that are agnostic to type of coordinates used.
 '''
-import geom_utils as gu
 import math
+import geom_utils as gu
 
 MAX = 50
 
-class Quadtree:
+class Quadtree(object):
     def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
+        if 'coord' in kwargs:
+            self.coord = kwargs['coord']
+        else:
+            self.coord = None
+        if 'objtype' in kwargs:
+            self.objtype = kwargs['objtype']
+        else:
+            self.objtype = None
         self.top = Node(xmin, ymin, xmax, ymax)
-        self.coord = kwargs['coord']
         self.num_subdivides = 0
+        self.num_insert = 0
         self.num_inserttonodes = 0
         self.num_matched = 0
         self.num_inserttoquads = 0
@@ -22,15 +30,26 @@ class Quadtree:
         print "Matched was called %d times", self.num_matched
         print "Inserttoquad was called %d times", self.num_inserttoquads
         print "Nearer sources was called %d times", self.num_nearersources
+        print "Insert was called %d times", self.num_insert
 
     def insert(self, source):
-        self.inserttonode(self.top, source)
+        self.num_insert+=1
+        # Any way to move this into __init__(). It's unnecessary to
+        # To do this for every
+        if self.objtype == 'subaru' or self.objtype == None:
+            if self.coord == 'pixel' or self.coord == None:
+                node = scamPixel(source)
+            elif self.coord == 'equatorial':
+                node = scamEquatorial(source)
+        elif self.objtype == 'vizier':
+            node = vizerEquatorial(source)
+
+        self.inserttonode(self.top, node)
 
     def inserttonode(self, node, source):
         self.num_inserttonodes+=1
         if len(node.contents) == MAX:
             self.subdivide(node)
-
         if node.q1:
             self.inserttoquad(node, source)
         else:
@@ -39,35 +58,16 @@ class Quadtree:
 
     def inserttoquad(self, node, source):
         self.num_inserttoquads+=1
-        # Get working the res to make more flexible
-        if self.coord == 'pix' or self.coord == None:
-            if source.ximg >= node.xmid:
-                if source.yimg >= node.ymid:
-                    quadrant = node.q1
-                else:
-                    quadrant = node.q4
+        if source.x >= node.xmid:
+            if source.y >= node.ymid:
+                quadrant = node.q1
             else:
-                if source.yimg >= node.ymid:
-                    quadrant = node.q2
-                else:
-                    quadrant = node.q3
-        # make sure xmid and ymid are consistent
-        # fix so not hardcoding/can use different
-        # object types
-        elif self.coord == 'equatorial':
-            if source['RAJ2000'] >= node.xmid:
-                if source['DEJ2000'] >= node.ymid:
-                    quadrant = node.q1
-                else:
-                    quadrant = node.q4
-            else:
-                if source['DEJ2000'] >= node.ymid:
-                    quadrant = node.q1
-                else:
-                    quadrant = node.q4
+                quadrant = node.q4
         else:
-            print "you did not enter a coordinate system recognized. Try again."
-            # bail out of the proram better
+            if source.y >= node.ymid:
+                quadrant = node.q2
+            else:
+                quadrant = node.q3
         self.inserttonode(quadrant, source)
 
     def subdivide(self, node):
@@ -76,7 +76,6 @@ class Quadtree:
         node.q2 = Node(node.xmin, node.ymid, node.xmid, node.ymax)
         node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
         node.q4 = Node(node.xmid, node.ymin, node.xmax, node.ymid)
-
         # pop the list and insert the sources as they come off
         while node.contents:
             self.inserttoquad(node, node.contents.pop())
@@ -87,39 +86,31 @@ class Quadtree:
 
     def nearestsource(self, tree, x, y):
         nearest = {'source':None, 'dist':0}
-
-        # Initialize a box of interest
-        if self.coord == 'pix' or self.coord == None:
-            nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
-                                  tree.top.ymax - tree.top.ymin) / 1000.0
-        elif self.coord == 'equatorial':
-            nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
-                                  tree.top.ymax - tree.top.ymin) / 1.0 # What should this be?
-        else:
-            print "you did not specify a coordinate system recognized"
+        # Need to include this next line somehow in the subclasses
+        nearest['dist'] = min(tree.top.xmax - tree.top.xmin,
+                              tree.top.ymax - tree.top.ymin)/1000.0
         interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'],
                     'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
-        interest = gu.clip_box(interest['xmin'], interest['ymin'], interest['xmax'], interest['ymax'],
-                    tree.top.xmin, tree.top.ymin, tree.top.xmax, tree.top.ymax)
-        nearest['dist'] = nearest['dist'] * nearest['dist']
+        interest = gu.clip_box(interest['xmin'], interest['ymin'],
+                               interest['xmax'], interest['ymax'],
+                               tree.top.xmin, tree.top.ymin,
+                               tree.top.xmax, tree.top.ymax)
+        nearest['dist'] = nearest['dist']*nearest['dist']
 
         self.nearersource(tree, tree.top, x, y, nearest, interest)
-
         return nearest['source']
 
     def nearersource(self, tree, node, x, y, nearest, interest):
         self.num_nearersources+=1
         if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
-                            interest['xmin'], interest['xmax'], interest['ymin'], interest['ymax']):
+                          interest['xmin'], interest['xmax'],
+                          interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    if self.coord == 'pix' or self.coord == None:
-                        s_dist = gu.pixnorm2(s.ximg, s.yimg, x, y)
+                    if self.coord == 'pixel' or self.coord == None:
+                        s_dist = gu.pixnorm2(s.x, s.y, x, y)
                     elif self.coord == 'equatorial':
-                        s_dist = gu.equnorm2(s['RAJ2000'], s['DEJ2000'], x, y)
-                    else:
-                        print "you did not specify a coordinate system recognized"
-                        # Bail out better
+                        s_dist = gu.equnorm2(s.x, s.y, x, y)
                     if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
@@ -129,16 +120,34 @@ class Quadtree:
                         interest['xmax'] = x + dist
                         interest['ymax'] = y + dist
                         interest = gu.clip_box(interest['xmin'], interest['ymin'],
-                                               interest['xmax'], interest['ymax'],
-                                               tree.top.xmin, tree.top.ymin,
-                                               tree.top.xmax, tree.top.ymax)
+                                           interest['xmax'], interest['ymax'],
+                                           tree.top.xmin, tree.top.ymin,
+                                           tree.top.xmax, tree.top.ymax)
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
                 self.nearersource(tree, node.q2, x, y, nearest, interest)
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
                 self.nearersource(tree, node.q4, x, y, nearest, interest)
 
-class Node:
+class scamPixel(Quadtree):
+    def __init__(self, node):
+        #super(scamPixel, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='pixel')
+        self.x = node.ximg
+        self.y = node.yimg
+
+class scamEquatorial(Quadtree):
+    def __init__(self, node):
+        #super(scamEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
+        self.x = node.ra
+        self.y = node.dec
+
+class vizierEquatorial(Quadtree):
+    def __init__(self, node):
+        #super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
+        self.x = node['RAJ2000']
+        self.y = node['DEJ2000']
+
+class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = float(xmin)
         self.ymin = float(ymin)
