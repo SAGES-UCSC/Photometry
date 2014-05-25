@@ -38,13 +38,13 @@ class Quadtree(object):
         # To do this for every
         if self.objtype == 'subaru' or self.objtype == None:
             if self.coord == 'pixel' or self.coord == None:
-                node = scamPixel(source)
+                source = scamPixel(source)
             elif self.coord == 'equatorial':
-                node = scamEquatorial(source)
+                source = scamEquatorial(source)
         elif self.objtype == 'vizier':
-            node = vizerEquatorial(source)
+            source = vizerEquatorial(source)
 
-        self.inserttonode(self.top, node)
+        self.inserttonode(self.top, source)
 
     def inserttonode(self, node, source):
         self.num_inserttonodes+=1
@@ -129,23 +129,26 @@ class Quadtree(object):
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
                 self.nearersource(tree, node.q4, x, y, nearest, interest)
 
-class scamPixel(Quadtree):
-    def __init__(self, node):
+class Point()
+    def __init__(self, source):
+        self.source = source
+        self.x = source.ximg
+        self.y = source.yimg
+
+class ScamPixelQuadtree(Quadtree):
+    def __init__(self, source):
         #super(scamPixel, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='pixel')
-        self.x = node.ximg
-        self.y = node.yimg
+    def insert():
 
-class scamEquatorial(Quadtree):
+class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, node):
-        #super(scamEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
-        self.x = node.ra
-        self.y = node.dec
+        super(scamEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
+    def insert():
 
-class vizierEquatorial(Quadtree):
+class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, node):
-        #super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
-        self.x = node['RAJ2000']
-        self.y = node['DEJ2000']
+        super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
+    def insert():
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
