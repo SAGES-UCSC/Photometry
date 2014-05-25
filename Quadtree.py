@@ -110,7 +110,7 @@ class Quadtree(object):
                           interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    s_dist = pixnorm2(s.x, s.y, x, y)
+                    s_dist = norm2(s.x, s.y, x, y)
                     if s_dist < nearest['dist']:
                         nearest['source'] = s
                         nearest['dist'] = s_dist
