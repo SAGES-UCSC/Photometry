@@ -19,10 +19,10 @@ class Quadtree(object):
             self.contents = []
 
     class Point(object):
-        def __init__(self, source):
+        def __init__(self, source, x, y):
             self.source = source
-            self.x = source.ximg
-            self.y = source.yimg
+            self.x = float(source.x)
+            self.y = float(source.y)
 
     def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
         if 'coord' in kwargs:
@@ -150,7 +150,9 @@ class Quadtree(object):
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
         super(ScamPixelQuadtree, self).__init__(xmin, ymin, xmax, ymax, coord='pixel')
-    def insert():
+    def insert(self, source):
+        self.num_insert+=1
+        inserttnode(self.top, Point(source, source.ximg, source.yimg))
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, node):
