@@ -21,8 +21,8 @@ class Quadtree(object):
     class Point(object):
         def __init__(self, source, x, y):
             self.source = source
-            self.x = float(source.x)
-            self.y = float(source.y)
+            self.x = float(x)
+            self.y = float(y)
 
     def __init__(self, xmin, ymin, xmax, ymax, **kwargs):
         if 'coord' in kwargs:
@@ -146,21 +146,24 @@ class Quadtree(object):
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
                 self.nearersource(tree, node.q4, x, y, nearest, interest)
 
-
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
-        super(ScamPixelQuadtree, self).__init__(xmin, ymin, xmax, ymax, coord='pixel')
+        super(ScamPixelQuadtree, self).__init__(xmin, ymin, xmax, ymax)
     def insert(self, source):
         self.num_insert+=1
-        inserttnode(self.top, Point(source, source.ximg, source.yimg))
+        self.inserttnode(self.top, Point(source, source.ximg, source.yimg))
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, node):
-        super(scamEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
-    def insert():
+        super(scamEquatorial, self).__init__(xmin, ymin, xmax, ymax)
+    def insert(self, source):
+        self.num_insert+=1
+        self.inserttnode(self.top, Point(source, source.ra, source.dec))
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, node):
-        super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax, cood='equatorial')
-    def insert():
+        super(vizierEquatorial, self).__init__(node.xmin, node.ymin, node.xmax, node.ymax)
+    def insert(self, source):
+        self.num_insert+=1
+        self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
 
