@@ -95,12 +95,20 @@ def calc_seeing(catalog, **kwargs):
         tmp = filter(lambda line: no_head(line), f)
         cat = map(lambda line: sources.SCAMSource(line), tmp)
     shape = map(lambda s: s.a_world, cat)
-    peak = detSizeCut(shape, 1000)
+    peak = det_size_cut(shape, 1000)
     ptsources = filter(lambda s: s.a_world <= peak, cat)
-    ptsources = filter(lambda s: mag_cut(s, 0, 20), ptsources)
+    mag = map(lambda s: s.mag_best, ptsources)
+    max_mag = calc_average(mag) - 3.0*calc_average(variance(mag))
+    ptsources = filter(lambda s: mag_cut(s.mag_best, 0, max_mag), ptsources)
     #if kwargs['makereg']:
     fwhm = map(lambda line: line.fwhm, ptsources)
     return sum(fwhm)/len(fwhm)*pixel_scale
+
+def calc_average(data): return sum(data)/len(data)
+
+def variance(data):
+    avg = calc_average(data)
+    return map(lambda value: (value - avg)**2, data)
 
 def calc_median(data):
     data.sort()
