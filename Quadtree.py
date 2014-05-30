@@ -4,7 +4,11 @@ import geom_utils as gu
 MAX = 50
 
 class Quadtree(object):
-
+    """
+    Quadtree base class. Only functions that are agnostic to
+    the type of coordinate system or source object used. Must
+    use a subclass.
+    """
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
         self.num_subdivides = 0
@@ -23,6 +27,7 @@ class Quadtree(object):
         print "Insert was called %d times" % self.num_insert
 
     def inserttonode(self, node, source):
+        print source.ra
         self.num_inserttonodes+=1
         if len(node.contents) == MAX:
             self.subdivide(node)
@@ -101,11 +106,6 @@ class Quadtree(object):
                 self.nearersource(tree, node.q3, x, y, nearest, interest)
                 self.nearersource(tree, node.q4, x, y, nearest, interest)
 
-"""
-Quadtree base class. Only functions that are agnostic to
-the type of coordinate system or source object used. Must
-use a subclass.
-"""
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = float(xmin)
@@ -123,7 +123,7 @@ class Point(object):
     can be passed around the Quadtree. This makes for
     easy switching between equatorial and pixel coordinate
     systems or different objects.
-        """
+    """
     def __init__(self, source, x, y):
         self.source = source
         self.x = float(x)
@@ -135,7 +135,7 @@ class ScamPixelQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.inserttnode(self.top, Point(source, source.ximg, source.yimg))
+        self.insertotnode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(x1, y1, x2, y2):
         return gu.pixnorm2(x1, y1, x2, y2)
@@ -149,13 +149,13 @@ class ScamEquatorialQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.inserttnode(self.top, Point(source, source.ra, source.dec))
+        self.inserttonode(self.top, Point(source, source.ra, source.dec))
 
     def norm2(x1, y1, x2, y2):
         return gu.equnorm2(x1, y1, x2, y2)
 
     def initial_dist(x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/0.1
+        return  min(x2 - x1, y2 - y1)/0.000001
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -163,7 +163,7 @@ class VizierEquatorialQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.inserttnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
+        self.insertotnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
 
     def norm2(x1, y1, x2, y2):
         return gu.equnorm2(x1, y1, x2, y2)
