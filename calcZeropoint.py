@@ -6,29 +6,33 @@ INPUT
 '''
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 from subprocess import call
 from astroquery.vizier import Vizier
 from astropy.coordinates import Angle
 import Quadtree as Q
 import Sources as S
+import phot_utils
+import geom_utils
 
-def associate(list1, tree2, aperture):
-    dist = aperture/2
-    while list1:
-        target = list1.pop()
-        match2 = tree2.match(target.ximg, target.yimg)
-        if match2 != None and gu.norm2(match2['ra'], match2['dec'], \
-                                       target.ra, target.dec) <= dist:
-            target.match2 = match2
-
-    return list1
+def associate(table, tree2):
+    dist = 0.04
+    matches = []
+    for entry in table:
+        match = tree2.match(entry['RAJ2000'], entry['DEJ2000'])
+        if match != None and geom_utils.equnorm(entry['RAJ2000'], entry['DEJ2000'], \
+                                       match.ra, match.dec) <= dist:
+            match.match2 = entry
+            matches.append(match)
+    return matches
 
 def getSDSS(galaxy):
-    " Query SDSS through Vizier "
-    # Remove row limit on output table
-    Vizier.ROW_LIMIT = -1
-    result = Vizier.query_region("NGC4459", radius=Angle(0.1, "deg"), catalog='SDSS')
-
+    """
+    Query SDSS through Vizier, pick out only the stellar sources,
+    and put the SDSS magnitudes into AB
+    """
+    Vizier.ROW_LIMIT = -1 # Removes row limit on output table
+    result = Vizier.query_region(galaxy, radius=Angle(0.1, "deg"), catalog='SDSS')
     # Only select stellar sources
     index = []
     for i, entry in enumerate(result[1]):
@@ -38,28 +42,56 @@ def getSDSS(galaxy):
     result[1].remove_rows(index)
 
     # SDSS magnitudes are not exactly in AB so need to correct
-
     return result[1]
 
 def calcZP(sdss, scam):
-    # Match scam and sdss catalogs
-    sdsssources = Q.VizierEquatorialQuadtree(min(sdss['RAJ2000']) - 0.1,
-                                             min(sdss['DEJ2000']) - 0.1,
-                                             max(sdss['RAJ2000']) + 0.1,
-                                             max(sdss['DEJ2000']) + 0.1)
-    map(lambda line: sdsssources.insert(line), sdss)
-    matches = associate(scam, sdsssources, 4)
+    """
+    To calculate the zeropoint of the Subaru image match the Subaru catalog
+    and the table returned from Vizier.
+    """
 
-    ## Clip outliers of (m_sdss - m_scam)
-    #std =  np.std(matches.match2['g_mag'] - m_scam.mag_aper)
-    #for entries in catalog if m_sdds - m_scam > std*3 then delete entry
+    with open(scam, 'r') as catalog:
+        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
+    # Do magnitude cute on data here
+    tmp2 = map(lambda line: S.SCAMSource(line), tmp)
 
-    ##plot to see
-    #plt.plot(m_sdss - m_scam, m_scam, linestyle='none', marker=',')
-    #plt.show()
+    ra = map(lambda line: line.ra, tmp2)
+    dec = map(lambda line: line.dec, tmp2)
+    scam_sources = Q.ScamEquatorialQuadtree(min(ra), min(dec),
+                                            max(ra), max(dec))
+    map(lambda sources: scam_sources.insert(sources), tmp2)
+    matches = associate(sdss, scam_sources)
 
-    ## Take median of offset
-    #return phot_utils.calcMedian()
+    m_scam = map(lambda source: source.mag_aper, matches)
+    m_sdss = map(lambda source: source.match2['gmag'], matches)
+
+
+    # Clip outliers of (m_sdss - m_scam)
+    difference = []
+    for i, entry in enumerate(m_scam):
+        difference.append(m_sdss[i] - m_scam[i])
+    std =  np.std(difference)
+    print "Standard Deviation of Difference Magnitudes: ", std
+
+    clipped = []
+    for entry in matches:
+        if entry.match2['gmag'] - entry.mag_aper < std*3:
+            clipped.append(entry)
+
+    difference = []
+    for entry in clipped:
+        difference.append(entry.match2['gmag'] - entry.mag_aper)
+    m_scam = map(lambda source: source.mag_aper, clipped)
+
+    #plot to see
+    plt.plot(difference, m_scam, linestyle='none', marker='o')
+    plt.xlabel(r'$m_{SDSS}$ - $m_{SCAM}$', fontsize=20)
+    plt.ylabel(r'$m_{SCAM}$', fontsize=20, labelpad=30)
+    #plt.tight_layout()
+    plt.show()
+#
+#    # Take median of offset
+#    return phot_utils.calcMedian()
 
 def main():
     galaxy, scam_catalog = sys.argv[1], sys.argv[2]
