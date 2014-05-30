@@ -140,8 +140,6 @@ class ScamPixelQuadtree(Quadtree):
     def norm2(x1, y1, x2, y2):
         return gu.pixnorm2(x1, y1, x2, y2)
 
-        nearest['dist'] = initial_dist(tree.top.xmax, tree.top.xmin,
-                                       tree.top.ymax, tree.top.ymin)
     def initial_dist(x2, x1, y2, y1):
         return  min(x2 - x1, y2 - y1)/1000.0
 
