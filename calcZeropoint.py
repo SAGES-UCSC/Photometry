@@ -37,11 +37,14 @@ def getSDSS(galaxy):
     # SDSS magnitudes are not exactly in AB so need to correct
     return result[1]
 
-def calcZP(sdss, scam):
+def calcZP(sdss, scam, band):
     """
     To calculate the zeropoint of the Subaru image match the Subaru catalog
     and the table returned from Vizier.
     """
+
+    column = str(band + 'mag')
+
     with open(scam, 'r') as catalog:
         tmp = filter(lambda line: phot_utils.no_head(line), catalog)
     # Do magnitude cute on data here
@@ -59,7 +62,7 @@ def calcZP(sdss, scam):
     matches = associate(sdss, scam_sources)
 
     m_scam = map(lambda source: source.mag_aper, matches)
-    m_sdss = map(lambda source: source.match2['gmag'], matches)
+    m_sdss = map(lambda source: source.match2[column], matches)
 
     # Clip outliers of (m_sdss - m_scam)
     difference = []
@@ -70,12 +73,12 @@ def calcZP(sdss, scam):
 
     clipped = []
     for entry in matches:
-        if entry.match2['gmag'] - entry.mag_aper < std*3:
+        if entry.match2[column] - entry.mag_aper < std*3:
             clipped.append(entry)
 
     difference = []
     for entry in clipped:
-        difference.append(entry.match2['gmag'] - entry.mag_aper)
+        difference.append(entry.match2[column] - entry.mag_aper)
     m_scam = map(lambda source: source.mag_aper, clipped)
 
     # Look at offsets
@@ -85,11 +88,11 @@ def calcZP(sdss, scam):
     plt.show()
 
     # Take median of offset
-    return  phot_utils.calcMedian(difference)
+    return  phot_utils.calc_median(difference)
 
 def main():
-    galaxy, scam_catalog = sys.argv[1], sys.argv[2]
-    calcZP(getSDSS(galaxy), scam_catalog)
+    galaxy, scam_catalog, band = sys.argv[1], sys.argv[2], sys.argv[3]
+    calcZP(getSDSS(galaxy), scam_catalog, band)
 
 
 if __name__ == '__main__':
