@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 from subprocess import call
 from astroquery.vizier import Vizier
 from astropy.coordinates import Angle
+import makeRegionFile
 import Quadtree as Q
 import Sources as S
 import phot_utils
 import geom_utils
 
 def associate(table, tree2):
-    dist = 0.04
+    dist = 0.001
     matches = []
     for entry in table:
         match = tree2.match(entry['RAJ2000'], entry['DEJ2000'])
@@ -70,6 +71,17 @@ def calcZP(sdss, scam, band):
         difference.append(m_sdss[i] - m_scam[i])
     std =  np.std(difference)
     print "Standard Deviation of Difference Magnitudes: ", std
+
+    # Make a region file to check the matching
+    with open("scam_match_source.reg", "w") as out:
+        for source in matches:
+            out.write("j2000; circle " + str(phot_utils.convertRA(source.ra)) + "," +
+                        str(phot_utils.convertDEC(source.dec)) + " .1' #color=red \n")
+
+    with open("sdss_match_source.reg", "w") as out:
+        for source in matches:
+            out.write("j2000; circle " + str(phot_utils.convertRA(source.match2['RAJ2000']))
+                    + "," + str(phot_utils.convertDEC(source.match2['DEJ2000'])) + " .15' #color=green \n")
 
     clipped = []
     for entry in matches:
