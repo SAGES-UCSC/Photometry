@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import geom_utils as gu
 
@@ -27,7 +28,6 @@ class Quadtree(object):
         print "Insert was called %d times" % self.num_insert
 
     def inserttonode(self, node, source):
-        print source.ra
         self.num_inserttonodes+=1
         if len(node.contents) == MAX:
             self.subdivide(node)
@@ -58,6 +58,7 @@ class Quadtree(object):
         node.q3 = Node(node.xmin, node.ymin, node.xmid, node.ymid)
         node.q4 = Node(node.xmid, node.ymin, node.xmax, node.ymid)
         # Pop the list and insert the sources as they come off
+        print node.xmin, node.xmax, node.ymin, node.ymax
         while node.contents:
             self.inserttoquad(node, node.contents.pop())
 
@@ -67,7 +68,7 @@ class Quadtree(object):
 
     def nearestsource(self, tree, x, y):
         nearest = {'source':None, 'dist':0}
-        nearest['dist'] = initial_dist(tree.top.xmax, tree.top.xmin,
+        nearest['dist'] = self.initial_dist(tree.top.xmax, tree.top.xmin,
                                        tree.top.ymax, tree.top.ymin)
         interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'],
                     'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
@@ -87,7 +88,7 @@ class Quadtree(object):
                           interest['ymin'], interest['ymax']):
             if node.q1 == None:
                 for s in node.contents:
-                    s_dist = norm2(s.x, s.y, x, y)
+                    s_dist = self.norm2(s.x, s.y, x, y)
                     if s_dist < nearest['dist']:
                         nearest['source'] = s.source
                         nearest['dist'] = s_dist
@@ -112,8 +113,8 @@ class Node(object):
         self.ymin = float(ymin)
         self.xmax = float(xmax)
         self.ymax = float(ymax)
-        self.xmid = (self.xmin + self.xmax)/2
-        self.ymid = (self.ymin + self.ymax)/2
+        self.xmid = (self.xmin + self.xmax)/2.0
+        self.ymid = (self.ymin + self.ymax)/2.0
         self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
 
@@ -135,7 +136,7 @@ class ScamPixelQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.insertotnode(self.top, Point(source, source.ximg, source.yimg))
+        self.inserttonode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(x1, y1, x2, y2):
         return gu.pixnorm2(x1, y1, x2, y2)
@@ -151,10 +152,10 @@ class ScamEquatorialQuadtree(Quadtree):
         self.num_insert+=1
         self.inserttonode(self.top, Point(source, source.ra, source.dec))
 
-    def norm2(x1, y1, x2, y2):
+    def norm2(self, x1, y1, x2, y2):
         return gu.equnorm2(x1, y1, x2, y2)
 
-    def initial_dist(x2, x1, y2, y1):
+    def initial_dist(self, x2, x1, y2, y1):
         return  min(x2 - x1, y2 - y1)/0.000001
 
 class VizierEquatorialQuadtree(Quadtree):
@@ -163,7 +164,7 @@ class VizierEquatorialQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.insertotnode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
+        self.inserttonode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
 
     def norm2(x1, y1, x2, y2):
         return gu.equnorm2(x1, y1, x2, y2)
