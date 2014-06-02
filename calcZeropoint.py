@@ -38,14 +38,14 @@ def getSDSS(galaxy):
     # SDSS magnitudes are not exactly in AB so need to correct
     return result[1]
 
-def calcZP(sdss, scam, band):
+def calcZP(galaxy, scam, band):
     """
     To calculate the zeropoint of the Subaru image match the Subaru catalog
     and the table returned from Vizier.
     """
+    sdss = getSDSS(galaxy)
 
     column = str(band + 'mag')
-
     with open(scam, 'r') as catalog:
         tmp = filter(lambda line: phot_utils.no_head(line), catalog)
     # Do magnitude cute on data here
@@ -70,7 +70,6 @@ def calcZP(sdss, scam, band):
     for i, entry in enumerate(m_scam):
         difference.append(m_sdss[i] - m_scam[i])
     std =  np.std(difference)
-    print "Standard Deviation of Difference Magnitudes: ", std
 
     # Make a region file to check the matching
     with open("scam_match_source.reg", "w") as out:
@@ -104,8 +103,9 @@ def calcZP(sdss, scam, band):
 
 def main():
     galaxy, scam_catalog, band = sys.argv[1], sys.argv[2], sys.argv[3]
-    calcZP(getSDSS(galaxy), scam_catalog, band)
+    print "Zeropoint is: ", calcZP(galaxy, scam_catalog, band)
 
 
 if __name__ == '__main__':
+    #calcZP(sys.argv[1], sys.argv[2], sys.argv[3])
     sys.exit(main())
