@@ -32,7 +32,7 @@ def disassociate(list1, tree2, aperture):
             unmatched.append(target)
     return unmatched
 
-def findBestAperture(image, satur, seeing):
+def findBestAperture(path, image, satur, seeing):
     if os.path.isdir('BestApertureFiles') == False:
         os.mkdir('BestApertureFiles')
 
@@ -97,8 +97,7 @@ def findBestAperture(image, satur, seeing):
     plt.plot(aperture, snr, linestyle='none', marker='o')
     plt.xlabel('Aperture (pix)')
     plt.ylabel('SNR')
-    plt.show()
-    plt.savefig(image + '_snr.png')
+    pu.save(path, image[-12]+'_snr')
     maxsnr = snr.index(max(snr))
     return aperture[maxsnr]
 
