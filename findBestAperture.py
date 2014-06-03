@@ -97,7 +97,7 @@ def findBestAperture(path, image, satur, seeing):
     plt.plot(aperture, snr, linestyle='none', marker='o')
     plt.xlabel('Aperture (pix)')
     plt.ylabel('SNR')
-    pu.save(path, image[-12]+'_snr')
+    pu.save(path, image[-6]+'_snr')
     maxsnr = snr.index(max(snr))
     return aperture[maxsnr]
 
