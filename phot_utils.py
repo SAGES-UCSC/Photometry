@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import os
 import numpy as np
 import math
 import Sources as sources
@@ -145,5 +146,16 @@ def no_head(line):
         return True
     else:
         return False
+
+def save(path, filename, ext='png', close=True, verbose=True):
+    savepath = os.path.join(path, filename)
+    print savepath
+    if verbose:
+        print("Saving figure to '%s'..." % savepath),
+
+    plt.savefig(savepath)
+
+    if close:
+        plt.close()
 
 #def testColorCut():
