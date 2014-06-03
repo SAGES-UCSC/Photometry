@@ -65,7 +65,7 @@ def findBestAperture(image, satur, seeing):
         ntmp = filter(lambda line: pu.no_head(line), ncat)
 
         # Background measuresments can't overlap with source detections
-        ssources = q.Quadtree(0, 0, 12000, 10000, coord='pix')
+        ssources = q.ScamPixelQuadtree(0, 0, 12000, 10000)
         map(lambda line: ssources.insert(S.SCAMSource(line)), stmp)
         nsources = map(lambda line: S.SCAMSource(line), ntmp)
 
@@ -75,10 +75,10 @@ def findBestAperture(image, satur, seeing):
         print("ELAPSED TIME: " + str(end-start))
         srcdetections = map(lambda line: S.SCAMSource(line), stmp)
 
-        flux = map(lambda f: f.mag_aper, bkgddetections)
+        flux = map(lambda f: f.flux_aper, bkgddetections)
         noise.append(pu.calc_MAD(flux))
 
-        flux = map(lambda f: f.mag_aper, srcdetections)
+        flux = map(lambda f: f.flux_aper, srcdetections)
         signal.append(pu.calc_MAD(flux))
 
         with open(image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", "w") as output:
