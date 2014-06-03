@@ -31,9 +31,8 @@ def get_photometry(system, in_images):
         image = phot_utils.load_fits(img, verbose=False)
         satur = image[0].header['SATURATE']
         seeing = 1
-        #ap = ','.join(map(str, np.linspace(5.0, 10, 1)))
-        #ap = findBestAperture.findBestAperture(img, satur, seeing)
-        ap = 5.0
+        path = os.getcwd()
+        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
         fname = system + '_' + img[-12]
         # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
