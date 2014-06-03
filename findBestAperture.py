@@ -95,6 +95,8 @@ def findBestAperture(image, satur, seeing):
     for i in range(len(noise)):
         snr.append(signal[i]/noise[i])
     plt.plot(aperture, snr, linestyle='none', marker='o')
+    plt.xlabel('Aperture (pix)')
+    plt.ylabel('SNR')
     plt.show()
     plt.savefig(image + '_snr.png')
     maxsnr = snr.index(max(snr))
