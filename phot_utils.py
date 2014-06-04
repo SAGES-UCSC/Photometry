@@ -95,6 +95,7 @@ def calc_seeing(catalog, **kwargs):
     with open(catalog, 'r') as f:
         tmp = filter(lambda line: no_head(line), f)
         cat = map(lambda line: sources.SCAMSource(line), tmp)
+    ptsources = filter(lambda s: s.mag_best != 99.0, cat)
     shape = map(lambda s: s.a_world, cat)
     peak = det_size_cut(shape, 1000)
     ptsources = filter(lambda s: s.a_world <= peak, cat)
