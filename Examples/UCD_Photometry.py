@@ -11,9 +11,12 @@ import Quadtree
 import createSexConfig
 import createSexParam
 import findBestAperture
+import calcZeropoint
 import makeRegionFile
 import phot_utils
 import geom_utils
+
+verbose=False
 
 def get_photometry(system, in_images):
     galsub = []
@@ -32,53 +35,63 @@ def get_photometry(system, in_images):
         satur = image[0].header['SATURATE']
         seeing = 1
         path = os.getcwd()
-        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
+        #ap = findBestAperture.findBestAperture(path, img, satur, seeing)
+        ap = 5.0
         fname = system + '_' + img[-12]
         # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing, "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
-        seeing = phot_utils.calc_seeing(fname + '.cat')
+        seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
 
         # Re_extract with refined seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing, "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
 
-        ## Re-name the check images created
-        ## This doesn't work as intended
-        #checks = (glob.glob('*.fits'))
-        #for check in checks:
-        #    os.rename(check, fname + '_' + check)
+        # Re-name the check images created
+        checks = (glob.glob('*.fits'))
+        if not os.path.isdir('CheckImages'):
+            os.mkdir('CheckImages')
+        for check in checks:
+            os.rename(check, fname + '_' + check)
+            call(['mv', fname + '_' + check, 'CheckImages'])
 
 def main():
-    get_photometry(sys.argv[1], sys.argv[2])
+#    get_photometry(sys.argv[1], sys.argv[2])
+
+    i_zp = calcZeropoint.calcZP('NGC4621', 'NGC4621_i.cat', 'i')
+    print "Zeropoint for i-band: ", i_zp
 
     with open('NGC4621_i.cat', 'r') as catalog:
         tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-        tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
+    tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
+
     ra = map(lambda line: line.ra, tmp2)
     dec = map(lambda line: line.dec, tmp2)
-
     i_sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
                                               max(ra), max(dec))
-    with open('NGC4621_i.cat', 'r') as catalog:
-        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-        map(lambda line: i_sources.insert(Sources.SCAMSource(line)), tmp)
-        makeRegionFile.makeRegionFile('NGC4621_i.cat', 'NGC4621_i.reg', 10, 'blue')
+    map(lambda line: i_sources.insert(line), tmp2)
+
+    if verbose:
+            makeRegionFile.makeRegionFile('NGC4621_i.cat', 'NGC4621_i.reg', 10, 'blue')
 
     with open('NGC4621_g.cat', 'r') as catalog:
         tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-        tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
+    tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
+
+    g_zp = calcZeropoint.calcZP('NGC4621', 'NGC4621_g.cat', 'g')
+    print "Zeropoint for g-band: ", g_zp
+
     ra = map(lambda line: line.ra, tmp2)
     dec = map(lambda line: line.dec, tmp2)
 
     g_sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
                                               max(ra), max(dec))
-    with open('NGC4621_g.cat', 'r') as catalog:
-        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-        map(lambda line: g_sources.insert(Sources.SCAMSource(line)), tmp)
-        makeRegionFile.makeRegionFile('NGC4621_g.cat', 'NGC4621_g.reg', 10, 'blue')
+    map(lambda line: g_sources.insert(line), tmp2)
+
+    if verbose:
+            makeRegionFile.makeRegionFile('NGC4621_g.cat', 'NGC4621_g.reg', 10, 'blue')
 
     # Aaron gave me the coordinates
     m59_ucd3_i = i_sources.match(190.54601, 11.64478)
@@ -87,8 +100,12 @@ def main():
     print '\n'
 
     print "M58-UCD3's Location in catalog: ", m59_ucd3_i.name
-    print "I Mag and G Mag: ",  m59_ucd3_i.mag_auto, m59_ucd3_g.mag_auto
-    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_auto - m59_ucd3_i.mag_auto
+    print 'MAG_AUTO: '
+    print "I Mag and G Mag: ",  m59_ucd3_i.mag_auto + i_zp, m59_ucd3_g.mag_auto + g_zp
+    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_auto + g_zp - m59_ucd3_i.mag_auto + i_zp
+    print 'MAG_APER: '
+    print "I Mag and G Mag: ",  m59_ucd3_i.mag_aper + i_zp, m59_ucd3_g.mag_aper + g_zp
+    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_aper + g_zp - m59_ucd3_i.mag_aper + i_zp
     print 'M59-UCD3 FWHM: ', m59_ucd3_g.fwhm*0.2
     print "Coordinates from i-band catalog - "
     print phot_utils.convertRA(m59_ucd3_i.ra), phot_utils.convertDEC(m59_ucd3_i.dec)
@@ -101,8 +118,12 @@ def main():
     m59cO_i = i_sources.match(190.48056, 11.66771)
     m59cO_g = g_sources.match(190.48056, 11.66771)
     print "M59cO's Location in catalog: ", m59cO_i.name
-    print "I Mag and G Mag: ", m59cO_i.mag_auto, m59cO_g.mag_auto
-    print 'M59cO g-i: ', m59cO_g.mag_auto - m59cO_i.mag_auto
+    print "MAG_AUTO: "
+    print "I Mag and G Mag: ", m59cO_i.mag_auto + i_zp, m59cO_g.mag_auto + g_zp
+    print 'M59cO g-i: ', m59cO_g.mag_auto + g_zp - m59cO_i.mag_auto + i_zp
+    print "MAG_APER: "
+    print "I Mag and G Mag: ", m59cO_i.mag_aper + i_zp, m59cO_g.mag_aper + g_zp
+    print 'M59cO g-i: ', m59cO_g.mag_aper + g_zp - m59cO_i.mag_aper + i_zp
     print "Coordinates from i-band catalog - "
     print phot_utils.convertRA(m59cO_i.ra), phot_utils.convertDEC(m59cO_i.dec)
     print "Coordinates from g-band catalog - "
