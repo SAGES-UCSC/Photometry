@@ -35,8 +35,7 @@ def get_photometry(system, in_images):
         satur = image[0].header['SATURATE']
         seeing = 1
         path = os.getcwd()
-        #ap = findBestAperture.findBestAperture(path, img, satur, seeing)
-        ap = 5.0
+        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
         fname = system + '_' + img[-12]
         # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
@@ -57,55 +56,48 @@ def get_photometry(system, in_images):
             os.rename(check, fname + '_' + check)
             call(['mv', fname + '_' + check, 'CheckImages'])
 
-def main():
-#    get_photometry(sys.argv[1], sys.argv[2])
+def function(galaxy, catalog, band):
+    zp = calcZeropoint.calcZP(galaxy, catalog, band)
+    print "Zeropoint for " + band + "-band", zp
 
-    i_zp = calcZeropoint.calcZP('NGC4621', 'NGC4621_i.cat', 'i')
-    print "Zeropoint for i-band: ", i_zp
-
-    with open('NGC4621_i.cat', 'r') as catalog:
-        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
+    with open(catalog, 'r') as f:
+        tmp = filter(lambda line: phot_utils.no_head(line), f)
     tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
+
+    # Correct magnitudes for zeropoint...haven't decided how to do that yet
 
     ra = map(lambda line: line.ra, tmp2)
     dec = map(lambda line: line.dec, tmp2)
-    i_sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
-                                              max(ra), max(dec))
-    map(lambda line: i_sources.insert(line), tmp2)
 
+    sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
+                                              max(ra), max(dec))
+    map(lambda line: sources.insert(line), tmp2)
     if verbose:
             makeRegionFile.makeRegionFile('NGC4621_i.cat', 'NGC4621_i.reg', 10, 'blue')
+    return sources
 
-    with open('NGC4621_g.cat', 'r') as catalog:
-        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-    tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
 
-    g_zp = calcZeropoint.calcZP('NGC4621', 'NGC4621_g.cat', 'g')
-    print "Zeropoint for g-band: ", g_zp
+def main():
+    get_photometry(sys.argv[1], sys.argv[2])
+    catalogs = (glob.glob('*.cat'))
+    trees = {}
+    for catalog in catalogs:
+        trees[catalog[-5]] = function('NGC4621', catalog, catalog[-5])
 
-    ra = map(lambda line: line.ra, tmp2)
-    dec = map(lambda line: line.dec, tmp2)
-
-    g_sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
-                                              max(ra), max(dec))
-    map(lambda line: g_sources.insert(line), tmp2)
-
-    if verbose:
-            makeRegionFile.makeRegionFile('NGC4621_g.cat', 'NGC4621_g.reg', 10, 'blue')
 
     # Aaron gave me the coordinates
-    m59_ucd3_i = i_sources.match(190.54601, 11.64478)
-    m59_ucd3_g = g_sources.match(190.54601, 11.64478)
+    m59_ucd3_i = trees['i'].match(190.54601, 11.64478)
+    m59_ucd3_g = trees['g'].match(190.54601, 11.64478)
 
     print '\n'
 
     print "M58-UCD3's Location in catalog: ", m59_ucd3_i.name
     print 'MAG_AUTO: '
-    print "I Mag and G Mag: ",  m59_ucd3_i.mag_auto + i_zp, m59_ucd3_g.mag_auto + g_zp
-    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_auto + g_zp - m59_ucd3_i.mag_auto + i_zp
+    print "I Mag and G Mag: ",  m59_ucd3_i.mag_auto, m59_ucd3_g.mag_auto
+    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_auto - m59_ucd3_i.mag_auto
     print 'MAG_APER: '
-    print "I Mag and G Mag: ",  m59_ucd3_i.mag_aper + i_zp, m59_ucd3_g.mag_aper + g_zp
-    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_aper + g_zp - m59_ucd3_i.mag_aper + i_zp
+    print "I Mag and G Mag: ",  m59_ucd3_i.mag_aper, m59_ucd3_g.mag_aper
+    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_aper - m59_ucd3_i.mag_aper
     print 'M59-UCD3 FWHM: ', m59_ucd3_g.fwhm*0.2
     print "Coordinates from i-band catalog - "
     print phot_utils.convertRA(m59_ucd3_i.ra), phot_utils.convertDEC(m59_ucd3_i.dec)
@@ -115,15 +107,15 @@ def main():
     print '\n'
     print '\n'
 
-    m59cO_i = i_sources.match(190.48056, 11.66771)
-    m59cO_g = g_sources.match(190.48056, 11.66771)
+    m59cO_i = trees['i'].match(190.48056, 11.66771)
+    m59cO_g = trees['g'].match(190.48056, 11.66771)
     print "M59cO's Location in catalog: ", m59cO_i.name
     print "MAG_AUTO: "
-    print "I Mag and G Mag: ", m59cO_i.mag_auto + i_zp, m59cO_g.mag_auto + g_zp
-    print 'M59cO g-i: ', m59cO_g.mag_auto + g_zp - m59cO_i.mag_auto + i_zp
+    print "I Mag and G Mag: ", m59cO_i.mag_auto, m59cO_g.mag_auto
+    print 'M59cO g-i: ', m59cO_g.mag_auto - m59cO_i.mag_auto
     print "MAG_APER: "
-    print "I Mag and G Mag: ", m59cO_i.mag_aper + i_zp, m59cO_g.mag_aper + g_zp
-    print 'M59cO g-i: ', m59cO_g.mag_aper + g_zp - m59cO_i.mag_aper + i_zp
+    print "I Mag and G Mag: ", m59cO_i.mag_aper, m59cO_g.mag_aper
+    print 'M59cO g-i: ', m59cO_g.mag_aper - m59cO_i.mag_aper
     print "Coordinates from i-band catalog - "
     print phot_utils.convertRA(m59cO_i.ra), phot_utils.convertDEC(m59cO_i.dec)
     print "Coordinates from g-band catalog - "
