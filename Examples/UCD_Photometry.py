@@ -56,33 +56,50 @@ def get_photometry(system, in_images):
             os.rename(check, fname + '_' + check)
             call(['mv', fname + '_' + check, 'CheckImages'])
 
-def function(galaxy, catalog, band):
+def correct_mags(galaxy, catalog, band):
     zp = calcZeropoint.calcZP(galaxy, catalog, band)
-    print "Zeropoint for " + band + "-band", zp
 
+    if verbose:
+        print "Zeropoint for " + band + "-band", zp
+
+    with open(catalog, 'r') as f:
+        tmp = filter(lambda line: phot_utils.no_head(line), f)
+
+    sources = map(lambda line: Sources.SCAMSource(line), tmp)
+    for source in sources:
+        source.mag_aper = source.mag_aper + zp
+        source.mag_auto = source.mag_auto + zp
+        source.mag_best = source.mag_best + zp
+
+    with open('zpcorrected_' + catalog, 'w') as output:
+        output.write(''.join(map(lambda source: source.line, sources)))
+
+    sys.exit()
+    #return newcatalog
+
+def make_trees(catalog):
     with open(catalog, 'r') as f:
         tmp = filter(lambda line: phot_utils.no_head(line), f)
     tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
 
-    # Correct magnitudes for zeropoint...haven't decided how to do that yet
-
     ra = map(lambda line: line.ra, tmp2)
     dec = map(lambda line: line.dec, tmp2)
-
     sources = Quadtree.ScamEquatorialQuadtree(min(ra), min(dec),
                                               max(ra), max(dec))
     map(lambda line: sources.insert(line), tmp2)
+
     if verbose:
             makeRegionFile.makeRegionFile('NGC4621_i.cat', 'NGC4621_i.reg', 10, 'blue')
+
     return sources
 
-
 def main():
-    get_photometry(sys.argv[1], sys.argv[2])
+   # get_photometry(sys.argv[1], sys.argv[2])
     catalogs = (glob.glob('*.cat'))
     trees = {}
     for catalog in catalogs:
-        trees[catalog[-5]] = function(sys.argv[1], catalog, catalog[-5])
+        corrected_catalog = correct_mags(sys.argv[1], catalog, catalog[-5])
+#        trees[catalog[-5]] = make_tres(corrected_catalog)
 
     # Aaron gave me the coordinates
     m59_ucd3_i = trees['i'].match(190.54601, 11.64478)
