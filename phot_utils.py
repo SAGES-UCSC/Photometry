@@ -85,7 +85,7 @@ def make_histogram(shape_col, bin_num):
     plt.bar(center, hist, align='center', width=width)
     plt.show()
 
-def calc_seeing(catalog, **kwargs):
+def calc_seeing(catalog, verbose=False):
     """
     Calculate the seeing of an image by taking a SE catalog
     cutting out the extended and dim sources and averaging
@@ -95,18 +95,23 @@ def calc_seeing(catalog, **kwargs):
     with open(catalog, 'r') as f:
         tmp = filter(lambda line: no_head(line), f)
         cat = map(lambda line: sources.SCAMSource(line), tmp)
-    print "Length of catalog: ", len(cat)
+    if verbose == True:
+        print "Length of catalog: ", len(cat)
     ptsources = filter(lambda s: s.mag_best != 99.0, cat)
-    print "After spurious detection cut: ", len(ptsources)
+    if verbose == True:
+        print "After spurious detection cut: ", len(ptsources)
     shape = map(lambda s: s.a_world, cat)
     peak = det_size_cut(shape, 1000)
     ptsources = filter(lambda s: s.a_world <= peak, ptsources)
-    print "After size cut: ", len(ptsources)
+    if verbose == True:
+        print "After size cut: ", len(ptsources)
     mag = map(lambda s: s.mag_best, ptsources)
     max_mag = calc_average(mag) - 3.0*calc_average(variance(mag))
-    print "Max mag: ", max_mag, "Variance: ", calc_average(variance(mag))
+    if verbose == True:
+        print "Max mag: ", max_mag, "Variance: ", calc_average(variance(mag))
     ptsources = filter(lambda s: mag_cut(s.mag_best, 0, max_mag), ptsources)
-    print "After Magnitude cut: ", len(ptsources)
+    if verbose == True:
+        print "After Magnitude cut: ", len(ptsources)
     #if kwargs['makereg']:
     fwhm = map(lambda line: line.fwhm, ptsources)
     return sum(fwhm)/len(fwhm)*pixel_scale
