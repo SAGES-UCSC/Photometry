@@ -5,6 +5,7 @@ import sys
 import os
 from subprocess import call, Popen, PIPE
 import glob
+import math
 import numpy as np
 import Sources
 import Quadtree
@@ -35,17 +36,22 @@ def get_photometry(system, in_images):
         satur = image[0].header['SATURATE']
         seeing = 1
         path = os.getcwd()
-        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
         fname = system + '_' + img[-12]
+        #ap = findBestAperture.findBestAperture(path, img, satur, seeing)
+        ap = 3.06
+        seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
+        "If the aperture is less than the seeing round it up to next interger"
+        print seeing[1]
+        if ap < seeing[1]:
+            ap = math.ceil(ap)
         # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
-                 param_file, satur, seeing, "nill", ap, False)
+                 param_file, satur, seeing[0], "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
-        seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
 
         # Re_extract with refined seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
-                 param_file, satur, seeing, "nill", ap, False)
+                 param_file, satur, seeing[0], "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
 
         # Re-name the check images created
@@ -103,7 +109,7 @@ def make_trees(catalog):
     return sources
 
 def main():
-   # get_photometry(sys.argv[1], sys.argv[2])
+    #get_photometry(sys.argv[1], sys.argv[2])
     catalogs = (glob.glob('*.cat'))
     trees = {}
     for catalog in catalogs:
