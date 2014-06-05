@@ -100,7 +100,7 @@ def calc_seeing(catalog, **kwargs):
     print "After spurious detection cut: ", len(ptsources)
     shape = map(lambda s: s.a_world, cat)
     peak = det_size_cut(shape, 1000)
-    ptsources = filter(lambda s: s.a_world <= peak, cat)
+    ptsources = filter(lambda s: s.a_world <= peak, ptsources)
     print "After size cut: ", len(ptsources)
     mag = map(lambda s: s.mag_best, ptsources)
     max_mag = calc_average(mag) - 3.0*calc_average(variance(mag))
