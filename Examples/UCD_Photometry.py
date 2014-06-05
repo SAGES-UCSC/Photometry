@@ -82,8 +82,7 @@ def main():
     catalogs = (glob.glob('*.cat'))
     trees = {}
     for catalog in catalogs:
-        trees[catalog[-5]] = function('NGC4621', catalog, catalog[-5])
-
+        trees[catalog[-5]] = function(sys.argv[1], catalog, catalog[-5])
 
     # Aaron gave me the coordinates
     m59_ucd3_i = trees['i'].match(190.54601, 11.64478)
