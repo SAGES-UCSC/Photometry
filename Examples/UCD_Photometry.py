@@ -58,7 +58,6 @@ def get_photometry(system, in_images):
 
 def correct_mags(galaxy, catalog, band):
     zp = calcZeropoint.calcZP(galaxy, catalog, band)
-
     if verbose:
         print "Zeropoint for " + band + "-band", zp
 
@@ -67,15 +66,25 @@ def correct_mags(galaxy, catalog, band):
 
     sources = map(lambda line: Sources.SCAMSource(line), tmp)
     for source in sources:
-        source.mag_aper = source.mag_aper + zp
-        source.mag_auto = source.mag_auto + zp
-        source.mag_best = source.mag_best + zp
+        source.mag_aper = round(source.mag_aper + zp, 3)
+        source.mag_auto = round(source.mag_auto + zp, 3)
+        source.mag_best = round(source.mag_best + zp, 3)
 
-    with open('zpcorrected_' + catalog, 'w') as output:
-        output.write(''.join(map(lambda source: source.line, sources)))
-
-    sys.exit()
-    #return newcatalog
+    new_catalog = 'zpcorrected_' + catalog
+    with open(new_catalog, 'w') as output:
+        output.write(''.join(map(lambda source: '%5s' % source.name + '%15.4f' % source.flux_iso +
+                    '%15.4f' % source.fluxerr_iso + '%15.4f' % source.flux_aper +
+                    '%15.4f' % source.fluxerr_aper + '%15.4f' % source.ximg + '%15.4f' % source.yimg +
+                    '%15.4f' % source.ra + '%15.4f' % source.dec + '%15.4f' % source.mag_auto +
+                    '%15.4f' % source.mag_auto_err + '%15.4f' % source.mag_best +
+                    '%15.4f' % source.mag_best_err + '%15.4f' % source.mag_aper +
+                    '%15.4f' % source.mag_aper_err + '%15.4f' % source.a_world +
+                    '%15.4f' % source.a_world_err + '%15.4f' % source.b_world +
+                    '%15.4f' % source.b_world_err + '%15.4f' % source.theta_err +
+                    '%15.4f' % source.theta + '%15.4f' % source.isoarea + '%15.4f' % source.mu +
+                    '%15.4f' % source.flux_radius + '%15.4f' % source.flags + '%15.4f' % source.fwhm +
+                    '%15.4f' % source.elogation + '%5.4e' % source.vignet + '\n',  sources)))
+    return new_catalog
 
 def make_trees(catalog):
     with open(catalog, 'r') as f:
@@ -99,7 +108,7 @@ def main():
     trees = {}
     for catalog in catalogs:
         corrected_catalog = correct_mags(sys.argv[1], catalog, catalog[-5])
-#        trees[catalog[-5]] = make_tres(corrected_catalog)
+        trees[catalog[-5]] = make_trees(corrected_catalog)
 
     # Aaron gave me the coordinates
     m59_ucd3_i = trees['i'].match(190.54601, 11.64478)
