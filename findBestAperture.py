@@ -81,15 +81,24 @@ def findBestAperture(path, image, satur, seeing):
         flux = map(lambda f: f.flux_aper, srcdetections)
         signal.append(pu.calc_MAD(flux))
 
-        with open(image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", "w") as output:
+        with open(image[-12] + "_ap_" + str(round(ap, 2)) + "noise.txt", "w") as output:
             for source in bkgddetections:
                 output.write(source.line)
-        call(['mv', image[-6] + "_ap_" + str(round(ap, 2)) + "noise.txt", 'BestApertureFiles'])
+        call(['mv', image[-12] + "_ap_" + str(round(ap, 2)) + "noise.txt", 'BestApertureFiles'])
 
-        with open(image[-6] + "_ap_" + str(round(ap, 2)) + "signal.txt", "w") as output:
+        with open(image[-12] + "_ap_" + str(round(ap, 2)) + "signal.txt", "w") as output:
             for source in srcdetections:
                 output.write(source.line)
-        call(['mv', image[-6] + "_ap_" + str(round(ap, 2)) + "signal.txt", 'BestApertureFiles'])
+        call(['mv', image[-12] + "_ap_" + str(round(ap, 2)) + "signal.txt", 'BestApertureFiles'])
+
+    try:
+        os.remove('noise.*')
+    except OSError:
+        pass
+    try:
+        os.remove('sign.*')
+    except OSError:
+        pass
 
     snr = []
     for i in range(len(noise)):
@@ -97,7 +106,7 @@ def findBestAperture(path, image, satur, seeing):
     plt.plot(aperture, snr, linestyle='none', marker='o')
     plt.xlabel('Aperture (pix)')
     plt.ylabel('SNR')
-    pu.save(path, image[-6]+'_snr')
+    pu.save(path, image[-12]+'_snr')
     maxsnr = snr.index(max(snr))
     return aperture[maxsnr]
 
