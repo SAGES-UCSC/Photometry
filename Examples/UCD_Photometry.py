@@ -37,8 +37,7 @@ def get_photometry(system, in_images):
         seeing = 1
         path = os.getcwd()
         fname = system + '_' + img[-12]
-        #ap = findBestAperture.findBestAperture(path, img, satur, seeing)
-        ap = 3.06
+        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
         seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
         "If the aperture is less than the seeing round it up to next interger"
         print seeing[1]
