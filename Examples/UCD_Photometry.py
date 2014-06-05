@@ -40,7 +40,6 @@ def get_photometry(system, in_images):
         ap = findBestAperture.findBestAperture(path, img, satur, seeing)
         seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
         "If the aperture is less than the seeing round it up to next interger"
-        print seeing[1]
         if ap < seeing[1]:
             ap = math.ceil(ap)
         # Extract sources with initial rough estimate of seeing
