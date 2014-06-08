@@ -44,16 +44,19 @@ def calcZP(galaxy, scam, band):
     and the table returned from Vizier.
     """
     sdss = getSDSS(galaxy)
-
     column = str(band + 'mag')
+    # Get only the brightest sources
+    mag = map(lambda source: source[column], sdss)
+    max_mag = phot_utils.calc_average(mag) + 0.25*phot_utils.calc_average(phot_utils.variance(mag))
+    sdss = filter(lambda s: phot_utils.mag_cut(s[column], 18, max_mag), sdss)
+
     with open(scam, 'r') as catalog:
         tmp = filter(lambda line: phot_utils.no_head(line), catalog)
-    # Do magnitude cute on data here
+    # Get only the brightest sources
     tmp2 = map(lambda line: S.SCAMSource(line), tmp)
     mag = map(lambda s: s.mag_best, tmp2)
     max_mag = phot_utils.calc_average(mag) + 0.25*phot_utils.calc_average(phot_utils.variance(mag))
-    sources = filter(lambda s: phot_utils.mag_cut(s.mag_best, 0, max_mag), tmp2)
-
+    sources = filter(lambda s: phot_utils.mag_cut(s.mag_best, 18, max_mag), tmp2)
 
     ra = map(lambda line: line.ra, tmp2)
     dec = map(lambda line: line.dec, tmp2)
