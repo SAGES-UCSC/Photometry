@@ -37,7 +37,7 @@ def getSDSS(galaxy):
     result[1].remove_rows(index)
 
     # SDSS magnitudes are not exactly in AB so need to correct
-    return result[1]
+    return result[len(result)-1]
 
 def calcZP(galaxy, scam, band):
     """
