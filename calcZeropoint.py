@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from subprocess import call
 from astroquery.vizier import Vizier
-from astropy.coordinates import Angle
+import astropy.units as u
 import makeRegionFile
 import Quadtree as Q
 import Sources as S
@@ -27,7 +27,8 @@ def getSDSS(galaxy):
     and put the SDSS magnitudes into AB
     """
     Vizier.ROW_LIMIT = -1 # Removes row limit on output table
-    result = Vizier.query_region(galaxy, radius=Angle(0.1, "deg"), catalog='SDSS')
+    result = Vizier.query_region(galaxy, width=1.0*u.deg,
+                                 height=1.0*u.deg, catalog='SDSS')
     # Only select stellar sources
     index = []
     for i, entry in enumerate(result[1]):
