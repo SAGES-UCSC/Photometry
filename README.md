@@ -37,6 +37,8 @@ file to look like this -
 export PYTHONPATH=$PYTHONPATH:</path/to/directory/with/routines>
 ```
 
+This means that you can run all the tools from any other directory on your computer.
+
 
 An explanation of the code and how to use it is in the wiki for this repository.
 
