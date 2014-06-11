@@ -92,9 +92,10 @@ def calc_seeing(catalog, verbose=False):
     the FWHM. Only for Subaru Suprime-Cam right now
     """
     pixel_scale = 0.20
+    print catalog
     with open(catalog, 'r') as f:
         tmp = filter(lambda line: no_head(line), f)
-        cat = map(lambda line: sources.SCAMSource(line), tmp)
+    cat = map(lambda line: sources.SCAMSource(line), tmp)
     if verbose == True:
         print "Length of catalog: ", len(cat)
     ptsources = filter(lambda s: s.mag_best != 99.0, cat)
@@ -114,7 +115,8 @@ def calc_seeing(catalog, verbose=False):
         print "After Magnitude cut: ", len(ptsources)
     #if kwargs['makereg']:
     fwhm = map(lambda line: line.fwhm, ptsources)
-    return sum(fwhm)/len(fwhm)*pixel_scale
+    # [arcsec, pixel]
+    return [sum(fwhm)/len(fwhm)*pixel_scale, sum(fwhm)/len(fwhm)]
 
 def calc_average(data): return sum(data)/len(data)
 
@@ -168,5 +170,18 @@ def save(path, filename, ext='png', close=True, verbose=True):
 
     if close:
         plt.close()
+
+class List(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return repr(self.data)
+
+    def __add__(self, other):
+        return tuple( (a+b for a,b in zip(self.data, other.data) ) )
+
+    def __sub__(self, other):
+        return tuple( (a-b for a,b in zip(self.data, other.data) ) )
 
 #def testColorCut():
