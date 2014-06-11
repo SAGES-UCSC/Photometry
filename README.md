@@ -28,7 +28,9 @@ I wrote these routines using python 2.7.6 for a Mac computer. To run them you ne
 The first step is to get git - 
 
 *[Installing git](http://docs.astropy.org/en/stable/development/workflow/git_install.html)
+
 *[Configuring git](http://docs.astropy.org/en/stable/development/workflow/git_configure.html)
+
 *[Git resources](http://docs.astropy.org/en/stable/development/workflow/git_resources.html)
 
 
