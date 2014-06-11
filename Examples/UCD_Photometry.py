@@ -38,15 +38,16 @@ def get_photometry(system, in_images):
         path = os.getcwd()
         fname = system + '_' + img[-12]
         ap = findBestAperture.findBestAperture(path, img, satur, seeing)
-        seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
-        "If the aperture is less than the seeing round it up to next interger"
-        if ap < seeing[1]:
-            ap = math.ceil(ap)
         # Extract sources with initial rough estimate of seeing
+        seeing = [1, 1]
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing[0], "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
 
+        seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
+        "If the aperture is less than the seeing round it up to next interger"
+        if ap < seeing[1]:
+            ap = math.ceil(ap)
         # Re_extract with refined seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing[0], "nill", ap, False)
@@ -76,18 +77,18 @@ def correct_mags(galaxy, catalog, band):
 
     new_catalog = 'zpcorrected_' + catalog
     with open(new_catalog, 'w') as output:
-        output.write(''.join(map(lambda source: '%5s' % source.name + '%15.4f' % source.flux_iso +
-                    '%15.4f' % source.fluxerr_iso + '%15.4f' % source.flux_aper +
-                    '%15.4f' % source.fluxerr_aper + '%15.4f' % source.ximg + '%15.4f' % source.yimg +
-                    '%15.4f' % source.ra + '%15.4f' % source.dec + '%15.4f' % source.mag_auto +
-                    '%15.4f' % source.mag_auto_err + '%15.4f' % source.mag_best +
-                    '%15.4f' % source.mag_best_err + '%15.4f' % source.mag_aper +
-                    '%15.4f' % source.mag_aper_err + '%15.4f' % source.a_world +
-                    '%15.4f' % source.a_world_err + '%15.4f' % source.b_world +
-                    '%15.4f' % source.b_world_err + '%15.4f' % source.theta_err +
-                    '%15.4f' % source.theta + '%15.4f' % source.isoarea + '%15.4f' % source.mu +
-                    '%15.4f' % source.flux_radius + '%15.4f' % source.flags + '%15.4f' % source.fwhm +
-                    '%15.4f' % source.elogation + '%5.4e' % source.vignet + '\n',  sources)))
+        output.write(''.join(map(lambda source: '%5s' % source.name + '%15s' % source.flux_iso +
+                    '%15s' % source.fluxerr_iso + '%15s' % source.flux_aper +
+                    '%15s' % source.fluxerr_aper + '%15s' % source.ximg + '%15s' % source.yimg +
+                    '%15s' % source.ra + '%15s' % source.dec + '%15s' % source.mag_auto +
+                    '%15s' % source.mag_auto_err + '%15s' % source.mag_best +
+                    '%15s' % source.mag_best_err + '%15s' % source.mag_aper +
+                    '%15s' % source.mag_aper_err + '%15s' % source.a_world +
+                    '%15s' % source.a_world_err + '%15s' % source.b_world +
+                    '%15s' % source.b_world_err + '%15s' % source.theta_err +
+                    '%15s' % source.theta + '%15s' % source.isoarea + '%15s' % source.mu +
+                    '%15s' % source.flux_radius + '%15s' % source.flags + '%15s' % source.fwhm +
+                    '%15s' % source.elogation + '%15s' % source.vignet + '\n',  sources)))
     return new_catalog
 
 def make_trees(catalog):
@@ -111,6 +112,8 @@ def main():
     catalogs = (glob.glob('*.cat'))
     trees = {}
     for catalog in catalogs:
+        if verbose:
+            print "Working on catalog: ", catalog
         corrected_catalog = correct_mags(sys.argv[1], catalog, catalog[-5])
         trees[catalog[-5]] = make_trees(corrected_catalog)
 
