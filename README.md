@@ -30,6 +30,13 @@ The first step is to get git -
 * [Configuring git](http://docs.astropy.org/en/stable/development/workflow/git_configure.html)
 * [Git resources](http://docs.astropy.org/en/stable/development/workflow/git_resources.html)
 
+Put the routines in their own directory and add that directory to your PYTHONPATH variable. For example, to do this on a Mac edit your .bash_profile
+file to look like this - 
+
+```
+export PYTHONPATH=$PYTHONPATH:</path/to/directory/with/routines>
+```
+
 
 An explanation of the code and how to use it is in the wiki for this repository.
 
