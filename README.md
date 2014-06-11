@@ -18,7 +18,6 @@ I wrote these routines using python 2.7.6 for a Mac computer. To run them you ne
 
 1. [Source Extractor](http://www.astromatic.net/software/sextractor) - There are differences between Source Extractor for Mac and Source
    Extractor for Linux. The call to Soure Extractor is different, so if you're a Linux user be aware of that.
-
 2. Numpy and maplotlib
 3. [astropy](http://www.astropy.org/)
 4. [astroquery](https://github.com/  astropy/astroquery)
@@ -27,11 +26,9 @@ I wrote these routines using python 2.7.6 for a Mac computer. To run them you ne
 
 The first step is to get git - 
 
-*[Installing git](http://docs.astropy.org/en/stable/development/workflow/git_install.html)
-
-*[Configuring git](http://docs.astropy.org/en/stable/development/workflow/git_configure.html)
-
-*[Git resources](http://docs.astropy.org/en/stable/development/workflow/git_resources.html)
+* [Installing git](http://docs.astropy.org/en/stable/development/workflow/git_install.html)
+* [Configuring git](http://docs.astropy.org/en/stable/development/workflow/git_configure.html)
+* [Git resources](http://docs.astropy.org/en/stable/development/workflow/git_resources.html)
 
 
 An explanation of the code and how to use it is in the wiki for this repository.
