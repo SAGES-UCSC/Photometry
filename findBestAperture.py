@@ -9,6 +9,7 @@ import random as r
 import math
 from subprocess import call
 import matplotlib.pyplot as plt
+import glob
 import time
 
 import createSexConfig as sc
@@ -91,12 +92,25 @@ def findBestAperture(path, image, satur, seeing):
                 output.write(source.line)
         call(['mv', image[-12] + "_ap_" + str(round(ap, 2)) + "signal.txt", 'BestApertureFiles'])
 
+    '''
+    The files generated here aren't important and need to be
+    removed for the next steps to work properly.
+    '''
+
     try:
-        os.remove('noise.*')
+        os.remove('measurefluxat.txt')
     except OSError:
         pass
+    noise_files = (glob.glob('noise*'))
     try:
-        os.remove('sign.*')
+        for f in noise_files:
+            os.remove(f)
+    except OSError:
+        pass
+    sign_files = (glob.glob('sign*'))
+    try:
+        for f in sign_files:
+            os.remove(f)
     except OSError:
         pass
 
