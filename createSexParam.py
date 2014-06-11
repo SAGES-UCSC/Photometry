@@ -119,7 +119,7 @@ THETA_WORLD            Position angle (CCW/world-x)                             
 #ERRB_IMAGE             RMS position error along minor axis                        [pixel]
 #ERRTHETA_IMAGE         Error ellipse position angle (CCW/x)                       [deg]
 #ERRTHETA_SKY           Native error ellipse pos. angle (east of north)            [deg]
-ERRTHETA_J2000         J2000 error ellipse pos. angle (east of north)             [deg]
+#ERRTHETA_J2000         J2000 error ellipse pos. angle (east of north)             [deg]
 ISOAREA_IMAGE          Isophotal area above Analysis threshold                    [pixel**2]
 #ERRTHETA_B1950         B1950 error ellipse pos. angle (east of north)             [deg]
 #XWIN_IMAGE             Windowed position estimate along x                         [pixel]
