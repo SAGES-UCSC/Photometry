@@ -1,8 +1,9 @@
 from __future__ import division
+from decimal import *
 import math
 import geom_utils as gu
 
-MAX = 100
+MAX = 10000
 
 class Quadtree(object):
     """
@@ -85,6 +86,9 @@ class Quadtree(object):
         if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
                           interest['xmin'], interest['xmax'],
                           interest['ymin'], interest['ymax']):
+            # Going to work on vectorizing this part of the code since
+            # It's a bottle neck right now
+            #node.contents = np.array(node.contents)
             if node.q1 == None:
                 for s in node.contents:
                     s_dist = self.norm2(s.x, s.y, x, y)
@@ -155,7 +159,7 @@ class ScamEquatorialQuadtree(Quadtree):
         return gu.equnorm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/0.1
+        return  min(x2 - x1, y2 - y1)/1e-5
 
 class VizierEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -169,5 +173,5 @@ class VizierEquatorialQuadtree(Quadtree):
         return gu.equnorm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/0.1
+        return  min(x2 - x1, y2 - y1)/0.000001
 
