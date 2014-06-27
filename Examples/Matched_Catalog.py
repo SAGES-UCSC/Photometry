@@ -7,6 +7,7 @@ from subprocess import call, Popen, PIPE
 import glob
 import math
 import numpy as np
+
 import Sources
 import Quadtree
 import createSexConfig
@@ -17,7 +18,22 @@ import makeRegionFile
 import phot_utils
 import geom_utils
 
-verbose=False
+verbose=True
+
+def associate(list1, tree2, tree3):
+    dist = 0.001
+    matches = []
+    for entry in list1:
+        match2 = tree2.match(entry.ra, entry.dec)
+        if match2 != None and geom_utils.equnorm(entry.ra, entry.dec, match.ra, match.dec) <= dist:
+            match3 = tree3.match(entry.ra, entry.dec)
+            if match3 != None and geom_utils.equnorm(entry.ra, entry.dec, match3.ra, match3.dec) <= dist:
+                # Match2 is r-magnitudes
+                entry.match2 = match2.mag_aper
+                # Match3 is i-magnitudes
+                entry.match3 = match3.mag_aper
+                matches.append(entry)
+    return matches
 
 def get_photometry(system, in_images):
     galsub = []
@@ -33,13 +49,12 @@ def get_photometry(system, in_images):
 
     for i, img in enumerate(imgs):
         image = phot_utils.load_fits(img, verbose=False)
-        satur = image[0].header['SATURATE']
-        seeing = 1
         path = os.getcwd()
         fname = system + '_' + img[-12]
-        ap = findBestAperture.findBestAperture(path, img, satur, seeing)
-        # Extract sources with initial rough estimate of seeing
         seeing = [1, 1]
+        satur = image[0].header['SATURATE']
+        ap = findBestAperture.findBestAperture(path, img, satur, seeing[0])
+        # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing[0], "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
@@ -47,8 +62,8 @@ def get_photometry(system, in_images):
         seeing = phot_utils.calc_seeing(fname + '.cat', verbose=verbose)
         "If the aperture is less than the seeing round it up to next interger"
         if ap < seeing[1]:
-            ap = math.ceil(ap)
-        # Re_extract with refined seeing
+            ap = math.ceil(seeing[1])
+        # Re-extract with refined seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing[0], "nill", ap, False)
         call(['sex', '-c', config, galsub[i], img])
@@ -93,7 +108,6 @@ def correct_mags(galaxy, catalog, band):
 
 def make_trees(catalog):
     with open(catalog, 'r') as f:
-        #trees[catalog[-5]] = make_trees(corrected_catalog)
         tmp = filter(lambda line: phot_utils.no_head(line), f)
     tmp2 = map(lambda line: Sources.SCAMSource(line), tmp)
 
@@ -109,64 +123,26 @@ def make_trees(catalog):
     return sources
 
 def main():
-    #get_photometry(sys.argv[1], sys.argv[2])
-    catalogs = (glob.glob('*.cat'))
-    trees = {}
+    get_photometry(sys.argv[1], sys.argv[2])
+    catalogs = (glob.glob('NGC4621*.cat'))
     for catalog in catalogs:
         if verbose:
             print "Working on catalog: ", catalog
         corrected_catalog = correct_mags(sys.argv[1], catalog, catalog[-5])
-        trees[catalog[-5]] = make_trees(corrected_catalog)
 
-    # Aaron gave me the coordinates
-    m59_ucd3_i = trees['i'].match(190.54601, 11.64478)
-    m59_ucd3_g = trees['g'].match(190.54601, 11.64478)
+    sys.exit()
 
-    print '\n'
+    with open('NGC4621_g.cat', 'r') as catalog:
+        tmp = filter(lambda line: phot_utils.no_head(line), catalog)
+    g_sources = map(lambda source: Sources.SCAMSource(source), tmp)
 
-    print "M58-UCD3's Location in catalog: ", m59_ucd3_i.name
-    print 'MAG_AUTO: '
-    print "I Mag and G Mag: ",  m59_ucd3_i.mag_auto, m59_ucd3_g.mag_auto
-    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_auto - m59_ucd3_i.mag_auto
-    print 'MAG_APER: '
-    print "I Mag and G Mag: ",  m59_ucd3_i.mag_aper, m59_ucd3_g.mag_aper
-    print 'M59-UCD3 g-i: ', m59_ucd3_g.mag_aper - m59_ucd3_i.mag_aper
-    print 'M59-UCD3 FWHM: ', m59_ucd3_g.fwhm*0.2
-    print "Coordinates from i-band catalog - "
-    print phot_utils.convertRA(m59_ucd3_i.ra), phot_utils.convertDEC(m59_ucd3_i.dec)
-    print "Coordinates from g-band catalog - "
-    print phot_utils.convertRA(m59_ucd3_g.ra), phot_utils.convertDEC(m59_ucd3_g.dec)
+    r_sources = make_trees('NGC4621_r.cat')
+    i_sources = make_trees('NGC4621_i.cat')
 
-    print '\n'
-    print '\n'
+    matches = associate(g_sources, r_sources, i_sources)
 
-    m59cO_i = trees['i'].match(190.48056, 11.66771)
-    m59cO_g = trees['g'].match(190.48056, 11.66771)
-    print "M59cO's Location in catalog: ", m59cO_i.name
-    print "MAG_AUTO: "
-    print "I Mag and G Mag: ", m59cO_i.mag_auto, m59cO_g.mag_auto
-    print 'M59cO g-i: ', m59cO_g.mag_auto - m59cO_i.mag_auto
-    print "MAG_APER: "
-    print "I Mag and G Mag: ", m59cO_i.mag_aper, m59cO_g.mag_aper
-    print 'M59cO g-i: ', m59cO_g.mag_aper - m59cO_i.mag_aper
-    print "Coordinates from i-band catalog - "
-    print phot_utils.convertRA(m59cO_i.ra), phot_utils.convertDEC(m59cO_i.dec)
-    print "Coordinates from g-band catalog - "
-    print phot_utils.convertRA(m59cO_g.ra), phot_utils.convertDEC(m59cO_g.dec)
-
-    print '\n'
-
-    #M59_GCX = sources.match(190.50245, 11.65993)
-    #print M59_GCX.name
-    #print phot_utils.convertRA(M59_GCX.ra), phot_utils.convertDEC(M59_GCX.dec)
-
-    #M59_GCY = sources.match(190.51231, 11.63986)
-    #print M59_GCY.name
-    #print phot_utils.convertRA(M59_GCY.ra), phot_utils.convertDEC(M59_GCY.dec)
-
-    #NGC_4621_AIMSS1 = sources.match(190.47050, 11.63001)
-    #print NGC_4621_AIMSS1.name
-    #print phot_utils.convertRA(NGC_4621_AIMSS1.ra), phot_utils.convertDEC(NGC_4621_AIMSS1.dec)
+    with open('matched_gri.cat', 'w') as out:
+        out.write()
 
 if __name__ == '__main__':
     sys.exit(main())
