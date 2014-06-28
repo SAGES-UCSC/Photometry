@@ -34,7 +34,7 @@ def getSDSS(galaxy):
     for i, entry in enumerate(result[1]):
         if entry['cl'] != 6:
             index.append(i)
-    result[1].remove_rows(index)
+    result[len(result) - 1].remove_rows(index)
 
     # SDSS magnitudes are not exactly in AB so need to correct
     return result[len(result)-1]
@@ -46,9 +46,11 @@ def calcZP(galaxy, scam, band):
     """
     sdss = getSDSS(galaxy)
     column = str(band + 'mag')
+    print "Column: ", column
     # Get only the brightest sources
     mag = map(lambda source: source[column], sdss)
-    max_mag = phot_utils.calc_average(mag) + 0.25*phot_utils.calc_average(phot_utils.variance(mag))
+    max_mag = phot_utils.calc_average(mag) + \
+                0.25*phot_utils.calc_average(phot_utils.variance(mag))
     sdss = filter(lambda s: phot_utils.mag_cut(s[column], 18, max_mag), sdss)
 
     with open(scam, 'r') as catalog:
@@ -56,7 +58,8 @@ def calcZP(galaxy, scam, band):
     # Get only the brightest sources
     tmp2 = map(lambda line: S.SCAMSource(line), tmp)
     mag = map(lambda s: s.mag_best, tmp2)
-    max_mag = phot_utils.calc_average(mag) + 0.25*phot_utils.calc_average(phot_utils.variance(mag))
+    max_mag = phot_utils.calc_average(mag) + \
+                0.25*phot_utils.calc_average(phot_utils.variance(mag))
     sources = filter(lambda s: phot_utils.mag_cut(s.mag_best, 18, max_mag), tmp2)
 
     ra = map(lambda line: line.ra, tmp2)

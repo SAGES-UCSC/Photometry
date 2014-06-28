@@ -36,7 +36,7 @@ def associate(list1, tree2, tree3):
     return matches
 
 def get_photometry(system, in_images):
-    galsub = []
+    subs= []
     imgs = []
     with(open(in_images, "r")) as f:
         for line in f:
@@ -49,12 +49,13 @@ def get_photometry(system, in_images):
 
     path = '/Users/alexawork/Documents/GlobularClusters/Data/NGC4621'
     for galsub, img in zip(subs, imgs):
-        image = phot_utils.load_fits(path + img, verbose=False)
+        image = phot_utils.load_fits(img, verbose=False)
         path = os.getcwd()
-        fname = system + '_' + img[-5]
+        fname = system + '_' + img[-6]
         seeing = [1, 1]
         satur = image[0].header['SATURATE']
-        ap = findBestAperture.findBestAperture(path, img, satur, seeing[0])
+        #ap = findBestAperture.findBestAperture(path, img, satur, seeing[0])
+        ap = 5
         # Extract sources with initial rough estimate of seeing
         config = createSexConfig.createSexConfig(fname, filter_file,
                  param_file, satur, seeing[0], "nill", ap, False)
@@ -78,6 +79,7 @@ def get_photometry(system, in_images):
             call(['mv', fname + '_' + check, 'CheckImages'])
 
 def correct_mags(galaxy, catalog, band):
+    print "band: ", band
     zp = calcZeropoint.calcZP(galaxy, catalog, band)
     if verbose:
         print "Zeropoint for " + band + "-band", zp
@@ -124,7 +126,7 @@ def make_trees(catalog):
     return sources
 
 def main():
-    get_photometry(sys.argv[1], sys.argv[2])
+    #get_photometry(sys.argv[1], sys.argv[2])
     catalogs = (glob.glob('NGC4621*.cat'))
     for catalog in catalogs:
         if verbose:
