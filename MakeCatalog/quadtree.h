@@ -13,7 +13,7 @@ All the types required to make a quadtree
 /* ------- CONSTANTS ------- */
 
 #define MAX  10
-#define MAXDIST 0.00000014 // Half an arc second
+#define MAXDIST 0.000000014 // Half an arc second
 /*#define MAXDIST 0.000014 // Half an arc second*/
 
 /* ------- TYPES ------- */
@@ -34,7 +34,7 @@ typedef struct source_t {
     double b_world, errb_world, theta; 
     double errtheta, isoarea_img, mu_max, flux_radius; 
     int flags;
-    double fwhm, elongation;
+    double fwhm, elongation, vignet;
     struct source_t *match2, *match3;
 } source_t;
 
@@ -58,12 +58,12 @@ extern int debug;
 /* making a tree */
 node_t *new_quadtree(double xmin, double ymin, double xmax, double ymax);
 source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flux_aper, 
-                     double fluxerr_aper, long double x_image, long double y_image, 
+                     double fluxerr_aper, double x_image, double y_image, 
                      long double alpha, long double delta, double mag_auto, double magerr_auto,  
                      double mag_best, double magerr_best, double mag_aper, double magerr_aper,   
                      double a_world, double erra_world, double b_world, double errb_world,   
                      double theta, double errtheta, double isoarea_img, double mu_max,  
-                     double flux_radius, int flags, double fwhm, double elongation);
+                     double flux_radius, int flags, double fwhm, double elongation, double vignet);
 
 void insert_source(node_t *node, source_t *source);
 

@@ -43,12 +43,13 @@ node_t *new_node( double xmin,  double ymin,  double xmax,  double ymax) {
     return node;
 }
 source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flux_aper,
-                     double fluxerr_aper, long double x_image, long double y_image,
+                     double fluxerr_aper, double x_image, double y_image,
                      long double alpha, long double delta, double mag_auto, double magerr_auto,
                      double mag_best, double magerr_best, double mag_aper, double magerr_aper,
                      double a_world, double erra_world, double b_world, double errb_world,
                      double theta, double errtheta, double isoarea_img, double mu_max,
-                     double flux_radius, int flags, double fwhm, double elongation) {
+                     double flux_radius, int flags, double fwhm, double elongation, 
+                     double vignet) {
     source_t *source = malloc(sizeof(source_t));
     source->number = number;
     source->flux_iso = flux_iso;
@@ -77,6 +78,7 @@ source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flu
     source->flags = flags;
     source->fwhm = fwhm;
     source->elongation = elongation;
+    source->vignet = vignet;
     return source;
 }
 
@@ -89,7 +91,6 @@ void free_source(source_t *source) {
 
 void insert_source(node_t *node, source_t *source) {
     node_t *quadrant;
-   printf("inserting sources\n"); 
     // Check if the MAX has been reached
     if (node->contents.length == MAX)
         subdivide(node);    
@@ -112,7 +113,6 @@ void insert_source(node_t *node, source_t *source) {
         insert_source(quadrant, source);
 
     } else {    
-        printf("pushing to node\n");
         // If no subquads exist add source to the list in contents element 
         // Use push() to prepend the source on the list.
         push(&node->contents, source);
@@ -120,7 +120,6 @@ void insert_source(node_t *node, source_t *source) {
 }
 
 static void subdivide(node_t *node) {
-   printf("subdividing\n"); 
     source_t *source;
 
     // Divide up the node
