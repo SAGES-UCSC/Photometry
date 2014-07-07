@@ -42,20 +42,24 @@ node_t *new_node( double xmin,  double ymin,  double xmax,  double ymax) {
     init_list(&node->contents);
     return node;
 }
-
-source_t *new_source(int number, long double x_image, long double y_image, long double alpha, long double delta,
-                      double mag_auto,  double magerr_auto,  double mag_best,  double magerr_best,
-                      double mag_aper,  double magerr_aper,  double a_world,  double erra_world,
-                      double b_world,  double errb_world,  double theta,  double errtheta, 
-                      double isoarea_img,  double mu_max,  double flux_radius, int flags) {
-
+source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flux_aper,
+                     double fluxerr_aper, long double x_image, long double y_image,
+                     long double alpha, long double delta, double mag_auto, double magerr_auto,
+                     double mag_best, double magerr_best, double mag_aper, double magerr_aper,
+                     double a_world, double erra_world, double b_world, double errb_world,
+                     double theta, double errtheta, double isoarea_img, double mu_max,
+                     double flux_radius, int flags, double fwhm, double elongation) {
     source_t *source = malloc(sizeof(source_t));
     source->number = number;
+    source->flux_iso = flux_iso;
+    source->fluxerr_iso = fluxerr_iso;
+    source->flux_aper = flux_aper;
+    source->fluxerr_aper = fluxerr_aper;
     source->x_image = x_image;
     source->y_image = y_image;
     source->alpha = alpha;
     source->delta = delta;
-    source->mag_aper = mag_aper;
+    source->mag_auto = mag_auto;
     source->magerr_auto = magerr_auto;
     source->mag_best = mag_best;
     source->magerr_best = magerr_best;
@@ -71,6 +75,8 @@ source_t *new_source(int number, long double x_image, long double y_image, long 
     source->mu_max = mu_max;
     source->flux_radius = flux_radius;
     source->flags = flags;
+    source->fwhm = fwhm;
+    source->elongation = elongation;
     return source;
 }
 
@@ -83,7 +89,7 @@ void free_source(source_t *source) {
 
 void insert_source(node_t *node, source_t *source) {
     node_t *quadrant;
-    
+   printf("inserting sources\n"); 
     // Check if the MAX has been reached
     if (node->contents.length == MAX)
         subdivide(node);    
@@ -106,6 +112,7 @@ void insert_source(node_t *node, source_t *source) {
         insert_source(quadrant, source);
 
     } else {    
+        printf("pushing to node\n");
         // If no subquads exist add source to the list in contents element 
         // Use push() to prepend the source on the list.
         push(&node->contents, source);
@@ -113,6 +120,7 @@ void insert_source(node_t *node, source_t *source) {
 }
 
 static void subdivide(node_t *node) {
+   printf("subdividing\n"); 
     source_t *source;
 
     // Divide up the node
@@ -235,6 +243,7 @@ int intersecting(box_t *b1, box_t *b2) {
 
     return 0;
 }
+
 
 long  double norm(long double x1, long double y1, long double x2, long double y2) {
 	return sqrt(norm2(x1, y1, x2, y2));

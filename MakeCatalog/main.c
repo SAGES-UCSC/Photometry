@@ -28,6 +28,7 @@ int debug = 1;
 /*  ------- FUNCTIONS ------- */
 
 int main(int argc, char **argv) {
+    printf("started program\n");
     int i;
     double x, y;
     source_t *s;
@@ -48,8 +49,11 @@ int main(int argc, char **argv) {
 	name3 = argv[3];
 
 	// Read in the source extractor results and sort into the tree
-	list1 = fill_list(name1);
+    //printf("filling list\n");
+	//list1 = fill_list(name1);
+    printf("filling first quadtree\n");
 	quadtree2 = fill_quadtree(name2);
+    printf("filling second quadtree\n");
 	quadtree3 = fill_quadtree(name3);
 
 	// Make list of common elements
@@ -68,7 +72,7 @@ void write_list(list_t *list) {
     out = fopen("MatchedCatalog.txt", "w");
 
     while ((source = pop(list))) {
-        fprintf(out, "%6d %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %6d %14.4lf %14.4lf %14.4lf\n", 
+        fprintf(out, "%6d %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %6d %14.4lf %14.4lf %14.4lf %14.4lf\n", 
                 source->number, source->flux_iso, source->fluxerr_iso, source->flux_aper,
                 source->fluxerr_aper, source->x_image, source->y_image, source->alpha, 
                 source->delta, source->mag_auto, source->magerr_auto, source->mag_best, 
@@ -123,7 +127,7 @@ node_t *fill_quadtree(char *name) {
     
     // Fill the quadtree from the input file
     while (!feof(in)) {
-        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d %lf %lf", 
+        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d %lf %lf", 
 				&number, &flux_iso, &fluxerr_iso, &flux_aper, &fluxerr_aper, 
                 &x_image, &y_image, &alpha, &delta, &mag_auto, &magerr_auto, &mag_best, &magerr_best,
                 &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world, &errb_world, &theta, &errtheta, 
@@ -140,6 +144,8 @@ node_t *fill_quadtree(char *name) {
 list_t *fill_list(char *name) {
     FILE *in;
 	FILE *out;
+    
+    int count;
 
     double flux_iso, fluxerr_iso, flux_aper, fluxerr_aper;
 	double mag_auto, magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper;
@@ -156,7 +162,7 @@ list_t *fill_list(char *name) {
     
     // Fill the list from the input file
     while (!feof(in)) {
-        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d %lf %lf", 
+        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d %lf %lf", 
 				&number, &flux_iso, &fluxerr_iso, &flux_aper, &fluxerr_aper, 
                 &x_image, &y_image, &alpha, &delta, &mag_auto, &magerr_auto, &mag_best, &magerr_best,
                 &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world, &errb_world, &theta, &errtheta, 
