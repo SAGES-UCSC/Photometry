@@ -61,7 +61,7 @@ source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flu
                      double fluxerr_aper, long double x_image, long double y_image, 
                      long double alpha, long double delta, double mag_auto, double magerr_auto,  
                      double mag_best, double magerr_best, double mag_aper, double magerr_aper,   
-                    double a_world, double erra_world, double b_world, double errb_world,   
+                     double a_world, double erra_world, double b_world, double errb_world,   
                      double theta, double errtheta, double isoarea_img, double mu_max,  
                      double flux_radius, int flags, double fwhm, double elongation);
 
