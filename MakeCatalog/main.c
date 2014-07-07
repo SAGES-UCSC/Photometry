@@ -22,7 +22,7 @@ list_t *fill_list(char *name);
 
 /* ------- GLOBALS ------- */
 
-int debug = 0;
+int debug = 1;
 
 
 /*  ------- FUNCTIONS ------- */
@@ -68,7 +68,14 @@ void write_list(list_t *list) {
     out = fopen("MatchedCatalog.txt", "w");
 
     while ((source = pop(list))) {
-        fprintf(out, "%6d %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf\n", source->number, source->alpha, source->delta,  source->mag_aper, source->match2->mag_aper, source->match3->mag_aper);
+        fprintf(out, "%6d %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %14.4lf %6d %14.4lf %14.4lf %14.4lf\n", 
+                source->number, source->flux_iso, source->fluxerr_iso, source->flux_aper,
+                source->fluxerr_aper, source->x_image, source->y_image, source->alpha, 
+                source->delta, source->mag_auto, source->magerr_auto, source->mag_best, 
+                source->magerr_best, source->mag_aper, source->a_world, source->erra_world,
+                source->b_world, source->errb_world, source->theta, source->errtheta, 
+                source->isoarea_img, source->mu_max, source->flux_radius, source->flags,
+                source->fwhm, source->elongation, source->match2->mag_aper, source->match3->mag_aper);
     }
     fclose(out);
 }
@@ -101,12 +108,13 @@ int x = 0;
 node_t *fill_quadtree(char *name) {
     FILE *in;
 
+    double flux_iso, fluxerr_iso, flux_aper, fluxerr_aper;
 	double mag_auto, magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper;
     long double x_image, y_image, alpha, delta;
     double a_world, erra_world, b_world, errb_world;
     double theta, errtheta, isoarea_img, mu_max, flux_radius;
     int number, flags;
-
+    double fwhm, elongation;
 
     // Eventually want to fill in the dimension of the tree from 
     // the header
@@ -115,14 +123,15 @@ node_t *fill_quadtree(char *name) {
     
     // Fill the quadtree from the input file
     while (!feof(in)) {
-        fscanf(in, "%d %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d", 
-				&number, &x_image, &y_image, &alpha, &delta, &mag_auto, 
-				&magerr_auto, &mag_best, &magerr_best, &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world,
-                &errb_world, &theta, &errtheta, &isoarea_img, &mu_max, &flux_radius, &flags);
-        if (mag_aper != 99.0)
-            insert_source(quadtree, new_source(number, x_image, y_image, alpha, delta, mag_auto,            
-                          magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper, a_world, erra_world, b_world,
-                          errb_world, theta, errtheta, isoarea_img, mu_max, flux_radius, flags));
+        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d %lf %lf", 
+				&number, &flux_iso, &fluxerr_iso, &flux_aper, &fluxerr_aper, 
+                &x_image, &y_image, &alpha, &delta, &mag_auto, &magerr_auto, &mag_best, &magerr_best,
+                &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world, &errb_world, &theta, &errtheta, 
+                &isoarea_img, &mu_max, &flux_radius, &flags, &fwhm, &elongation );
+        insert_source(quadtree, new_source(number, flux_iso, fluxerr_iso, flux_aper, fluxerr_aper, 
+                        x_image, y_image, alpha, delta, mag_auto, magerr_auto, mag_best, magerr_best, mag_aper,
+                        magerr_aper, a_world, erra_world, b_world, errb_world, theta, errtheta, isoarea_img, 
+                        mu_max, flux_radius, flags, fwhm, elongation));
     }
     fclose(in);
     return quadtree;
@@ -132,13 +141,13 @@ list_t *fill_list(char *name) {
     FILE *in;
 	FILE *out;
 
+    double flux_iso, fluxerr_iso, flux_aper, fluxerr_aper;
 	double mag_auto, magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper;
     long double x_image, y_image, alpha, delta;
     double a_world, erra_world, b_world, errb_world;
     double theta, errtheta, isoarea_img, mu_max, flux_radius;
     int number, flags;
-
-out = fopen("ListFill.txt", "w");
+    double fwhm, elongation;
 
     list_t *list;
 
@@ -147,18 +156,16 @@ out = fopen("ListFill.txt", "w");
     
     // Fill the list from the input file
     while (!feof(in)) {
-        fscanf(in, "%d %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d", 
-				&number, &x_image, &y_image, &alpha, &delta, &mag_auto, 
-				&magerr_auto, &mag_best, &magerr_best, &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world,
-                &errb_world, &theta, &errtheta, &isoarea_img, &mu_max, &flux_radius, &flags);
-        if (mag_aper != 99.0)
-            push(list, new_source(number, x_image, y_image, alpha, delta, mag_auto,            
-                                  magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper, a_world, erra_world, b_world,
-                                  errb_world, theta, errtheta, isoarea_img, mu_max, flux_radius, flags));
-fprintf(out, "%6d %12.4LG %12.4LG %12.4LG %12.4LG %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf %12.4lf  %12.4lf %6d\n", number, x_image, y_image, alpha, delta, mag_auto, magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper, a_world, erra_world, b_world, errb_world, theta, errtheta, isoarea_img, mu_max, flux_radius, flags); 
-
+        fscanf(in, "%d %lf %lf %lf %lf %LG %LG %LG %LG %lf %lf %lf %lf %lf %lf %lf %lf %f %lf %lf %lf %lf %lf %lf %d %lf %lf", 
+				&number, &flux_iso, &fluxerr_iso, &flux_aper, &fluxerr_aper, 
+                &x_image, &y_image, &alpha, &delta, &mag_auto, &magerr_auto, &mag_best, &magerr_best,
+                &mag_aper, &magerr_aper, &a_world, &erra_world, &b_world, &errb_world, &theta, &errtheta, 
+                &isoarea_img, &mu_max, &flux_radius, &flags, &fwhm, &elongation);
+        push(list, new_source(number, flux_iso, fluxerr_iso, flux_aper, fluxerr_aper, x_image, y_image, 
+                 alpha, delta, mag_auto, magerr_auto, mag_best, magerr_best, mag_aper, magerr_aper, a_world, 
+                 erra_world, b_world, errb_world, theta, errtheta, isoarea_img, mu_max, flux_radius, flags,
+                 fwhm, elongation));
     }
-
 
     fclose(in);
     return list;

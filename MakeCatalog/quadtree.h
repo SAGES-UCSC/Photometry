@@ -1,4 +1,4 @@
-:*
+/*
 
 Author: Alexa Villaume
 Data: July 29th, 2013
@@ -27,12 +27,14 @@ typedef struct source_t {
 	list_links_t links;
     struct source_t *next, *prev;
     int number; 
+    double flux_iso, fluxerr_iso, flux_aper, fluxerr_aper;
     double x_image, y_image, alpha, delta;
     double mag_auto, magerr_auto, mag_best, magerr_best; 
     double mag_aper, magerr_aper, a_world, erra_world; 
     double b_world, errb_world, theta; 
-    double errtheta, isoarea_img, mu_max,flux_radius; 
+    double errtheta, isoarea_img, mu_max, flux_radius; 
     int flags;
+    double fwhm, elongation;
     struct source_t *match2, *match3;
 } source_t;
 
@@ -55,13 +57,16 @@ extern int debug;
 
 /* making a tree */
 node_t *new_quadtree(double xmin, double ymin, double xmax, double ymax);
-source_t *new_source(int number, long double x_image, long double y_image, long double alpha, long double delta, 
-                     double mag_auto, double magerr_auto, double mag_best, double magerr_best, 
-                     double mag_aper, double magerr_aper, double a_world, double erra_world, 
-                     double b_world, double errb_world, double theta, 
-                     double errtheta, double isoarea_img, double mu_max, double flux_radius, int flags);
+source_t *new_source(int number, double flux_iso, double fluxerr_iso, double flux_aper, 
+                     double fluxerr_aper, long double x_image, long double y_image, 
+                     long double alpha, long double delta, double mag_auto, double magerr_auto,  
+                     double mag_best, double magerr_best, double mag_aper, double magerr_aper,   
+                    double a_world, double erra_world, double b_world, double errb_world,   
+                     double theta, double errtheta, double isoarea_img, double mu_max,  
+                     double flux_radius, int flags, double fwhm, double elongation);
 
 void insert_source(node_t *node, source_t *source);
+
 void free_source(source_t *source);
 
 /* searching */
