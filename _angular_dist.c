@@ -28,7 +28,7 @@ static PyObject *angular_dist_angular_dist(PyObject *self, PyObject *args) {
     double x1, y1, x2, y2;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "ddOOO", &x1, &y1, &x2, &y2))
+    if (!PyArg_ParseTuple(args, "dddd", &x1, &y1, &x2, &y2))
         return NULL;
 
     /* Call the external C function to compute the angular_dist. */
@@ -46,7 +46,7 @@ static PyObject *angular_dist_angular_dist2(PyObject *self, PyObject *args) {
     double x1, y1, x2, y2;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "ddOOO", &x1, &y1, &x2, &y2))
+    if (!PyArg_ParseTuple(args, "dddd", &x1, &y1, &x2, &y2))
         return NULL;
 
     /* Call the external C function to compute the angular_dist. */

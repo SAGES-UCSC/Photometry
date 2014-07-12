@@ -27,8 +27,8 @@ PyMODINIT_FUNC init_norm(void) {
 static PyObject *norm_norm(PyObject *self, PyObject *args) {
     double x1, y1, x2, y2;
 
-    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "ddOOO", &x1, &y1, &x2, &y2))
+   /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "dddd", &x1, &y1, &x2, &y2))
         return NULL;
 
     /* Call the external C function to compute the norm. */
@@ -45,8 +45,8 @@ static PyObject *norm_norm(PyObject *self, PyObject *args) {
 static PyObject *norm_norm2(PyObject *self, PyObject *args) {
     double x1, y1, x2, y2;
 
-    /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "ddOOO", &x1, &y1, &x2, &y2))
+   /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "dddd", &x1, &y1, &x2, &y2))
         return NULL;
 
     /* Call the external C function to compute the norm. */
