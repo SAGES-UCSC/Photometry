@@ -1,10 +1,12 @@
-from __future__ import division
-from decimal import *
 import math
+from bigfloat import *
+
+import _norm
+import _angular_dist
 import geom_utils as gu
 
-MAX = 10000
 
+MAX = 60
 class Quadtree(object):
     """
     Quadtree base class. Only functions that are agnostic to
@@ -40,13 +42,13 @@ class Quadtree(object):
 
     def inserttoquad(self, node, source):
         self.num_inserttoquads+=1
-        if source.x >= node.xmid:
-            if source.y >= node.ymid:
+        if BigFloat(source.x) >= BigFloat(node.xmid):
+            if BigFloat(source.y) >= BigFloat(node.ymid):
                 quadrant = node.q1
             else:
                 quadrant = node.q4
         else:
-            if source.y >= node.ymid:
+            if BigFloat(source.y) >= BigFloat(node.ymid):
                 quadrant = node.q2
             else:
                 quadrant = node.q3
@@ -83,16 +85,17 @@ class Quadtree(object):
 
     def nearersource(self, tree, node, x, y, nearest, interest):
         self.num_nearersources+=1
-        if gu.intersecting(node.xmin, node.xmax, node.ymin, node.ymax,
-                          interest['xmin'], interest['xmax'],
-                          interest['ymin'], interest['ymax']):
+        if gu.intersecting((node.xmin), (node.xmax),
+                           (node.ymin), (node.ymax),
+                           (interest['xmin']), (interest['xmax']),
+                           (interest['ymin']), (interest['ymax'])):
             # Going to work on vectorizing this part of the code since
             # It's a bottle neck right now
             #node.contents = np.array(node.contents)
             if node.q1 == None:
-                for s in node.contents:
-                    s_dist = self.norm2(s.x, s.y, x, y)
-                    if s_dist < nearest['dist']:
+               for s in node.contents:
+                    s_dist = self.norm2(BigFloat(s.x), BigFloat(s.y), BigFloat(x), BigFloat(y))
+                    if (s_dist) < (nearest['dist']):
                         nearest['source'] = s.source
                         nearest['dist'] = s_dist
                         dist = math.sqrt(s_dist)
@@ -112,12 +115,12 @@ class Quadtree(object):
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
-        self.xmin = float(xmin)
-        self.ymin = float(ymin)
-        self.xmax = float(xmax)
-        self.ymax = float(ymax)
-        self.xmid = float((self.xmin + self.xmax)/2.0)
-        self.ymid = float((self.ymin + self.ymax)/2.0)
+        self.xmin = BigFloat(xmin)
+        self.ymin = BigFloat(ymin)
+        self.xmax = BigFloat(xmax)
+        self.ymax = BigFloat(ymax)
+        self.xmid = BigFloat((self.xmin + self.xmax)/2.0)
+        self.ymid = BigFloat((self.ymin + self.ymax)/2.0)
         self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
 
@@ -130,8 +133,8 @@ class Point(object):
     """
     def __init__(self, source, x, y):
         self.source = source
-        self.x = float(x)
-        self.y = float(y)
+        self.x = BigFloat(x)
+        self.y = BigFloat(y)
 
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -142,7 +145,8 @@ class ScamPixelQuadtree(Quadtree):
         self.inserttonode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(self, x1, y1, x2, y2):
-        return gu.pixnorm2(x1, y1, x2, y2)
+#        return gu.pixnorm2(x1, y1, x2, y2)
+        return _norm.norm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
         return  min(x2 - x1, y2 - y1)/1000.0
@@ -156,22 +160,8 @@ class ScamEquatorialQuadtree(Quadtree):
         self.inserttonode(self.top, Point(source, source.ra, source.dec))
 
     def norm2(self, x1, y1, x2, y2):
-        return gu.equnorm2(x1, y1, x2, y2)
+#        return gu.equnorm2(x1, y1, x2, y2)
+        return _angular_dist.angular_dist2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/1e-5
-
-class VizierEquatorialQuadtree(Quadtree):
-    def __init__(self, xmin, ymin, xmax, ymax):
-        super(VizierEquatorialQuadtree, self).__init__(xmin, ymin, xmax, ymax)
-
-    def insert(self, source):
-        self.num_insert+=1
-        self.inserttonode(self.top, Point(source, source['RAJ2000'], source['DEJ2000']))
-
-    def norm2(self, x1, y1, x2, y2):
-        return gu.equnorm2(x1, y1, x2, y2)
-
-    def initial_dist(self, x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/0.000001
-
+        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y))/100.0
