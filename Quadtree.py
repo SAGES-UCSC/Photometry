@@ -42,13 +42,13 @@ class Quadtree(object):
 
     def inserttoquad(self, node, source):
         self.num_inserttoquads+=1
-        if BigFloat(source.x) >= BigFloat(node.xmid):
-            if BigFloat(source.y) >= BigFloat(node.ymid):
+        if source.x >= node.xmid:
+            if source.y >= node.ymid:
                 quadrant = node.q1
             else:
                 quadrant = node.q4
         else:
-            if BigFloat(source.y) >= BigFloat(node.ymid):
+            if source.y >= node.ymid:
                 quadrant = node.q2
             else:
                 quadrant = node.q3
@@ -85,7 +85,7 @@ class Quadtree(object):
         self.nearersource(tree, tree.top, x, y, nearest, interest)
         return nearest.source
 
-#    @memoize
+    #@utils.memoize
     def nearersource(self, tree, node, x, y, nearest, interest):
         self.num_nearersources+=1
         if gu.intersecting(node.xmin, node.xmax,
@@ -94,11 +94,11 @@ class Quadtree(object):
                            interest.ymin, interest.ymax):
             if node.q1 == None:
                for s in node.contents:
-                    s_dist = self.norm2(BigFloat(s.x), BigFloat(s.y), BigFloat(x), BigFloat(y))
+                    s_dist = self.norm2(s.x, s.y, x, y)
                     if s_dist < nearest.dist:
                         nearest.source = s.source
                         nearest.dist = s_dist
-                        dist = math.sqrt(s_dist)
+                        dist = sqrt(s_dist)
                         interest.xmin = x - dist
                         interest.ymin = y - dist
                         interest.xmax = x + dist
