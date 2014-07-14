@@ -4,7 +4,7 @@ from bigfloat import *
 import _norm
 import _angular_dist
 import geom_utils as gu
-
+import Quadtree_Utilities as utils
 
 MAX = 60
 class Quadtree(object):
@@ -69,44 +69,45 @@ class Quadtree(object):
         return self.nearestsource(self, x, y)
 
     def nearestsource(self, tree, x, y):
-        nearest = {'source':None, 'dist':0}
-        nearest['dist'] = self.initial_dist(tree.top.xmax, tree.top.xmin,
-                                       tree.top.ymax, tree.top.ymin)
-        interest = {'xmin':x-nearest['dist'], 'ymin':y-nearest['dist'],
-                    'xmax':x+nearest['dist'], 'ymax':y+nearest['dist']}
-        interest = gu.clip_box(interest['xmin'], interest['ymin'],
-                               interest['xmax'], interest['ymax'],
+        nearest = utils.Nearest()
+        nearest.dist = self.initial_dist(tree.top.xmax, tree.top.xmin,
+                                         tree.top.ymax, tree.top.ymin)
+        interest = utils.Interest(x-nearest.dist, y-nearest.dist,
+                            x+nearest.dist, y+nearest.dist)
+
+        interest = gu.clip_box(interest.xmin, interest.ymin,
+                               interest.xmax, interest.ymax,
                                tree.top.xmin, tree.top.ymin,
                                tree.top.xmax, tree.top.ymax)
-        nearest['dist'] = nearest['dist']*nearest['dist']
+
+        nearest.dist = nearest.dist*nearest.dist
 
         self.nearersource(tree, tree.top, x, y, nearest, interest)
-        return nearest['source']
+        return nearest.source
 
+#    @memoize
     def nearersource(self, tree, node, x, y, nearest, interest):
         self.num_nearersources+=1
-        if gu.intersecting((node.xmin), (node.xmax),
-                           (node.ymin), (node.ymax),
-                           (interest['xmin']), (interest['xmax']),
-                           (interest['ymin']), (interest['ymax'])):
-            # Going to work on vectorizing this part of the code since
-            # It's a bottle neck right now
-            #node.contents = np.array(node.contents)
+        if gu.intersecting(node.xmin, node.xmax,
+                           node.ymin, node.ymax,
+                           interest.xmin, interest.xmax,
+                           interest.ymin, interest.ymax):
             if node.q1 == None:
                for s in node.contents:
                     s_dist = self.norm2(BigFloat(s.x), BigFloat(s.y), BigFloat(x), BigFloat(y))
-                    if (s_dist) < (nearest['dist']):
-                        nearest['source'] = s.source
-                        nearest['dist'] = s_dist
+                    if s_dist < nearest.dist:
+                        nearest.source = s.source
+                        nearest.dist = s_dist
                         dist = math.sqrt(s_dist)
-                        interest['xmin'] = x - dist
-                        interest['ymin'] = y - dist
-                        interest['xmax'] = x + dist
-                        interest['ymax'] = y + dist
-                        interest = gu.clip_box(interest['xmin'], interest['ymin'],
-                                           interest['xmax'], interest['ymax'],
-                                           tree.top.xmin, tree.top.ymin,
-                                           tree.top.xmax, tree.top.ymax)
+                        interest.xmin = x - dist
+                        interest.ymin = y - dist
+                        interest.xmax = x + dist
+                        interest.ymax = y + dist
+                        interest = gu.clip_box(interest.xmin, interest.ymin,
+                                               interest.xmax, interest.ymax,
+                                               tree.top.xmin, tree.top.ymin,
+                                               tree.top.xmax, tree.top.ymax)
+
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
                 self.nearersource(tree, node.q2, x, y, nearest, interest)
@@ -164,4 +165,5 @@ class ScamEquatorialQuadtree(Quadtree):
         return _angular_dist.angular_dist2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y))/100.0
+        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/100.0
+

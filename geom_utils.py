@@ -1,5 +1,7 @@
 import math
 
+import Quadtree_Utilities as utils
+
 def calc_y(x, m, b):
     y = m*x + b
     return y
@@ -25,7 +27,9 @@ def radius_cut(ra, dec, gal_ra, gal_dec, distance):
     else:
         return 0
 
-def intersecting(b1xmin, b1xmax, b1ymin, b1ymax, b2xmin, b2xmax, b2ymin, b2ymax):
+def intersecting(b1xmin, b1xmax, b1ymin,
+                 b1ymax, b2xmin, b2xmax,
+                 b2ymin, b2ymax):
     "   "
     if (b1xmin >= b2xmin and b1xmin < b2xmax) or \
         (b1xmax >= b2xmin and b1xmax < b2xmax) or \
@@ -43,8 +47,10 @@ def intersecting(b1xmin, b1xmax, b1ymin, b1ymax, b2xmin, b2xmax, b2ymin, b2ymax)
 
 def clip_box(bxmin, bymin, bxmax, bymax, boundsxmin, boundsymin, boundsxmax, boundsymax):
     "   "
-    return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
-            'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
+    return utils.Interest(min(bxmin, boundsxmin), min(bymin, boundsymin),
+                          max(bxmax, boundsxmax),  max(bymax, boundsymax))
+    #return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
+    #        'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
 
 def equnorm(x1, y1, x2, y2):
     return math.sqrt(equnorm2(x1, y1, x2, y2))
