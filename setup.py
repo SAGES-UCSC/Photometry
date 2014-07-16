@@ -1,6 +1,7 @@
 from distutils.core import setup, Extension
+import numpy.distutils.misc_util
 
 setup(
-    ext_modules=[Extension("_norm", ["_norm.c", "norm.c"]),
-                 Extension("_angular_dist", ["_angular_dist.c", "angular_dist.c"])]
+    ext_modules=[Extension("_Quadtree", ["_Quadtree.c", "quadtree.c", "list.c"])],
+    include_dirs=numpy.distutils.misc_util.get_numpy_include_dirs(),
 )
