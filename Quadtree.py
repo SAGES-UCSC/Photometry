@@ -3,7 +3,6 @@ from bigfloat import *
 
 import _norm
 import _angular_dist
-import geom_utils as gu
 import Quadtree_Utilities as utils
 
 MAX = 70
@@ -80,10 +79,7 @@ class Quadtree(object):
 
     def nearersource(self, tree, node, interest, nearest):
         self.num_nearersources+=1
-        if gu.intersecting(node.xmin, node.xmax,
-                           node.ymin, node.ymax,
-                           interest.xmin, interest.xmax,
-                           interest.ymin, interest.ymax):
+        if interest.intersect(node):
             if node.q1 == None:
                for s in node.contents:
                     dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)

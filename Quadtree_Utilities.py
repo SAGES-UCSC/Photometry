@@ -1,6 +1,7 @@
 '''
 Help functions and classes for the Quadtree
 '''
+import geom_utils as gu
 
 class Interest:
     def __init__(self, x, y, dist, bounds):
@@ -21,7 +22,11 @@ class Interest:
         self.xmax = min(self.xmax, self.bounds.xmax)
         self.ymax = min(self.ymax, self.bounds.ymax)
 
-
+    def intersect(self, node):
+        return  gu.intersecting(node.xmin, node.xmax,
+                                node.ymin, node.ymax,
+                                self.xmin, self.xmax,
+                                self.ymin, self.ymax)
 class Nearest:
     def __init__(self, dist):
         self.source = None
