@@ -67,14 +67,14 @@ class Quadtree(object):
         self.num_matched+=1
         return self.nearestsource(self, x, y)
 
-    def nearestsource(self, tree, x, y):
-        dist = self.initial_dist(tree.top.xmax, tree.top.xmin,
-                                 tree.top.ymax, tree.top.ymin)
+    def nearestsource(self, x, y):
+        dist = self.initial_dist(self.top.xmax, tree.self.xmin,
+                                 self.top.ymax, tree.self.ymin)
         nearest = utils.Nearest(dist*dist)
 
-        interest = utils.Interest(x, y, dist, tree.top)
+        interest = utils.Interest(x, y, dist, self.top)
 
-        self.nearersource(tree.top, interest, nearest)
+        self.nearersource(self.top, interest, nearest)
         return nearest.source
 
     def nearersource(self, node, interest, nearest):
