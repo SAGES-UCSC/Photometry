@@ -134,7 +134,7 @@ class ScamPixelQuadtree(Quadtree):
         return _norm.norm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  (min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/1000.0)**2
+        return  (BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/1000.0
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -149,5 +149,5 @@ class ScamEquatorialQuadtree(Quadtree):
         return _angular_dist.angular_dist2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  (min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/100.0)**2
+        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/100.0
 
