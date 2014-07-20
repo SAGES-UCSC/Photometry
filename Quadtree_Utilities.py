@@ -3,11 +3,13 @@ Help functions and classes for the Quadtree
 '''
 
 class Interest:
-    def __init__(self, xmin, ymin, xmax, ymax):
+    def __init__(self, xmin, ymin, xmax, ymax, bounds):
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
+
+        self.clip(bounds)
 
     def clip(self, bounds):
         self.xmin = max(self.xmin, bounds.xmin)
@@ -16,9 +18,9 @@ class Interest:
         self.ymax = min(self.ymax, bounds.ymax)
 
 class Nearest:
-    def __init__(self):
+    def __init__(self, dist):
         self.source = None
-        self.dist = None
+        self.dist = dist
 
 class memoize:
     def __init__(self, function):
