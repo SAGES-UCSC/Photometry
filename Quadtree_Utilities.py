@@ -4,7 +4,6 @@ Help functions and classes for the Quadtree
 
 class Interest:
     def __init__(self, x, y, dist, bounds):
-    #def __init__(self, xmin, ymin, xmax, ymax, bounds):
         self.tx = x
         self.ty = y
 
