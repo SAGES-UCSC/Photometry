@@ -26,7 +26,7 @@ class Interest:
 class Nearest:
     def __init__(self, dist):
         self.source = None
-        self.dist = dist
+        self.dist2 = dist
 
 class memoize:
     def __init__(self, function):
