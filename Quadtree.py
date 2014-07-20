@@ -6,7 +6,7 @@ import _angular_dist
 import geom_utils as gu
 import Quadtree_Utilities as utils
 
-MAX = 60
+MAX = 70
 class Quadtree(object):
     """
     Quadtree base class. Only functions that are agnostic to
@@ -72,20 +72,20 @@ class Quadtree(object):
         nearest = utils.Nearest()
         nearest.dist = self.initial_dist(tree.top.xmax, tree.top.xmin,
                                          tree.top.ymax, tree.top.ymin)
-        interest = utils.Interest(x-nearest.dist, y-nearest.dist,
-                            x+nearest.dist, y+nearest.dist)
+        interest = utils.Interest(x - nearest.dist, y - nearest.dist,
+                                  x + nearest.dist, y + nearest.dist)
 
         interest = gu.clip_box(interest.xmin, interest.ymin,
                                interest.xmax, interest.ymax,
                                tree.top.xmin, tree.top.ymin,
                                tree.top.xmax, tree.top.ymax)
 
-        nearest.dist = nearest.dist*nearest.dist
+        # Something wrong with this line?
+        nearest.dist = nearest.dist*nearest.dist*5
 
         self.nearersource(tree, tree.top, x, y, nearest, interest)
         return nearest.source
 
-    #@utils.memoize
     def nearersource(self, tree, node, x, y, nearest, interest):
         self.num_nearersources+=1
         if gu.intersecting(node.xmin, node.xmax,
@@ -98,11 +98,11 @@ class Quadtree(object):
                     if s_dist < nearest.dist:
                         nearest.source = s.source
                         nearest.dist = s_dist
-                        dist = sqrt(s_dist)
-                        interest.xmin = x - dist
-                        interest.ymin = y - dist
-                        interest.xmax = x + dist
-                        interest.ymax = y + dist
+                        s_dist = sqrt(s_dist)
+                        interest.xmin = x - s_dist
+                        interest.ymin = y - s_dist
+                        interest.xmax = x + s_dist
+                        interest.ymax = y + s_dist
                         interest = gu.clip_box(interest.xmin, interest.ymin,
                                                interest.xmax, interest.ymax,
                                                tree.top.xmin, tree.top.ymin,
@@ -150,7 +150,7 @@ class ScamPixelQuadtree(Quadtree):
         return _norm.norm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(x2 - x1, y2 - y1)/1000.0
+        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/1000.0
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
