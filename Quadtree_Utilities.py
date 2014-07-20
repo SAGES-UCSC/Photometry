@@ -9,6 +9,12 @@ class Interest:
         self.xmax = xmax
         self.ymax = ymax
 
+    def clip(self, tree):
+        self.xmin = min(self.xmin)
+        self.ymin = min(self.ymin)
+        self.xmax = max(self.xmax)
+        self.ymax = max(self.ymax)
+
 class Nearest:
     def __init__(self):
         self.source = None
