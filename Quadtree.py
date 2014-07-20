@@ -75,10 +75,15 @@ class Quadtree(object):
         interest = utils.Interest(x - nearest.dist, y - nearest.dist,
                                   x + nearest.dist, y + nearest.dist)
 
-        interest = gu.clip_box(interest.xmin, interest.ymin,
+        tmp_int = gu.clip_box(interest.xmin, interest.ymin,
                                interest.xmax, interest.ymax,
                                tree.top.xmin, tree.top.ymin,
                                tree.top.xmax, tree.top.ymax)
+
+        interest.xmin = tmp_int['xmin']
+        interest.ymin = tmp_int['ymin']
+        interest.xmax = tmp_int['xmax']
+        interest.ymax = tmp_int['ymax']
 
         # Something wrong with this line?
         nearest.dist = nearest.dist*nearest.dist*5
@@ -103,10 +108,15 @@ class Quadtree(object):
                         interest.ymin = y - s_dist
                         interest.xmax = x + s_dist
                         interest.ymax = y + s_dist
-                        interest = gu.clip_box(interest.xmin, interest.ymin,
+                        tmp_int = gu.clip_box(interest.xmin, interest.ymin,
                                                interest.xmax, interest.ymax,
                                                tree.top.xmin, tree.top.ymin,
                                                tree.top.xmax, tree.top.ymax)
+
+                        interest.xmin = tmp_int['xmin']
+                        interest.ymin = tmp_int['ymin']
+                        interest.xmax = tmp_int['xmax']
+                        interest.ymax = tmp_int['ymax']
 
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)

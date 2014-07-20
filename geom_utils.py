@@ -47,10 +47,8 @@ def intersecting(b1xmin, b1xmax, b1ymin,
 
 def clip_box(bxmin, bymin, bxmax, bymax, boundsxmin, boundsymin, boundsxmax, boundsymax):
     "   "
-    return utils.Interest(min(bxmin, boundsxmin), min(bymin, boundsymin),
-                          max(bxmax, boundsxmax),  max(bymax, boundsymax))
-    #return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
-    #        'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
+    return {'xmin' : min(bxmin, boundsxmin), 'ymin' : min(bymin, boundsymin),
+            'xmax' : max(bxmax, boundsxmax), 'ymax' : max(bymax, boundsymax)}
 
 def equnorm(x1, y1, x2, y2):
     return math.sqrt(equnorm2(x1, y1, x2, y2))
