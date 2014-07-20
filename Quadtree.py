@@ -93,10 +93,10 @@ class Quadtree(object):
                         interest.update(sqrt(dist2))
 
             else:
-                self.nearersource(tree, node.q1, x, y, nearest, interest)
-                self.nearersource(tree, node.q2, x, y, nearest, interest)
-                self.nearersource(tree, node.q3, x, y, nearest, interest)
-                self.nearersource(tree, node.q4, x, y, nearest, interest)
+                self.nearersource(tree, node.q1, interest, nearest)
+                self.nearersource(tree, node.q2, interest, nearest)
+                self.nearersource(tree, node.q3, interest, nearest)
+                self.nearersource(tree, node.q4, interest, nearest)
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
