@@ -75,10 +75,10 @@ class Quadtree(object):
 
         interest = utils.Interest(x, y, dist, tree.top)
 
-        self.nearersource(tree, tree.top, x, y, nearest, interest)
+        self.nearersource(tree, tree.top, interest, nearest)
         return nearest.source
 
-    def nearersource(self, tree, node, x, y, nearest, interest):
+    def nearersource(self, tree, node, interest, nearest):
         self.num_nearersources+=1
         if gu.intersecting(node.xmin, node.xmax,
                            node.ymin, node.ymax,
@@ -86,7 +86,7 @@ class Quadtree(object):
                            interest.ymin, interest.ymax):
             if node.q1 == None:
                for s in node.contents:
-                    dist2 = self.norm2(s.x, s.y, x, y)
+                    dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
                     if dist2 < nearest.dist2:
                         nearest.source = s.source
                         nearest.dist2 = dist2
