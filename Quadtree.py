@@ -90,7 +90,7 @@ class Quadtree(object):
                     if dist2 < nearest.dist2:
                         nearest.source = s.source
                         nearest.dist2 = dist2
-                        interest = interest.update(sqrt(dist2))
+                        interest.update(sqrt(dist2))
 
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
