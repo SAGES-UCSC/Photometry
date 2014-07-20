@@ -73,7 +73,7 @@ class Quadtree(object):
                                  tree.top.ymax, tree.top.ymin)
         nearest = utils.Nearest(dist*dist)
 
-        interest = utils.Interest(x, y, nearest.dist2, tree.top)
+        interest = utils.Interest(x, y, dist, tree.top)
 
         self.nearersource(tree, tree.top, x, y, nearest, interest)
         return nearest.source
