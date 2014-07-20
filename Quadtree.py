@@ -1,5 +1,5 @@
 import math
-from bigfloat import *
+#from bigfloat import *
 
 import _norm
 import _angular_dist
@@ -77,14 +77,16 @@ class Quadtree(object):
     def nearersource(self, node, interest, nearest):
         self.num_nearersources+=1
         if interest.intersect(node):
+            print "Intersecting Quadtrant: "
             if node.q1 == None:
                for s in node.contents:
                     dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
                     if dist2 < nearest.dist2:
+                        print "     Searching"
+                        print "     ", dist2
                         nearest.source = s.source
                         nearest.dist2 = dist2
-                        interest.update(sqrt(dist2))
-
+                        interest.update(math.sqrt(dist2))
             else:
                 self.nearersource(node.q1, interest, nearest)
                 self.nearersource(node.q2, interest, nearest)
@@ -93,12 +95,12 @@ class Quadtree(object):
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
-        self.xmin = BigFloat(xmin)
-        self.ymin = BigFloat(ymin)
-        self.xmax = BigFloat(xmax)
-        self.ymax = BigFloat(ymax)
-        self.xmid = BigFloat((self.xmin + self.xmax)/2.0)
-        self.ymid = BigFloat((self.ymin + self.ymax)/2.0)
+        self.xmin = (xmin)
+        self.ymin = (ymin)
+        self.xmax = (xmax)
+        self.ymax = (ymax)
+        self.xmid = ((self.xmin + self.xmax)/2.0)
+        self.ymid = ((self.ymin + self.ymax)/2.0)
         self.q1 = self.q2 = self.q3 = self.q4 = None
         self.contents = []
 
@@ -111,8 +113,8 @@ class Point(object):
     """
     def __init__(self, source, x, y):
         self.source = source
-        self.x = BigFloat(x)
-        self.y = BigFloat(y)
+        self.x = (x)
+        self.y = (y)
 
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -126,7 +128,7 @@ class ScamPixelQuadtree(Quadtree):
         return _norm.norm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  (BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/1000.0
+        return  min((x2) - (x1), (y2) - (y1))
 
 class ScamEquatorialQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -140,5 +142,5 @@ class ScamEquatorialQuadtree(Quadtree):
         return _angular_dist.angular_dist2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
-        return  min(BigFloat(x2) - BigFloat(x1), BigFloat(y2) - BigFloat(y1))/100.0
+        return  min((x2) - (x1), (y2) - (y1))
 
