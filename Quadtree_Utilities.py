@@ -10,10 +10,10 @@ class Interest:
         self.ymax = ymax
 
     def clip(self, bounds):
-        self.xmin = min(self.xmin, bounds.xmin)
-        self.ymin = min(self.ymin, bounds.ymin)
-        self.xmax = max(self.xmax, bounds.xmax)
-        self.ymax = max(self.ymax, bounds.ymax)
+        self.xmin = max(self.xmin, bounds.xmin)
+        self.ymin = max(self.ymin, bounds.ymin)
+        self.xmax = min(self.xmax, bounds.xmax)
+        self.ymax = min(self.ymax, bounds.ymax)
 
 class Nearest:
     def __init__(self):
