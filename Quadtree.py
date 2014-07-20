@@ -74,10 +74,10 @@ class Quadtree(object):
 
         interest = utils.Interest(x, y, dist, tree.top)
 
-        self.nearersource(tree, tree.top, interest, nearest)
+        self.nearersource(tree, interest, nearest)
         return nearest.source
 
-    def nearersource(self, tree, node, interest, nearest):
+    def nearersource(self, node, interest, nearest):
         self.num_nearersources+=1
         if interest.intersect(node):
             if node.q1 == None:
@@ -89,10 +89,10 @@ class Quadtree(object):
                         interest.update(sqrt(dist2))
 
             else:
-                self.nearersource(tree, node.q1, interest, nearest)
-                self.nearersource(tree, node.q2, interest, nearest)
-                self.nearersource(tree, node.q3, interest, nearest)
-                self.nearersource(tree, node.q4, interest, nearest)
+                self.nearersource(node.q1, interest, nearest)
+                self.nearersource(node.q2, interest, nearest)
+                self.nearersource(node.q3, interest, nearest)
+                self.nearersource(node.q4, interest, nearest)
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -126,7 +126,6 @@ class ScamPixelQuadtree(Quadtree):
         self.inserttonode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(self, x1, y1, x2, y2):
-#        return gu.pixnorm2(x1, y1, x2, y2)
         return _norm.norm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
@@ -141,7 +140,6 @@ class ScamEquatorialQuadtree(Quadtree):
         self.inserttonode(self.top, Point(source, source.ra, source.dec))
 
     def norm2(self, x1, y1, x2, y2):
-#        return gu.equnorm2(x1, y1, x2, y2)
         return _angular_dist.angular_dist2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
