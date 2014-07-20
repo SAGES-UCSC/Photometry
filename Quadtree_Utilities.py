@@ -7,26 +7,22 @@ class Interest:
     #def __init__(self, xmin, ymin, xmax, ymax, bounds):
         self.tx = x
         self.ty = y
-        self.xmin = x - dist
-        self.ymin = y - dist
-        self.xmax = x + dist
-        self.ymax = y + dist
 
-        self.clip(bounds, dist)
+        self.update(dist, bounds)
 
-    def clip(self, bounds, dist):
-        self.update(dist)
-
+    def clip(self, bounds):
         self.xmin = max(self.xmin, bounds.xmin)
         self.ymin = max(self.ymin, bounds.ymin)
         self.xmax = min(self.xmax, bounds.xmax)
         self.ymax = min(self.ymax, bounds.ymax)
 
-    def update(self, dist):
+    def update(self, dist, bounds):
         self.xmin = self.tx - dist
         self.ymin = self.ty - dist
         self.xmax = self.tx + dist
         self.ymax = self.ty + dist
+
+        self.clip(bounds)
 
 class Nearest:
     def __init__(self, dist):

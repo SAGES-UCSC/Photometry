@@ -90,7 +90,7 @@ class Quadtree(object):
                         nearest.source = s.source
                         nearest.dist = s_dist
                         s_dist = sqrt(s_dist)
-                        interest = Interest.clip(tree.top, s_dist)
+                        interest = Interest.update(s_dist, tree.top)
 
             else:
                 self.nearersource(tree, node.q1, x, y, nearest, interest)
