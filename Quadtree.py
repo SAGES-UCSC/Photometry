@@ -124,12 +124,12 @@ class Quadtree(object):
 
     def debug(self):
         print "\n"
-        print "Number of subdivides: %d" % self.num_subdivides
-        print "Inserttonode was called %d times" % self.num_inserttonodes
-        print "Matched was called %d times" % self.num_matched
-        print "Inserttoquad was called %d times" % self.num_inserttoquads
-        print "Nearer sources was called %d times" % self.num_nearersources
         print "Insert was called %d times" % self.num_insert
+        print "Inserttonode was called %d times" % self.num_inserttonodes
+        print "Inserttoquad was called %d times" % self.num_inserttoquads
+        print "Number of subdivides: %d" % self.num_subdivides
+        print "Matched was called %d times" % self.num_matched
+        print "Nearer sources was called %d times" % self.num_nearersources
         print "\n"
 
 class Node(object):
