@@ -1,7 +1,8 @@
 import math
 #from bigfloat import *
 
-import _norm
+import geom_utils as gu
+#import _norm
 import _angular_dist
 import Quadtree_Utilities as utils
 
@@ -74,16 +75,18 @@ class Quadtree(object):
         self.nearersource(self.top, interest, nearest)
         return nearest.source
 
+    # For every leaf, a node with no subtree, make a region file. As a test.
+
     def nearersource(self, node, interest, nearest):
         self.num_nearersources+=1
         if interest.intersect(node):
-            print "Intersecting Quadtrant: "
+          #  print "Intersecting Quadtrant: "
             if node.q1 == None:
-               for s in node.contents:
+                for s in node.contents:
                     dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
                     if dist2 < nearest.dist2:
-                        print "     Searching"
-                        print "     ", dist2
+          #              print "     Searching"
+          #              print "     ", dist2
                         nearest.source = s.source
                         nearest.dist2 = dist2
                         interest.update(math.sqrt(dist2))
@@ -92,6 +95,35 @@ class Quadtree(object):
                 self.nearersource(node.q2, interest, nearest)
                 self.nearersource(node.q3, interest, nearest)
                 self.nearersource(node.q4, interest, nearest)
+
+    """
+    Debug. Walk the tree and make a region file to check that insert is working.
+    """
+    def sources_region(self, root):
+        if root.q1 == None:
+            for s in root.contents:
+                with open("tree_sources.reg", "a") as region:
+                    region.write("physical;circle(" + str(s.x) + "," \
+                                    + str(s.y) +  " 10) #color=green \n")
+        else:
+            self.sources_region(root.q1)
+            self.sources_region(root.q2)
+            self.sources_region(root.q3)
+            self.sources_region(root.q4)
+
+    """
+    Debug. For visualizing the quadtree on a .fits image with ds9 region file.
+    """
+    def leaf_region(self, root):
+        if root.q1 == None:
+            with open("tree_leaves.reg", "a") as region:
+                region.write("physical;ruler(" + str(root.xmin) + str(root.ymin) + str(root.xmax) + str(root.ymax) +  ") # ruler=[pixels] \n")
+
+        else:
+            self.sources_region(root.q1)
+            self.sources_region(root.q2)
+            self.sources_region(root.q3)
+            self.sources_region(root.q4)
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -125,7 +157,8 @@ class ScamPixelQuadtree(Quadtree):
         self.inserttonode(self.top, Point(source, source.ximg, source.yimg))
 
     def norm2(self, x1, y1, x2, y2):
-        return _norm.norm2(x1, y1, x2, y2)
+#        return _norm.pixnorm2(x1, y1, x2, y2)
+        return gu.pixnorm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
         return  min((x2) - (x1), (y2) - (y1))
