@@ -31,16 +31,12 @@ def intersecting(b1xmin, b1xmax, b1ymin,
                  b1ymax, b2xmin, b2xmax,
                  b2ymin, b2ymax):
     "   "
-
     xmin = max(b1xmin, b2xmin)
     ymin = max(b1ymin, b2ymin)
     xmax = min(b1xmax, b2xmax)
     ymax = min(b1ymax, b2ymax)
 
-    if xmin >= xmax or ymin >= ymax:
-        return False
-    else:
-        return True
+    return (xmin < xmax and ymin < ymax)
 
 def equnorm(x1, y1, x2, y2):
     return math.sqrt(equnorm2(x1, y1, x2, y2))
