@@ -15,11 +15,11 @@ class Quadtree(object):
     """
     def __init__(self, xmin, ymin, xmax, ymax):
         self.top = Node(xmin, ymin, xmax, ymax)
-        self.num_subdivides = 0
         self.num_insert = 0
         self.num_inserttonodes = 0
-        self.num_matched = 0
         self.num_inserttoquads = 0
+        self.num_subdivides = 0
+        self.num_matched = 0
         self.num_nearersources = 0
         self.verbose = False
 
@@ -123,12 +123,14 @@ class Quadtree(object):
                 self.leaf_region(root.q4)
 
     def debug(self):
+        print "\n"
         print "Number of subdivides: %d" % self.num_subdivides
         print "Inserttonode was called %d times" % self.num_inserttonodes
         print "Matched was called %d times" % self.num_matched
         print "Inserttoquad was called %d times" % self.num_inserttoquads
         print "Nearer sources was called %d times" % self.num_nearersources
         print "Insert was called %d times" % self.num_insert
+        print "\n"
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
