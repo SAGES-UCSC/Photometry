@@ -100,30 +100,30 @@ class Quadtree(object):
     Debug. Walk the tree and make a region file to check that insert is working.
     """
     def sources_region(self, root):
-        if root.q1 == None:
-            for s in root.contents:
-                with open("tree_sources.reg", "a") as region:
+        with open("tree_sources.reg", "a") as region:
+            if root.q1 == None:
+                for s in root.contents:
                     region.write("physical;circle(" + str(s.x) + "," \
                                     + str(s.y) +  " 10) #color=green \n")
-        else:
-            self.sources_region(root.q1)
-            self.sources_region(root.q2)
-            self.sources_region(root.q3)
-            self.sources_region(root.q4)
+            else:
+                self.sources_region(root.q1)
+                self.sources_region(root.q2)
+                self.sources_region(root.q3)
+                self.sources_region(root.q4)
 
     """
     Debug. For visualizing the quadtree on a .fits image with ds9 region file.
     """
     def leaf_region(self, root):
-        if root.q1 == None:
-            with open("tree_leaves.reg", "a") as region:
+        with open("tree_leaves.reg", "a") as region:
+            if root.q1 == None:
                 region.write("physical;ruler(" + str(root.xmin) + str(root.ymin) + str(root.xmax) + str(root.ymax) +  ") # ruler=[pixels] \n")
 
-        else:
-            self.sources_region(root.q1)
-            self.sources_region(root.q2)
-            self.sources_region(root.q3)
-            self.sources_region(root.q4)
+            else:
+                self.sources_region(root.q1)
+                self.sources_region(root.q2)
+                self.sources_region(root.q3)
+                self.sources_region(root.q4)
 
 class Node(object):
     def __init__(self, xmin, ymin, xmax, ymax):
