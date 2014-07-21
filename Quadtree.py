@@ -14,7 +14,7 @@ class Quadtree(object):
     use a subclass.
     """
     def __init__(self, xmin, ymin, xmax, ymax):
-        self.top = Node(xmin, ymin, xmax, ymax)
+        self.root = Node(xmin, ymin, xmax, ymax)
         self.num_insert = 0
         self.num_inserttonodes = 0
         self.num_inserttoquads = 0
@@ -57,13 +57,13 @@ class Quadtree(object):
 
     def match(self, x, y):
         self.num_matched+=1
-        dist = self.initial_dist(self.top.xmax, self.top.xmin,
-                                 self.top.ymax, self.top.ymin)
+        dist = self.initial_dist(self.root.xmax, self.root.xmin,
+                                 self.root.ymax, self.root.ymin)
         nearest = utils.Nearest(dist*dist)
 
-        interest = utils.Interest(x, y, dist, self.top)
+        interest = utils.Interest(x, y, dist, self.root)
 
-        self.nearersource(self.top, interest, nearest)
+        self.nearersource(self.root, interest, nearest)
         return nearest.source
 
     def nearersource(self, node, interest, nearest):
@@ -91,36 +91,38 @@ class Quadtree(object):
     Functions to aid in testing and debugging.
     """
 
-    def sources_region(self, root):
+    def sources_region(self, node):
         """
-        Walk the tree and make a region file to check that insert is working.
+        Pass the function the root of the tree. Walk the tree
+        and make a region file to check that insert is working.
         """
         with open("tree_sources.reg", "a") as region:
-            if root.q1 == None:
-                for s in root.contents:
+            if node.q1 == None:
+                for s in node.contents:
                     region.write("physical;circle(" + str(s.x) + "," \
                                     + str(s.y) +  " 10) #color=blue \n")
             else:
-                self.sources_region(root.q1)
-                self.sources_region(root.q2)
-                self.sources_region(root.q3)
-                self.sources_region(root.q4)
+                self.sources_region(node.q1)
+                self.sources_region(node.q2)
+                self.sources_region(node.q3)
+                self.sources_region(node.q4)
 
-    def leaf_region(self, root):
+    def leaf_region(self, node):
         """
-        For visualizing the quadtree on a .fits image with ds9 region file.
+        Pass the function the root of the tree. For visualizing
+        the quadtree on a .fits image with ds9 region file.
         """
         with open("tree_leaves.reg", "a") as region:
-            if root.q1 == None:
-                region.write("physical;ruler(" + str(root.xmin) + "," + \
-                                str(root.ymin) + "," + str(root.xmax) + \
-                                "," + str(root.ymax) +  ") # ruler=pixels \n")
+            if node.q1 == None:
+                region.write("physical;ruler(" + str(node.xmin) + "," + \
+                                str(node.ymin) + "," + str(node.xmax) + \
+                                "," + str(node.ymax) +  ") # ruler=pixels \n")
 
             else:
-                self.leaf_region(root.q1)
-                self.leaf_region(root.q2)
-                self.leaf_region(root.q3)
-                self.leaf_region(root.q4)
+                self.leaf_region(node.q1)
+                self.leaf_region(node.q2)
+                self.leaf_region(node.q3)
+                self.leaf_region(node.q4)
 
     def debug(self):
         print "\n"
@@ -161,7 +163,7 @@ class ScamPixelQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.inserttonode(self.top, Point(source, source.ximg, source.yimg))
+        self.inserttonode(self.root, Point(source, source.ximg, source.yimg))
 
     def norm2(self, x1, y1, x2, y2):
 #        return _norm.norm2(x1, y1, x2, y2)
@@ -176,7 +178,7 @@ class ScamEquatorialQuadtree(Quadtree):
 
     def insert(self, source):
         self.num_insert+=1
-        self.inserttonode(self.top, Point(source, source.ra, source.dec))
+        self.inserttonode(self.root, Point(source, source.ra, source.dec))
 
     def norm2(self, x1, y1, x2, y2):
         return _angular_dist.angular_dist2(x1, y1, x2, y2)
