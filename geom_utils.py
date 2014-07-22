@@ -1,7 +1,5 @@
 import math
 
-import Quadtree_Utilities as utils
-
 def calc_y(x, m, b):
     y = m*x + b
     return y
