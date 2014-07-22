@@ -66,19 +66,22 @@ class Quadtree(object):
         self.nearersource(self.root, interest, nearest)
         return nearest.source
 
+    def leafcompare(self, node, interest, nearest):
+        old_dist2 = nearest.dist2
+        for s in node.contents:
+            dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
+            if dist2 < nearest.dist2:
+                nearest.source = s.source
+                nearest.dist2 = dist2
+            if nearest.dist2 < old_dist2:
+                interest.update(math.sqrt(nearest.dist2))
+
     def nearersourcepoint(self, node, interest,  nearest)
         self.num_nearersources+=1
         if gu.in_box(node.xmin, node.xmax, node.ymin, \
                     node.ymax, interest.tx, interest.ty)
             if node.q1 == None:
-                old_dist2 = nearest.dist2
-                for s in node.contents:
-                    dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
-                    if dist2 < nearest.dist2:
-                        nearest.source = s.source
-                        nearest.dist2 = dist2
-                if nearest.dist2 < old_dist2:
-                    interest.update(math.sqrt(nearest.dist2))
+                leafcompare(node, interest, nearest)
             else:
                 self.nearersourcepoint(node.q1, interest, nearest)
                 self.nearersourcepoint(node.q2, interest, nearest)
@@ -88,20 +91,8 @@ class Quadtree(object):
     def nearersource(self, node, interest, nearest):
         self.num_nearersources+=1
         if interest.intersect(node):
-            old_dist2 = nearest.dist
-            if self.verbose:
-                print "Intersecting Quadtrant: "
             if node.q1 == None:
-                for s in node.contents:
-                    dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
-                    if dist2 < nearest.dist2:
-                        if self.verbose:
-                            print "     Searching"
-                            print "     ", dist2
-                        nearest.source = s.source
-                        nearest.dist2 = dist2
-                if nearest.dist2 < old_dist2:
-                    interest.update(math.sqrt(nearest.dist2))
+                leafcompare(node, interest, nearest)
             else:
                 self.nearersource(node.q1, interest, nearest)
                 self.nearersource(node.q2, interest, nearest)
