@@ -1,12 +1,9 @@
 import math
-#from bigfloat import *
 
 import geom_utils as gu
-import _norm
-import _angular_dist
 import Quadtree_Utilities as utils
 
-LEAF_MAX = 70
+LEAF_MAX = 35
 class Quadtree(object):
     """
     Quadtree base class. Only functions that are agnostic to
@@ -76,10 +73,10 @@ class Quadtree(object):
         if nearest.dist2 < old_dist2:
             interest.update(math.sqrt(nearest.dist2))
 
-    def tree_climb_point(self, node, interest,  nearest)
+    def tree_climb_point(self, node, interest,  nearest):
         self.num_tree_climb_boxs+=1
         if gu.in_box(node.xmin, node.xmax, node.ymin,
-                    node.ymax, interest.tx, interest.ty)
+                    node.ymax, interest.tx, interest.ty):
             if node.q1 == None:
                 self.leaf_walk(node, interest, nearest)
             else:
@@ -183,7 +180,7 @@ class ScamPixelQuadtree(Quadtree):
         self.inserttonode(self.root, Point(source, source.ximg, source.yimg))
 
     def norm2(self, x1, y1, x2, y2):
-        return _norm.norm2(x1, y1, x2, y2)
+        return gu.pixnorm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
         return  min(x2 - x1, y2 - y1)
@@ -197,7 +194,7 @@ class ScamEquatorialQuadtree(Quadtree):
         self.inserttonode(self.root, Point(source, source.ra, source.dec))
 
     def norm2(self, x1, y1, x2, y2):
-        return _angular_dist.angular_dist2(x1, y1, x2, y2)
+        return gu.equnorm2(x1, y1, x2, y2)
 
     def initial_dist(self, x2, x1, y2, y1):
         return  min(x2 - x1, y2 - y1)
