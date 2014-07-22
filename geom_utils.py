@@ -7,7 +7,7 @@ def calc_y(x, m, b):
     return y
 
 def in_box(x0, x1, y0, y1, px, py):
-    return px >= x0 and px < x1 and py >= y0 and py < y1:
+    return (px >= x0 and px < x1 and py >= y0 and py < y1)
 
 def in_parallelogram(px, py,  m, b, var):
     is_in = 0
