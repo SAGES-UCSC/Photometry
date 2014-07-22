@@ -63,10 +63,11 @@ class Quadtree(object):
 
         interest = utils.Interest(tx, ty, dist, self.root)
 
+        self.nearersourcepoint(self.root, interest, nearest)
         self.nearersource(self.root, interest, nearest)
         return nearest.source
 
-    def leafcompare(self, node, interest, nearest):
+    def leafwalk(self, node, interest, nearest):
         old_dist2 = nearest.dist2
         for s in node.contents:
             dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
@@ -78,10 +79,10 @@ class Quadtree(object):
 
     def nearersourcepoint(self, node, interest,  nearest)
         self.num_nearersources+=1
-        if gu.in_box(node.xmin, node.xmax, node.ymin, \
+        if gu.in_box(node.xmin, node.xmax, node.ymin,
                     node.ymax, interest.tx, interest.ty)
             if node.q1 == None:
-                self.leafcompare(node, interest, nearest)
+                self.leafwalk(node, interest, nearest)
             else:
                 self.nearersourcepoint(node.q1, interest, nearest)
                 self.nearersourcepoint(node.q2, interest, nearest)
@@ -92,7 +93,7 @@ class Quadtree(object):
         self.num_nearersources+=1
         if interest.intersect(node):
             if node.q1 == None:
-                self.leafcompare(node, interest, nearest)
+                self.leafwalk(node, interest, nearest)
             else:
                 self.nearersource(node.q1, interest, nearest)
                 self.nearersource(node.q2, interest, nearest)
