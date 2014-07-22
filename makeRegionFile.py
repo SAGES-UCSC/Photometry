@@ -6,10 +6,6 @@ import phot_utils
 import Sources
 
 def fromFile(filename, outname, pixsize, color):
-    catalog = open(filename, "r")
-    tmp = filter(lambda line: pu.no_head(line), catalog)
-
-    sources = map(lambda line: S.SCAMSource(line), tmp)
     with open(filename, "r") as catalog:
         sources = [Sources.SCAMSource(line) for line in catalog if phot_utils.no_head(line)]
         with open(outname, "w") as out:
