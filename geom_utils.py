@@ -10,12 +10,9 @@ def in_box(x0, x1, y0, y1, px, py):
     return (px >= x0 and px < x1 and py >= y0 and py < y1)
 
 def in_parallelogram(px, py,  m, b, var):
-    is_in = 0
     y_top = calcY(px, m, b+var)
     y_bot = calcY(px, m, b-var)
-    if py > y_bot and py < y_top:
-        is_in = 1
-    return is_in
+    return (py > y_bot and py < y_top)
 
 def radius_cut(ra, dec, gal_ra, gal_dec, distance):
     "All of these inputs need to be in degrees."
@@ -27,7 +24,7 @@ def radius_cut(ra, dec, gal_ra, gal_dec, distance):
 def intersecting(b1xmin, b1xmax, b1ymin,
                  b1ymax, b2xmin, b2xmax,
                  b2ymin, b2ymax):
-    "   "
+    "Test two boxes to see if they are intersecting. "
     xmin = max(b1xmin, b2xmin)
     ymin = max(b1ymin, b2ymin)
     xmax = min(b1xmax, b2xmax)
