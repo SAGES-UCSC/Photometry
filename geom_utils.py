@@ -14,13 +14,6 @@ def in_parallelogram(px, py,  m, b, var):
     y_bot = calcY(px, m, b-var)
     return (py > y_bot and py < y_top)
 
-def radius_cut(ra, dec, gal_ra, gal_dec, distance):
-    "All of these inputs need to be in degrees."
-    if (math.sqrt((ra-gal_ra)**2) + math.sqrt((dec-gal_dec)**2)) <= distance:
-        return 1
-    else:
-        return 0
-
 def intersecting(b1xmin, b1xmax, b1ymin,
                  b1ymax, b2xmin, b2xmax,
                  b2ymin, b2ymax):
@@ -31,6 +24,13 @@ def intersecting(b1xmin, b1xmax, b1ymin,
     ymax = min(b1ymax, b2ymax)
 
     return (xmin < xmax and ymin < ymax)
+
+def radius_cut(ra, dec, gal_ra, gal_dec, distance):
+    "All of these inputs need to be in degrees."
+    if (math.sqrt((ra-gal_ra)**2) + math.sqrt((dec-gal_dec)**2)) <= distance:
+        return 1
+    else:
+        return 0
 
 def equnorm(x1, y1, x2, y2):
     return math.sqrt(equnorm2(x1, y1, x2, y2))
