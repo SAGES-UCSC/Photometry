@@ -1,17 +1,24 @@
 '''
-A program to turn a catalog file into a ds9 region file
+A program to turn a SCAMSources into a ds9 region files.
 '''
 
-import phot_utils as pu
-import Sources as S
+import phot_utils
+import Sources
 
-def makeRegionFile(filename, outname, pixsize, color):
+def fromFile(filename, outname, pixsize, color):
     catalog = open(filename, "r")
     tmp = filter(lambda line: pu.no_head(line), catalog)
 
     sources = map(lambda line: S.SCAMSource(line), tmp)
+    with open(filename, "r") as catalog:
+        sources = [Sources.SCAMSource(line) for line in catalog if phot_utils.no_head(line)]
+        with open(outname, "w") as out:
+            for source in sources:
+                out.write("physical;circle(" + str(source.ximg) + "," +
+                            str(source.yimg) + "," + str(pixsize) + ") #color=" + str(color) + "\n")
 
-    out = open(outname, "w")
-    for source in sources:
-        out.write("physical;circle(" + str(source.ximg) + "," +
-                str(source.yimg) + "," + str(pixsize) + ") #color=" + str(color) + "\n")
+def fromList(list, outname, pixsize, color):
+    with open(outname, "w") as out:
+        for source in list:
+            out.write("j2000; circle " + str(phot_utils.convertRA(source.ra)) + "," +
+                        str(phot_utils.convertDEC(source.dec)) + " .1' #color=red \n")
