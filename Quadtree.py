@@ -20,7 +20,7 @@ class Quadtree(object):
         self.num_inserttoquads = 0
         self.num_subdivides = 0
         self.num_matched = 0
-        self.num_treewalkboxs = 0
+        self.num_treeclimb_boxs = 0
         self.verbose = False
 
     def inserttonode(self, node, source):
@@ -62,8 +62,8 @@ class Quadtree(object):
         nearest = utils.Nearest(dist*dist)
         interest = utils.Interest(tx, ty, dist, self.root)
 
-        self.treeclimbbox(self.root, interest, nearest)
-        self.treewalkbox(self.root, interest, nearest)
+        self.treeclimb_point(self.root, interest, nearest)
+        self.treeclimb_box(self.root, interest, nearest)
         return nearest.source
 
     def leafwalk(self, node, interest, nearest):
@@ -76,28 +76,28 @@ class Quadtree(object):
         if nearest.dist2 < old_dist2:
             interest.update(math.sqrt(nearest.dist2))
 
-    def treeclimbbox(self, node, interest,  nearest)
-        self.num_treewalkboxs+=1
+    def treeclimb_point(self, node, interest,  nearest)
+        self.num_treeclimb_boxs+=1
         if gu.in_box(node.xmin, node.xmax, node.ymin,
                     node.ymax, interest.tx, interest.ty)
             if node.q1 == None:
                 self.leafwalk(node, interest, nearest)
             else:
-                self.treeclimbbox(node.q1, interest, nearest)
-                self.treeclimbbox(node.q2, interest, nearest)
-                self.treeclimbbox(node.q3, interest, nearest)
-                self.treeclimbbox(node.q4, interest, nearest)
+                self.treeclimb_point(node.q1, interest, nearest)
+                self.treeclimb_point(node.q2, interest, nearest)
+                self.treeclimb_point(node.q3, interest, nearest)
+                self.treeclimb_point(node.q4, interest, nearest)
 
-    def treewalkbox(self, node, interest, nearest):
-        self.num_treewalkboxs+=1
+    def treeclimb_box(self, node, interest, nearest):
+        self.num_treeclimb_boxs+=1
         if interest.intersect(node):
             if node.q1 == None:
                 self.leafwalk(node, interest, nearest)
             else:
-                self.treewalkbox(node.q1, interest, nearest)
-                self.treewalkbox(node.q2, interest, nearest)
-                self.treewalkbox(node.q3, interest, nearest)
-                self.treewalkbox(node.q4, interest, nearest)
+                self.treeclimb_box(node.q1, interest, nearest)
+                self.treeclimb_box(node.q2, interest, nearest)
+                self.treeclimb_box(node.q3, interest, nearest)
+                self.treeclimb_box(node.q4, interest, nearest)
 
     """
     Functions to aid in testing and debugging.
@@ -148,7 +148,7 @@ class Quadtree(object):
         print "Inserttoquad was called %d times" % self.num_inserttoquads
         print "Number of subdivides: %d" % self.num_subdivides
         print "Matched was called %d times" % self.num_matched
-        print "Nearer sources was called %d times" % self.num_treewalkboxs
+        print "Nearer sources was called %d times" % self.num_treeclimb_boxs
         print "\n"
 
 class Node(object):
