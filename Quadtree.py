@@ -70,16 +70,11 @@ class Quadtree(object):
         self.num_nearersources+=1
         if gu.in_box(node.xmin, node.xmax, node.ymin, \
                     node.ymax, interest.tx, interest.ty)
-            if self.verbose:
-                print "Intersecting Quadtrant: "
             if node.q1 == None:
-                old_dist2 = nearest.dist
+                old_dist2 = nearest.dist2
                 for s in node.contents:
                     dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
                     if dist2 < nearest.dist2:
-                        if self.verbose:
-                            print "     Searching"
-                            print "     ", dist2
                         nearest.source = s.source
                         nearest.dist2 = dist2
                 if nearest.dist2 < old_dist2:
