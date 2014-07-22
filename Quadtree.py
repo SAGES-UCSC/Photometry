@@ -55,16 +55,38 @@ class Quadtree(object):
         while node.contents:
             self.inserttoquad(node, node.contents.pop())
 
-    def match(self, x, y):
+    def match(self, tx, ty):
         self.num_matched+=1
         dist = self.initial_dist(self.root.xmax, self.root.xmin,
                                  self.root.ymax, self.root.ymin)
         nearest = utils.Nearest(dist*dist)
 
-        interest = utils.Interest(x, y, dist, self.root)
+        interest = utils.Interest(tx, ty, dist, self.root)
 
         self.nearersource(self.root, interest, nearest)
         return nearest.source
+
+    def nearersourcepoint(self, node, interest,  nearest)
+        self.num_nearersources+=1
+        if in_box(node.xmin, node.xmax, node.ymin, \
+                    node.ymax, interest.tx, interest.ty)
+            if self.verbose:
+                print "Intersecting Quadtrant: "
+            if node.q1 == None:
+                for s in node.contents:
+                    dist2 = self.norm2(s.x, s.y, interest.tx, interest.ty)
+                    if dist2 < nearest.dist2:
+                        if self.verbose:
+                            print "     Searching"
+                            print "     ", dist2
+                        nearest.source = s.source
+                        nearest.dist2 = dist2
+                        interest.update(math.sqrt(dist2))
+            else:
+                self.nearersource(node.q1, interest, nearest)
+                self.nearersource(node.q2, interest, nearest)
+                self.nearersource(node.q3, interest, nearest)
+                self.nearersource(node.q4, interest, nearest)
 
     def nearersource(self, node, interest, nearest):
         self.num_nearersources+=1
@@ -91,12 +113,17 @@ class Quadtree(object):
     Functions to aid in testing and debugging.
     """
 
+    #def get_depth(self, node):
+        #"""
+        #Create histogram of depths.
+        #"""
+
     def sources_region(self, node):
         """
         Pass the function the root of the tree. Walk the tree
         and make a region file to check that insert is working.
         """
-        with open("tree_sources.reg", "a") as region:
+        with open("tree_sources.reg", "w") as region:
             if node.q1 == None:
                 for s in node.contents:
                     region.write("physical;circle(" + str(s.x) + "," \
@@ -112,7 +139,7 @@ class Quadtree(object):
         Pass the function the root of the tree. For visualizing
         the quadtree on a .fits image with ds9 region file.
         """
-        with open("tree_leaves.reg", "a") as region:
+        with open("tree_leaves.reg", "w") as region:
             if node.q1 == None:
                 region.write("physical;ruler(" + str(node.xmin) + "," + \
                                 str(node.ymin) + "," + str(node.xmax) + \
@@ -154,8 +181,8 @@ class Point(object):
     """
     def __init__(self, source, x, y):
         self.source = source
-        self.x = (x)
-        self.y = (y)
+        self.x = x
+        self.y = y
 
 class ScamPixelQuadtree(Quadtree):
     def __init__(self, xmin, ymin, xmax, ymax):
