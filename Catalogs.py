@@ -6,6 +6,7 @@ class ScamCatalog(object):
     def __init__(self, fname):
         self.data = open(fname, 'r')
         line_count = 0
+        # Need to change this just to skip any line starting with '#'
         while True:
             if line_count < 27:
                 self.data.readline()
@@ -48,6 +49,8 @@ class ScamCatalog(object):
     # mach3 != None
     def catalog_write(self, outname):
         with open(outname, "w") as out:
-            out.write("".join(self.header + "\n"))
+            out.write("    ".join(self.header) + "\n")
             for source in self:
-                out.write(''.join(str(element) for element in self)
+                out.write("    ".join(map(str, source)) + "\n")
+
+
