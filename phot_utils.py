@@ -6,6 +6,7 @@ import Sources as sources
 from astropy.io import fits
 import geom_utils as gu
 
+c = 299792458
 
 def convertRA(ra):
     """
@@ -92,7 +93,6 @@ def calc_seeing(catalog, verbose=False):
     the FWHM. Only for Subaru Suprime-Cam right now
     """
     pixel_scale = 0.20
-    print catalog
     with open(catalog, 'r') as f:
         tmp = filter(lambda line: no_head(line), f)
     cat = map(lambda line: sources.SCAMSource(line), tmp)
@@ -107,9 +107,9 @@ def calc_seeing(catalog, verbose=False):
     if verbose == True:
         print "After size cut: ", len(ptsources)
     mag = map(lambda s: s.mag_best, ptsources)
-    max_mag = calc_average(mag) - 3.0*calc_average(variance(mag))
+    max_mag = np.mean(mag) - 3.0*np.std(mag)
     if verbose == True:
-        print "Max mag: ", max_mag, "Variance: ", calc_average(variance(mag))
+        print "Max mag: ", max_mag, "Variance: ", np.mean(np.std(mag))
     ptsources = filter(lambda s: mag_cut(s.mag_best, 0, max_mag), ptsources)
     if verbose == True:
         print "After Magnitude cut: ", len(ptsources)
@@ -117,21 +117,6 @@ def calc_seeing(catalog, verbose=False):
     fwhm = map(lambda line: line.fwhm, ptsources)
     # [arcsec, pixel]
     return [sum(fwhm)/len(fwhm)*pixel_scale, sum(fwhm)/len(fwhm)]
-
-def calc_average(data): return sum(data)/len(data)
-
-def variance(data):
-    avg = calc_average(data)
-    return map(lambda value: (value - avg)**2, data)
-
-def calc_median(data):
-    data.sort()
-    if len(data) % 2 == 1:
-        return data[(len(data) + 1)/2 -1]
-    else:
-        lower = data[len(data)/2 -1]
-        upper = data[len(data)/2]
-    return (float(lower + upper))/2
 
 def calc_MAD(data):
     " Compute Median Absolute Deviation "
@@ -160,9 +145,25 @@ def no_head(line):
     else:
         return False
 
-def save(path, filename, ext='png', close=True, verbose=True):
+
+def get_index(array, value):
+    return (np.abs(array - value)).argmin()
+
+
+
+"""
+Convert from Jy to lam*F_Lam.
+"""
+
+def jy_lfl(wave, flux, scale):
+    for i in range(len(flux)):
+        flux[i] = flux[i] * 10e-23          # Jy -> CGS
+        flux[i] = flux[i] * (c/wave[i]**2)  # -> F_lam
+        flux[i] = flux[i] * wave[i]**scale  # -> lam*F_lam
+    return flux
+
+def save(path, filename, ext='png', close=True, verbose=False):
     savepath = os.path.join(path, filename)
-    print savepath
     if verbose:
         print("Saving figure to '%s'..." % savepath),
 
