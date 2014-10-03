@@ -149,6 +149,14 @@ def no_head(line):
 def get_index(array, value):
     return (np.abs(array - value)).argmin()
 
+def get_indices(array, max_val, min_val):
+    """
+    Get indices for a range of values.
+
+    Make more general eventually
+    """
+    value_range = np.linspace(max_val, min_val, num=50, endpoint=True)
+    return [np.abs(array - value).argmin() for value in value_range]
 
 
 """
